@@ -99,3 +99,2191 @@ Processing by PagesController#index as HTML
 Completed 200 OK in 5193ms (Views: 5190.7ms | ActiveRecord: 0.0ms)
 
 
+Started GET "/" for 127.0.0.1 at 2021-10-12 10:53:03 +0300
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (1.0ms)
+[Webpacker] Compiling...
+[Webpacker] Compilation failed:
+yarn run v1.22.15
+info Visit https://yarnpkg.com/en/docs/cli/run for documentation about this command.
+
+
+error Command "webpack" not found.
+
+Completed 500 Internal Server Error in 7003ms (ActiveRecord: 0.0ms)
+
+
+  
+ActionView::Template::Error (Webpacker can't find application.js in /home/donat/Documents/react-rails/hello-rails-react/public/packs/manifest.json. Possible causes:
+1. You want to set webpacker.yml value of compile to true for your environment
+   unless you are using the `webpack -w` or the webpack-dev-server.
+2. webpack has not yet re-run to reflect updates.
+3. You have misconfigured Webpacker's config/webpacker.yml file.
+4. Your webpack configuration is not creating a manifest.
+Your manifest contains:
+{
+}
+):
+     7: 
+     8:     <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track': 'reload' %>
+     9:     <%= javascript_include_tag 'application', 'data-turbolinks-track': 'reload' %>
+    10:     <%= javascript_pack_tag 'application' %>
+    11:   </head>
+    12: 
+    13:   <body>
+  
+app/views/layouts/application.html.erb:10:in `_app_views_layouts_application_html_erb__2122126118417595514_24160'
+Started GET "/Greeting" for 127.0.0.1 at 2021-10-12 10:58:39 +0300
+  
+ActionController::RoutingError (No route matches [GET] "/Greeting"):
+  
+vendor/bundle/ruby/2.7.0/gems/actionpack-5.2.6/lib/action_dispatch/middleware/debug_exceptions.rb:65:in `call'
+vendor/bundle/ruby/2.7.0/gems/web-console-3.7.0/lib/web_console/middleware.rb:135:in `call_app'
+vendor/bundle/ruby/2.7.0/gems/web-console-3.7.0/lib/web_console/middleware.rb:30:in `block in call'
+vendor/bundle/ruby/2.7.0/gems/web-console-3.7.0/lib/web_console/middleware.rb:20:in `catch'
+vendor/bundle/ruby/2.7.0/gems/web-console-3.7.0/lib/web_console/middleware.rb:20:in `call'
+vendor/bundle/ruby/2.7.0/gems/actionpack-5.2.6/lib/action_dispatch/middleware/show_exceptions.rb:33:in `call'
+vendor/bundle/ruby/2.7.0/gems/railties-5.2.6/lib/rails/rack/logger.rb:38:in `call_app'
+vendor/bundle/ruby/2.7.0/gems/railties-5.2.6/lib/rails/rack/logger.rb:26:in `block in call'
+vendor/bundle/ruby/2.7.0/gems/activesupport-5.2.6/lib/active_support/tagged_logging.rb:71:in `block in tagged'
+vendor/bundle/ruby/2.7.0/gems/activesupport-5.2.6/lib/active_support/tagged_logging.rb:28:in `tagged'
+vendor/bundle/ruby/2.7.0/gems/activesupport-5.2.6/lib/active_support/tagged_logging.rb:71:in `tagged'
+vendor/bundle/ruby/2.7.0/gems/railties-5.2.6/lib/rails/rack/logger.rb:26:in `call'
+vendor/bundle/ruby/2.7.0/gems/sprockets-rails-3.2.2/lib/sprockets/rails/quiet_assets.rb:13:in `call'
+vendor/bundle/ruby/2.7.0/gems/actionpack-5.2.6/lib/action_dispatch/middleware/remote_ip.rb:81:in `call'
+vendor/bundle/ruby/2.7.0/gems/actionpack-5.2.6/lib/action_dispatch/middleware/request_id.rb:27:in `call'
+vendor/bundle/ruby/2.7.0/gems/rack-2.2.3/lib/rack/method_override.rb:24:in `call'
+vendor/bundle/ruby/2.7.0/gems/rack-2.2.3/lib/rack/runtime.rb:22:in `call'
+vendor/bundle/ruby/2.7.0/gems/activesupport-5.2.6/lib/active_support/cache/strategy/local_cache_middleware.rb:29:in `call'
+vendor/bundle/ruby/2.7.0/gems/actionpack-5.2.6/lib/action_dispatch/middleware/executor.rb:14:in `call'
+vendor/bundle/ruby/2.7.0/gems/actionpack-5.2.6/lib/action_dispatch/middleware/static.rb:127:in `call'
+vendor/bundle/ruby/2.7.0/gems/rack-2.2.3/lib/rack/sendfile.rb:110:in `call'
+vendor/bundle/ruby/2.7.0/gems/webpacker-5.4.3/lib/webpacker/dev_server_proxy.rb:25:in `perform_request'
+vendor/bundle/ruby/2.7.0/gems/rack-proxy-0.7.0/lib/rack/proxy.rb:63:in `call'
+vendor/bundle/ruby/2.7.0/gems/railties-5.2.6/lib/rails/engine.rb:524:in `call'
+vendor/bundle/ruby/2.7.0/gems/puma-3.12.6/lib/puma/configuration.rb:227:in `call'
+vendor/bundle/ruby/2.7.0/gems/puma-3.12.6/lib/puma/server.rb:706:in `handle_request'
+vendor/bundle/ruby/2.7.0/gems/puma-3.12.6/lib/puma/server.rb:476:in `process_client'
+vendor/bundle/ruby/2.7.0/gems/puma-3.12.6/lib/puma/server.rb:334:in `block in run'
+vendor/bundle/ruby/2.7.0/gems/puma-3.12.6/lib/puma/thread_pool.rb:135:in `block in spawn_thread'
+Started GET "/Greeting" for 127.0.0.1 at 2021-10-12 11:01:49 +0300
+Processing by PagesController#index as HTML
+  Parameters: {"pages"=>"Greeting"}
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (1.0ms)
+[Webpacker] Compiling...
+[Webpacker] Compilation failed:
+yarn run v1.22.15
+info Visit https://yarnpkg.com/en/docs/cli/run for documentation about this command.
+
+
+error Command "webpack" not found.
+
+Completed 500 Internal Server Error in 3156ms (ActiveRecord: 0.0ms)
+
+
+  
+ActionView::Template::Error (Webpacker can't find application.js in /home/donat/Documents/react-rails/hello-rails-react/public/packs/manifest.json. Possible causes:
+1. You want to set webpacker.yml value of compile to true for your environment
+   unless you are using the `webpack -w` or the webpack-dev-server.
+2. webpack has not yet re-run to reflect updates.
+3. You have misconfigured Webpacker's config/webpacker.yml file.
+4. Your webpack configuration is not creating a manifest.
+Your manifest contains:
+{
+}
+):
+     7: 
+     8:     <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track': 'reload' %>
+     9:     <%= javascript_include_tag 'application', 'data-turbolinks-track': 'reload' %>
+    10:     <%= javascript_pack_tag 'application' %>
+    11:   </head>
+    12: 
+    13:   <body>
+  
+app/views/layouts/application.html.erb:10:in `_app_views_layouts_application_html_erb__2122126118417595514_30120'
+Started GET "/Greeting" for 127.0.0.1 at 2021-10-12 11:02:50 +0300
+Processing by PagesController#index as HTML
+  Parameters: {"pages"=>"Greeting"}
+  Rendering pages/index.html.erb within layouts/application
+[Webpacker] Compiling...
+[Webpacker] Compilation failed:
+yarn run v1.22.15
+info Visit https://yarnpkg.com/en/docs/cli/run for documentation about this command.
+
+
+error Command "webpack" not found.
+
+  Rendered pages/index.html.erb within layouts/application (3082.2ms)
+Completed 500 Internal Server Error in 3088ms (ActiveRecord: 0.0ms)
+
+
+  
+ActionView::Template::Error (Webpacker can't find application.js in /home/donat/Documents/react-rails/hello-rails-react/public/packs/manifest.json. Possible causes:
+1. You want to set webpacker.yml value of compile to true for your environment
+   unless you are using the `webpack -w` or the webpack-dev-server.
+2. webpack has not yet re-run to reflect updates.
+3. You have misconfigured Webpacker's config/webpacker.yml file.
+4. Your webpack configuration is not creating a manifest.
+Your manifest contains:
+{
+}
+):
+    1:  <%= javascript_pack_tag 'application' %>
+    2: <h1>Welcome on my first rails-react app</h1>
+    3: <%= react_component("App")%>
+  
+app/views/pages/index.html.erb:1:in `_app_views_pages_index_html_erb__2249805889453674144_30640'
+Started GET "/Greeting" for 127.0.0.1 at 2021-10-12 11:04:19 +0300
+Processing by PagesController#index as HTML
+  Parameters: {"pages"=>"Greeting"}
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (0.9ms)
+[Webpacker] Compiling...
+[Webpacker] Compilation failed:
+yarn run v1.22.15
+info Visit https://yarnpkg.com/en/docs/cli/run for documentation about this command.
+
+
+error Command "webpack" not found.
+
+Completed 500 Internal Server Error in 3125ms (ActiveRecord: 0.0ms)
+
+
+  
+ActionView::Template::Error (Webpacker can't find application.js in /home/donat/Documents/react-rails/hello-rails-react/public/packs/manifest.json. Possible causes:
+1. You want to set webpacker.yml value of compile to true for your environment
+   unless you are using the `webpack -w` or the webpack-dev-server.
+2. webpack has not yet re-run to reflect updates.
+3. You have misconfigured Webpacker's config/webpacker.yml file.
+4. Your webpack configuration is not creating a manifest.
+Your manifest contains:
+{
+}
+):
+     7: 
+     8:     <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track': 'reload' %>
+     9:     <%= javascript_include_tag 'application', 'data-turbolinks-track': 'reload' %>
+    10:     <%= javascript_pack_tag 'application' %>
+    11:   </head>
+    12: 
+    13:   <body>
+  
+app/views/layouts/application.html.erb:10:in `_app_views_layouts_application_html_erb__2122126118417595514_33600'
+Started GET "/Greeting" for 127.0.0.1 at 2021-10-12 11:06:10 +0300
+Processing by PagesController#index as HTML
+  Parameters: {"pages"=>"Greeting"}
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (1.0ms)
+[Webpacker] Compiling...
+[Webpacker] Compilation failed:
+yarn run v1.22.15
+info Visit https://yarnpkg.com/en/docs/cli/run for documentation about this command.
+
+
+error Command "webpack" not found.
+
+Completed 500 Internal Server Error in 3047ms (ActiveRecord: 0.0ms)
+
+
+  
+ActionView::Template::Error (Webpacker can't find application.js in /home/donat/Documents/react-rails/hello-rails-react/public/packs/manifest.json. Possible causes:
+1. You want to set webpacker.yml value of compile to true for your environment
+   unless you are using the `webpack -w` or the webpack-dev-server.
+2. webpack has not yet re-run to reflect updates.
+3. You have misconfigured Webpacker's config/webpacker.yml file.
+4. Your webpack configuration is not creating a manifest.
+Your manifest contains:
+{
+}
+):
+     7: 
+     8:     <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track': 'reload' %>
+     9:     <%= javascript_include_tag 'application', 'data-turbolinks-track': 'reload' %>
+    10:     <%= javascript_pack_tag 'application' %>
+    11:   </head>
+    12: 
+    13:   <body>
+  
+app/views/layouts/application.html.erb:10:in `_app_views_layouts_application_html_erb__2122126118417595514_34140'
+Started GET "/Greeting" for 127.0.0.1 at 2021-10-12 11:06:17 +0300
+Processing by PagesController#index as HTML
+  Parameters: {"pages"=>"Greeting"}
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (0.8ms)
+[Webpacker] Compiling...
+[Webpacker] Compilation failed:
+yarn run v1.22.15
+info Visit https://yarnpkg.com/en/docs/cli/run for documentation about this command.
+
+
+error Command "webpack" not found.
+
+Completed 500 Internal Server Error in 3152ms (ActiveRecord: 0.0ms)
+
+
+  
+ActionView::Template::Error (Webpacker can't find application.js in /home/donat/Documents/react-rails/hello-rails-react/public/packs/manifest.json. Possible causes:
+1. You want to set webpacker.yml value of compile to true for your environment
+   unless you are using the `webpack -w` or the webpack-dev-server.
+2. webpack has not yet re-run to reflect updates.
+3. You have misconfigured Webpacker's config/webpacker.yml file.
+4. Your webpack configuration is not creating a manifest.
+Your manifest contains:
+{
+}
+):
+     7: 
+     8:     <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track': 'reload' %>
+     9:     <%= javascript_include_tag 'application', 'data-turbolinks-track': 'reload' %>
+    10:     <%= javascript_pack_tag 'application' %>
+    11:   </head>
+    12: 
+    13:   <body>
+  
+app/views/layouts/application.html.erb:10:in `_app_views_layouts_application_html_erb__2122126118417595514_34680'
+Started GET "/Greeting" for 127.0.0.1 at 2021-10-12 11:07:01 +0300
+Processing by PagesController#index as HTML
+  Parameters: {"pages"=>"Greeting"}
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (0.8ms)
+[Webpacker] Compiling...
+[Webpacker] Compilation failed:
+yarn run v1.22.15
+info Visit https://yarnpkg.com/en/docs/cli/run for documentation about this command.
+
+
+error Command "webpack" not found.
+
+Completed 500 Internal Server Error in 3112ms (ActiveRecord: 0.0ms)
+
+
+  
+ActionView::Template::Error (Webpacker can't find application.js in /home/donat/Documents/react-rails/hello-rails-react/public/packs/manifest.json. Possible causes:
+1. You want to set webpacker.yml value of compile to true for your environment
+   unless you are using the `webpack -w` or the webpack-dev-server.
+2. webpack has not yet re-run to reflect updates.
+3. You have misconfigured Webpacker's config/webpacker.yml file.
+4. Your webpack configuration is not creating a manifest.
+Your manifest contains:
+{
+}
+):
+     7: 
+     8:     <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track': 'reload' %>
+     9:     <%= javascript_include_tag 'application', 'data-turbolinks-track': 'reload' %>
+    10:     <%= javascript_pack_tag 'application' %>
+    11:   </head>
+    12: 
+    13:   <body>
+  
+app/views/layouts/application.html.erb:10:in `_app_views_layouts_application_html_erb__2122126118417595514_35220'
+Started GET "/Greeting" for 127.0.0.1 at 2021-10-12 11:09:38 +0300
+Processing by PagesController#index as HTML
+  Parameters: {"pages"=>"Greeting"}
+  Rendering pages/index.html.erb within layouts/application
+[Webpacker] Compiling...
+[Webpacker] Compilation failed:
+yarn run v1.22.15
+info Visit https://yarnpkg.com/en/docs/cli/run for documentation about this command.
+
+
+error Command "webpack" not found.
+
+  Rendered pages/index.html.erb within layouts/application (2991.1ms)
+Completed 500 Internal Server Error in 2996ms (ActiveRecord: 0.0ms)
+
+
+  
+ActionView::Template::Error (Webpacker can't find application.js in /home/donat/Documents/react-rails/hello-rails-react/public/packs/manifest.json. Possible causes:
+1. You want to set webpacker.yml value of compile to true for your environment
+   unless you are using the `webpack -w` or the webpack-dev-server.
+2. webpack has not yet re-run to reflect updates.
+3. You have misconfigured Webpacker's config/webpacker.yml file.
+4. Your webpack configuration is not creating a manifest.
+Your manifest contains:
+{
+}
+):
+    1:  <%= javascript_pack_tag 'application' %>
+    2: <h1>Welcome on my first rails-react app</h1>
+    3: <%= react_component("App")%>
+  
+app/views/pages/index.html.erb:1:in `_app_views_pages_index_html_erb__2249805889453674144_38160'
+Started GET "/Greeting" for 127.0.0.1 at 2021-10-12 11:14:10 +0300
+Processing by PagesController#index as HTML
+  Parameters: {"pages"=>"Greeting"}
+  Rendering pages/index.html.erb within layouts/application
+[Webpacker] Compiling...
+[Webpacker] Compilation failed:
+yarn run v1.22.15
+info Visit https://yarnpkg.com/en/docs/cli/run for documentation about this command.
+
+
+error Command "webpack" not found.
+
+  Rendered pages/index.html.erb within layouts/application (3009.6ms)
+Completed 500 Internal Server Error in 3015ms (ActiveRecord: 0.0ms)
+
+
+  
+ActionView::Template::Error (Webpacker can't find application.js in /home/donat/Documents/react-rails/hello-rails-react/public/packs/manifest.json. Possible causes:
+1. You want to set webpacker.yml value of compile to true for your environment
+   unless you are using the `webpack -w` or the webpack-dev-server.
+2. webpack has not yet re-run to reflect updates.
+3. You have misconfigured Webpacker's config/webpacker.yml file.
+4. Your webpack configuration is not creating a manifest.
+Your manifest contains:
+{
+}
+):
+    1:  <%= javascript_pack_tag 'application' %>
+    2: <h1>Welcome on my first rails-react app</h1>
+    3: <%= react_component("App")%>
+  
+app/views/pages/index.html.erb:1:in `_app_views_pages_index_html_erb__2249805889453674144_41100'
+Started GET "/Greeting" for 127.0.0.1 at 2021-10-12 11:14:17 +0300
+Processing by PagesController#index as HTML
+  Parameters: {"pages"=>"Greeting"}
+  Rendering pages/index.html.erb within layouts/application
+[Webpacker] Compiling...
+[Webpacker] Compilation failed:
+yarn run v1.22.15
+info Visit https://yarnpkg.com/en/docs/cli/run for documentation about this command.
+
+
+error Command "webpack" not found.
+
+  Rendered pages/index.html.erb within layouts/application (3185.8ms)
+Completed 500 Internal Server Error in 3190ms (ActiveRecord: 0.0ms)
+
+
+  
+ActionView::Template::Error (Webpacker can't find application.js in /home/donat/Documents/react-rails/hello-rails-react/public/packs/manifest.json. Possible causes:
+1. You want to set webpacker.yml value of compile to true for your environment
+   unless you are using the `webpack -w` or the webpack-dev-server.
+2. webpack has not yet re-run to reflect updates.
+3. You have misconfigured Webpacker's config/webpacker.yml file.
+4. Your webpack configuration is not creating a manifest.
+Your manifest contains:
+{
+}
+):
+    1:  <%= javascript_pack_tag 'application' %>
+    2: <h1>Welcome on my first rails-react app</h1>
+    3: <%= react_component("App")%>
+  
+app/views/pages/index.html.erb:1:in `_app_views_pages_index_html_erb__2249805889453674144_41620'
+Started GET "/" for 127.0.0.1 at 2021-10-12 11:14:22 +0300
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+[Webpacker] Compiling...
+[Webpacker] Compilation failed:
+yarn run v1.22.15
+info Visit https://yarnpkg.com/en/docs/cli/run for documentation about this command.
+
+
+error Command "webpack" not found.
+
+  Rendered pages/index.html.erb within layouts/application (2989.1ms)
+Completed 500 Internal Server Error in 2993ms (ActiveRecord: 0.0ms)
+
+
+  
+ActionView::Template::Error (Webpacker can't find application.js in /home/donat/Documents/react-rails/hello-rails-react/public/packs/manifest.json. Possible causes:
+1. You want to set webpacker.yml value of compile to true for your environment
+   unless you are using the `webpack -w` or the webpack-dev-server.
+2. webpack has not yet re-run to reflect updates.
+3. You have misconfigured Webpacker's config/webpacker.yml file.
+4. Your webpack configuration is not creating a manifest.
+Your manifest contains:
+{
+}
+):
+    1:  <%= javascript_pack_tag 'application' %>
+    2: <h1>Welcome on my first rails-react app</h1>
+    3: <%= react_component("App")%>
+  
+app/views/pages/index.html.erb:1:in `_app_views_pages_index_html_erb__2249805889453674144_42140'
+Started GET "/" for 127.0.0.1 at 2021-10-12 11:14:29 +0300
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+[Webpacker] Compiling...
+[Webpacker] Compilation failed:
+yarn run v1.22.15
+info Visit https://yarnpkg.com/en/docs/cli/run for documentation about this command.
+
+
+error Command "webpack" not found.
+
+  Rendered pages/index.html.erb within layouts/application (3059.6ms)
+Completed 500 Internal Server Error in 3064ms (ActiveRecord: 0.0ms)
+
+
+  
+ActionView::Template::Error (Webpacker can't find application.js in /home/donat/Documents/react-rails/hello-rails-react/public/packs/manifest.json. Possible causes:
+1. You want to set webpacker.yml value of compile to true for your environment
+   unless you are using the `webpack -w` or the webpack-dev-server.
+2. webpack has not yet re-run to reflect updates.
+3. You have misconfigured Webpacker's config/webpacker.yml file.
+4. Your webpack configuration is not creating a manifest.
+Your manifest contains:
+{
+}
+):
+    1:  <%= javascript_pack_tag 'application' %>
+    2: <h1>Welcome on my first rails-react app</h1>
+    3: <%= react_component("App")%>
+  
+app/views/pages/index.html.erb:1:in `_app_views_pages_index_html_erb__2249805889453674144_42660'
+Started GET "/" for 127.0.0.1 at 2021-10-12 11:14:47 +0300
+  
+ActionController::RoutingError (uninitialized constant StaticController):
+  
+vendor/bundle/ruby/2.7.0/gems/activesupport-5.2.6/lib/active_support/inflector/methods.rb:283:in `const_get'
+vendor/bundle/ruby/2.7.0/gems/activesupport-5.2.6/lib/active_support/inflector/methods.rb:283:in `block in constantize'
+vendor/bundle/ruby/2.7.0/gems/activesupport-5.2.6/lib/active_support/inflector/methods.rb:281:in `each'
+vendor/bundle/ruby/2.7.0/gems/activesupport-5.2.6/lib/active_support/inflector/methods.rb:281:in `inject'
+vendor/bundle/ruby/2.7.0/gems/activesupport-5.2.6/lib/active_support/inflector/methods.rb:281:in `constantize'
+vendor/bundle/ruby/2.7.0/gems/actionpack-5.2.6/lib/action_dispatch/http/request.rb:88:in `controller_class_for'
+vendor/bundle/ruby/2.7.0/gems/actionpack-5.2.6/lib/action_dispatch/http/request.rb:81:in `controller_class'
+vendor/bundle/ruby/2.7.0/gems/actionpack-5.2.6/lib/action_dispatch/routing/route_set.rb:46:in `controller'
+vendor/bundle/ruby/2.7.0/gems/actionpack-5.2.6/lib/action_dispatch/routing/route_set.rb:32:in `serve'
+vendor/bundle/ruby/2.7.0/gems/actionpack-5.2.6/lib/action_dispatch/journey/router.rb:52:in `block in serve'
+vendor/bundle/ruby/2.7.0/gems/actionpack-5.2.6/lib/action_dispatch/journey/router.rb:35:in `each'
+vendor/bundle/ruby/2.7.0/gems/actionpack-5.2.6/lib/action_dispatch/journey/router.rb:35:in `serve'
+vendor/bundle/ruby/2.7.0/gems/actionpack-5.2.6/lib/action_dispatch/routing/route_set.rb:840:in `call'
+vendor/bundle/ruby/2.7.0/gems/rack-2.2.3/lib/rack/tempfile_reaper.rb:15:in `call'
+vendor/bundle/ruby/2.7.0/gems/rack-2.2.3/lib/rack/etag.rb:27:in `call'
+vendor/bundle/ruby/2.7.0/gems/rack-2.2.3/lib/rack/conditional_get.rb:27:in `call'
+vendor/bundle/ruby/2.7.0/gems/rack-2.2.3/lib/rack/head.rb:12:in `call'
+vendor/bundle/ruby/2.7.0/gems/actionpack-5.2.6/lib/action_dispatch/http/content_security_policy.rb:18:in `call'
+vendor/bundle/ruby/2.7.0/gems/rack-2.2.3/lib/rack/session/abstract/id.rb:266:in `context'
+vendor/bundle/ruby/2.7.0/gems/rack-2.2.3/lib/rack/session/abstract/id.rb:260:in `call'
+vendor/bundle/ruby/2.7.0/gems/actionpack-5.2.6/lib/action_dispatch/middleware/cookies.rb:670:in `call'
+vendor/bundle/ruby/2.7.0/gems/activerecord-5.2.6/lib/active_record/migration.rb:559:in `call'
+vendor/bundle/ruby/2.7.0/gems/actionpack-5.2.6/lib/action_dispatch/middleware/callbacks.rb:28:in `block in call'
+vendor/bundle/ruby/2.7.0/gems/activesupport-5.2.6/lib/active_support/callbacks.rb:98:in `run_callbacks'
+vendor/bundle/ruby/2.7.0/gems/actionpack-5.2.6/lib/action_dispatch/middleware/callbacks.rb:26:in `call'
+vendor/bundle/ruby/2.7.0/gems/actionpack-5.2.6/lib/action_dispatch/middleware/executor.rb:14:in `call'
+vendor/bundle/ruby/2.7.0/gems/actionpack-5.2.6/lib/action_dispatch/middleware/debug_exceptions.rb:61:in `call'
+vendor/bundle/ruby/2.7.0/gems/web-console-3.7.0/lib/web_console/middleware.rb:135:in `call_app'
+vendor/bundle/ruby/2.7.0/gems/web-console-3.7.0/lib/web_console/middleware.rb:30:in `block in call'
+vendor/bundle/ruby/2.7.0/gems/web-console-3.7.0/lib/web_console/middleware.rb:20:in `catch'
+vendor/bundle/ruby/2.7.0/gems/web-console-3.7.0/lib/web_console/middleware.rb:20:in `call'
+vendor/bundle/ruby/2.7.0/gems/actionpack-5.2.6/lib/action_dispatch/middleware/show_exceptions.rb:33:in `call'
+vendor/bundle/ruby/2.7.0/gems/railties-5.2.6/lib/rails/rack/logger.rb:38:in `call_app'
+vendor/bundle/ruby/2.7.0/gems/railties-5.2.6/lib/rails/rack/logger.rb:26:in `block in call'
+vendor/bundle/ruby/2.7.0/gems/activesupport-5.2.6/lib/active_support/tagged_logging.rb:71:in `block in tagged'
+vendor/bundle/ruby/2.7.0/gems/activesupport-5.2.6/lib/active_support/tagged_logging.rb:28:in `tagged'
+vendor/bundle/ruby/2.7.0/gems/activesupport-5.2.6/lib/active_support/tagged_logging.rb:71:in `tagged'
+vendor/bundle/ruby/2.7.0/gems/railties-5.2.6/lib/rails/rack/logger.rb:26:in `call'
+vendor/bundle/ruby/2.7.0/gems/sprockets-rails-3.2.2/lib/sprockets/rails/quiet_assets.rb:13:in `call'
+vendor/bundle/ruby/2.7.0/gems/actionpack-5.2.6/lib/action_dispatch/middleware/remote_ip.rb:81:in `call'
+vendor/bundle/ruby/2.7.0/gems/actionpack-5.2.6/lib/action_dispatch/middleware/request_id.rb:27:in `call'
+vendor/bundle/ruby/2.7.0/gems/rack-2.2.3/lib/rack/method_override.rb:24:in `call'
+vendor/bundle/ruby/2.7.0/gems/rack-2.2.3/lib/rack/runtime.rb:22:in `call'
+vendor/bundle/ruby/2.7.0/gems/activesupport-5.2.6/lib/active_support/cache/strategy/local_cache_middleware.rb:29:in `call'
+vendor/bundle/ruby/2.7.0/gems/actionpack-5.2.6/lib/action_dispatch/middleware/executor.rb:14:in `call'
+vendor/bundle/ruby/2.7.0/gems/actionpack-5.2.6/lib/action_dispatch/middleware/static.rb:127:in `call'
+vendor/bundle/ruby/2.7.0/gems/rack-2.2.3/lib/rack/sendfile.rb:110:in `call'
+vendor/bundle/ruby/2.7.0/gems/webpacker-5.4.3/lib/webpacker/dev_server_proxy.rb:25:in `perform_request'
+vendor/bundle/ruby/2.7.0/gems/rack-proxy-0.7.0/lib/rack/proxy.rb:63:in `call'
+vendor/bundle/ruby/2.7.0/gems/railties-5.2.6/lib/rails/engine.rb:524:in `call'
+vendor/bundle/ruby/2.7.0/gems/puma-3.12.6/lib/puma/configuration.rb:227:in `call'
+vendor/bundle/ruby/2.7.0/gems/puma-3.12.6/lib/puma/server.rb:706:in `handle_request'
+vendor/bundle/ruby/2.7.0/gems/puma-3.12.6/lib/puma/server.rb:476:in `process_client'
+vendor/bundle/ruby/2.7.0/gems/puma-3.12.6/lib/puma/server.rb:334:in `block in run'
+vendor/bundle/ruby/2.7.0/gems/puma-3.12.6/lib/puma/thread_pool.rb:135:in `block in spawn_thread'
+Started GET "/" for 127.0.0.1 at 2021-10-12 11:14:59 +0300
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+[Webpacker] Compiling...
+[Webpacker] Compilation failed:
+yarn run v1.22.15
+info Visit https://yarnpkg.com/en/docs/cli/run for documentation about this command.
+
+
+error Command "webpack" not found.
+
+  Rendered pages/index.html.erb within layouts/application (3073.7ms)
+Completed 500 Internal Server Error in 3079ms (ActiveRecord: 0.0ms)
+
+
+  
+ActionView::Template::Error (Webpacker can't find application.js in /home/donat/Documents/react-rails/hello-rails-react/public/packs/manifest.json. Possible causes:
+1. You want to set webpacker.yml value of compile to true for your environment
+   unless you are using the `webpack -w` or the webpack-dev-server.
+2. webpack has not yet re-run to reflect updates.
+3. You have misconfigured Webpacker's config/webpacker.yml file.
+4. Your webpack configuration is not creating a manifest.
+Your manifest contains:
+{
+}
+):
+    1:  <%= javascript_pack_tag 'application' %>
+    2: <h1>Welcome on my first rails-react app</h1>
+    3: <%= react_component("App")%>
+  
+app/views/pages/index.html.erb:1:in `_app_views_pages_index_html_erb__2249805889453674144_48500'
+Started GET "/" for 127.0.0.1 at 2021-10-12 11:19:32 +0300
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+[Webpacker] Compiling...
+[Webpacker] Compilation failed:
+yarn run v1.22.15
+info Visit https://yarnpkg.com/en/docs/cli/run for documentation about this command.
+
+
+error Command "webpack" not found.
+
+  Rendered pages/index.html.erb within layouts/application (3160.6ms)
+Completed 500 Internal Server Error in 3165ms (ActiveRecord: 0.0ms)
+
+
+  
+ActionView::Template::Error (Webpacker can't find index.js in /home/donat/Documents/react-rails/hello-rails-react/public/packs/manifest.json. Possible causes:
+1. You want to set webpacker.yml value of compile to true for your environment
+   unless you are using the `webpack -w` or the webpack-dev-server.
+2. webpack has not yet re-run to reflect updates.
+3. You have misconfigured Webpacker's config/webpacker.yml file.
+4. Your webpack configuration is not creating a manifest.
+Your manifest contains:
+{
+}
+):
+    1:  <%= javascript_pack_tag 'index' %>
+    2: <h1>Welcome on my first rails-react app</h1>
+    3: <%= react_component("App")%>
+  
+app/views/pages/index.html.erb:1:in `_app_views_pages_index_html_erb__2249805889453674144_49020'
+Started GET "/" for 127.0.0.1 at 2021-10-12 11:19:51 +0300
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+[Webpacker] Compiling...
+[Webpacker] Compilation failed:
+yarn run v1.22.15
+info Visit https://yarnpkg.com/en/docs/cli/run for documentation about this command.
+
+
+error Command "webpack" not found.
+
+  Rendered pages/index.html.erb within layouts/application (3116.9ms)
+Completed 500 Internal Server Error in 3121ms (ActiveRecord: 0.0ms)
+
+
+  
+ActionView::Template::Error (Webpacker can't find App.js in /home/donat/Documents/react-rails/hello-rails-react/public/packs/manifest.json. Possible causes:
+1. You want to set webpacker.yml value of compile to true for your environment
+   unless you are using the `webpack -w` or the webpack-dev-server.
+2. webpack has not yet re-run to reflect updates.
+3. You have misconfigured Webpacker's config/webpacker.yml file.
+4. Your webpack configuration is not creating a manifest.
+Your manifest contains:
+{
+}
+):
+    1:  <%= javascript_pack_tag 'App' %>
+    2: <h1>Welcome on my first rails-react app</h1>
+    3: <%= react_component("App")%>
+  
+app/views/pages/index.html.erb:1:in `_app_views_pages_index_html_erb__2249805889453674144_49540'
+Started GET "/" for 127.0.0.1 at 2021-10-12 11:23:33 +0300
+  [1m[35m (1.8ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+  ↳ vendor/bundle/ruby/2.7.0/gems/activerecord-5.2.6/lib/active_record/log_subscriber.rb:98
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+[Webpacker] Compiling...
+[Webpacker] Compilation failed:
+yarn run v1.22.15
+info Visit https://yarnpkg.com/en/docs/cli/run for documentation about this command.
+
+
+error Command "webpack" not found.
+
+  Rendered pages/index.html.erb within layouts/application (3296.2ms)
+Completed 500 Internal Server Error in 3314ms (ActiveRecord: 0.0ms)
+
+
+  
+ActionView::Template::Error (Webpacker can't find App.js in /home/donat/Documents/react-rails/hello-rails-react/public/packs/manifest.json. Possible causes:
+1. You want to set webpacker.yml value of compile to true for your environment
+   unless you are using the `webpack -w` or the webpack-dev-server.
+2. webpack has not yet re-run to reflect updates.
+3. You have misconfigured Webpacker's config/webpacker.yml file.
+4. Your webpack configuration is not creating a manifest.
+Your manifest contains:
+{
+}
+):
+    1:  <%= javascript_pack_tag 'App' %>
+    2: <h1>Welcome on my first rails-react app</h1>
+    3: <%= react_component("App")%>
+  
+app/views/pages/index.html.erb:1:in `_app_views_pages_index_html_erb___2372926383071344373_15640'
+Started GET "/" for 127.0.0.1 at 2021-10-12 11:23:52 +0300
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+[Webpacker] Compiling...
+[Webpacker] Compilation failed:
+yarn run v1.22.15
+info Visit https://yarnpkg.com/en/docs/cli/run for documentation about this command.
+
+
+error Command "webpack" not found.
+
+  Rendered pages/index.html.erb within layouts/application (3298.0ms)
+Completed 500 Internal Server Error in 3306ms (ActiveRecord: 0.0ms)
+
+
+  
+ActionView::Template::Error (Webpacker can't find App.js in /home/donat/Documents/react-rails/hello-rails-react/public/packs/manifest.json. Possible causes:
+1. You want to set webpacker.yml value of compile to true for your environment
+   unless you are using the `webpack -w` or the webpack-dev-server.
+2. webpack has not yet re-run to reflect updates.
+3. You have misconfigured Webpacker's config/webpacker.yml file.
+4. Your webpack configuration is not creating a manifest.
+Your manifest contains:
+{
+}
+):
+    1:  <%= javascript_pack_tag 'App' %>
+    2: <h1>Welcome on my first rails-react app</h1>
+    3: <%= react_component("App")%>
+  
+app/views/pages/index.html.erb:1:in `_app_views_pages_index_html_erb___2372926383071344373_16200'
+Started GET "/" for 127.0.0.1 at 2021-10-12 11:25:29 +0300
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (0.5ms)
+[Webpacker] Compiling...
+[Webpacker] Compilation failed:
+yarn run v1.22.15
+info Visit https://yarnpkg.com/en/docs/cli/run for documentation about this command.
+
+
+error Command "webpack" not found.
+
+Completed 500 Internal Server Error in 5139ms (ActiveRecord: 0.0ms)
+
+
+  
+ActionView::Template::Error (Webpacker can't find application.js in /home/donat/Documents/react-rails/hello-rails-react/public/packs/manifest.json. Possible causes:
+1. You want to set webpacker.yml value of compile to true for your environment
+   unless you are using the `webpack -w` or the webpack-dev-server.
+2. webpack has not yet re-run to reflect updates.
+3. You have misconfigured Webpacker's config/webpacker.yml file.
+4. Your webpack configuration is not creating a manifest.
+Your manifest contains:
+{
+}
+):
+     7: 
+     8:     <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track': 'reload' %>
+     9:     <%= javascript_include_tag 'application', 'data-turbolinks-track': 'reload' %>
+    10:     <%= javascript_pack_tag 'application' %>
+    11:   </head>
+    12: 
+    13:   <body>
+  
+app/views/layouts/application.html.erb:10:in `_app_views_layouts_application_html_erb___3702437225685026780_16780'
+Started GET "/" for 127.0.0.1 at 2021-10-12 11:26:02 +0300
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (0.6ms)
+Completed 200 OK in 51ms (Views: 49.4ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/" for 127.0.0.1 at 2021-10-12 11:26:19 +0300
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+[Webpacker] Compiling...
+[Webpacker] Compilation failed:
+yarn run v1.22.15
+info Visit https://yarnpkg.com/en/docs/cli/run for documentation about this command.
+
+
+error Command "webpack" not found.
+
+  Rendered pages/index.html.erb within layouts/application (3185.7ms)
+Completed 500 Internal Server Error in 3189ms (ActiveRecord: 0.0ms)
+
+
+  
+ActionView::Template::Error (Webpacker can't find App.js in /home/donat/Documents/react-rails/hello-rails-react/public/packs/manifest.json. Possible causes:
+1. You want to set webpacker.yml value of compile to true for your environment
+   unless you are using the `webpack -w` or the webpack-dev-server.
+2. webpack has not yet re-run to reflect updates.
+3. You have misconfigured Webpacker's config/webpacker.yml file.
+4. Your webpack configuration is not creating a manifest.
+Your manifest contains:
+{
+}
+):
+    1:  <%= javascript_pack_tag 'App' %>
+    2: <h1>Welcome on my first rails-react app</h1>
+    3: <%= react_component("App")%>
+  
+app/views/pages/index.html.erb:1:in `_app_views_pages_index_html_erb___2372926383071344373_17560'
+Started GET "/" for 127.0.0.1 at 2021-10-12 11:26:33 +0300
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+[Webpacker] Compiling...
+[Webpacker] Compilation failed:
+yarn run v1.22.15
+info Visit https://yarnpkg.com/en/docs/cli/run for documentation about this command.
+
+
+error Command "webpack" not found.
+
+  Rendered pages/index.html.erb within layouts/application (3177.5ms)
+Completed 500 Internal Server Error in 3184ms (ActiveRecord: 0.0ms)
+
+
+  
+ActionView::Template::Error (Webpacker can't find Application.js in /home/donat/Documents/react-rails/hello-rails-react/public/packs/manifest.json. Possible causes:
+1. You want to set webpacker.yml value of compile to true for your environment
+   unless you are using the `webpack -w` or the webpack-dev-server.
+2. webpack has not yet re-run to reflect updates.
+3. You have misconfigured Webpacker's config/webpacker.yml file.
+4. Your webpack configuration is not creating a manifest.
+Your manifest contains:
+{
+}
+):
+    1:  <%= javascript_pack_tag 'Application' %>
+    2: <h1>Welcome on my first rails-react app</h1>
+    3: <%= react_component("App")%>
+  
+app/views/pages/index.html.erb:1:in `_app_views_pages_index_html_erb___2372926383071344373_18080'
+Started GET "/" for 127.0.0.1 at 2021-10-12 11:26:46 +0300
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (1.1ms)
+Completed 200 OK in 38ms (Views: 36.4ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/Greeting" for 127.0.0.1 at 2021-10-12 11:27:20 +0300
+Processing by PagesController#index as HTML
+  Parameters: {"pages"=>"Greeting"}
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (0.7ms)
+Completed 200 OK in 55ms (Views: 47.6ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/Greeting" for 127.0.0.1 at 2021-10-12 11:27:24 +0300
+Processing by PagesController#index as HTML
+  Parameters: {"pages"=>"Greeting"}
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (0.9ms)
+Completed 200 OK in 34ms (Views: 32.1ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/" for 127.0.0.1 at 2021-10-12 11:27:29 +0300
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (0.8ms)
+Completed 200 OK in 42ms (Views: 40.1ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/" for 127.0.0.1 at 2021-10-12 11:28:22 +0300
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (0.7ms)
+Completed 200 OK in 31ms (Views: 29.1ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/" for 127.0.0.1 at 2021-10-12 11:28:24 +0300
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (0.9ms)
+Completed 200 OK in 40ms (Views: 38.7ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/" for 127.0.0.1 at 2021-10-12 11:29:44 +0300
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (0.8ms)
+Completed 200 OK in 39ms (Views: 37.2ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/" for 127.0.0.1 at 2021-10-12 11:30:17 +0300
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (1.0ms)
+Completed 200 OK in 40ms (Views: 38.3ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/" for 127.0.0.1 at 2021-10-12 11:37:47 +0300
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (1.0ms)
+Completed 200 OK in 41ms (Views: 39.6ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/" for 127.0.0.1 at 2021-10-12 11:37:49 +0300
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (1.0ms)
+Completed 200 OK in 39ms (Views: 37.2ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/" for 127.0.0.1 at 2021-10-12 11:41:30 +0300
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+[Webpacker] Compiling...
+[Webpacker] Compilation failed:
+yarn run v1.22.15
+info Visit https://yarnpkg.com/en/docs/cli/run for documentation about this command.
+
+
+error Command "webpack" not found.
+
+  Rendered pages/index.html.erb within layouts/application (3220.1ms)
+Completed 500 Internal Server Error in 3224ms (ActiveRecord: 0.0ms)
+
+
+  
+ActionView::Template::Error (Webpacker can't find application.js in /home/donat/Documents/react-rails/hello-rails-react/public/packs/manifest.json. Possible causes:
+1. You want to set webpacker.yml value of compile to true for your environment
+   unless you are using the `webpack -w` or the webpack-dev-server.
+2. webpack has not yet re-run to reflect updates.
+3. You have misconfigured Webpacker's config/webpacker.yml file.
+4. Your webpack configuration is not creating a manifest.
+Your manifest contains:
+{
+}
+):
+    1: <% javascript_pack_tag 'application' %>
+    2: <h1>Welcome on my first rails-react app</h1>
+    3: <%= react_component("App")%>
+  
+app/views/pages/index.html.erb:1:in `_app_views_pages_index_html_erb___2372926383071344373_31780'
+Started GET "/" for 127.0.0.1 at 2021-10-12 11:46:48 +0300
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+[Webpacker] Compiling...
+[Webpacker] Compilation failed:
+yarn run v1.22.15
+info Visit https://yarnpkg.com/en/docs/cli/run for documentation about this command.
+
+
+error Command "webpack" not found.
+
+  Rendered pages/index.html.erb within layouts/application (3175.3ms)
+Completed 500 Internal Server Error in 3180ms (ActiveRecord: 0.0ms)
+
+
+  
+ActionView::Template::Error (Webpacker can't find application.js in /home/donat/Documents/react-rails/hello-rails-react/public/packs/manifest.json. Possible causes:
+1. You want to set webpacker.yml value of compile to true for your environment
+   unless you are using the `webpack -w` or the webpack-dev-server.
+2. webpack has not yet re-run to reflect updates.
+3. You have misconfigured Webpacker's config/webpacker.yml file.
+4. Your webpack configuration is not creating a manifest.
+Your manifest contains:
+{
+}
+):
+    1: <% javascript_pack_tag 'application' %>
+    2: <h1>Welcome on my first rails-react app</h1>
+    3: <%= react_component("App")%>
+  
+app/views/pages/index.html.erb:1:in `_app_views_pages_index_html_erb___2372926383071344373_32300'
+Started GET "/" for 127.0.0.1 at 2021-10-12 11:47:07 +0300
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+[Webpacker] Compiling...
+[Webpacker] Compilation failed:
+yarn run v1.22.15
+info Visit https://yarnpkg.com/en/docs/cli/run for documentation about this command.
+
+
+error Command "webpack" not found.
+
+  Rendered pages/index.html.erb within layouts/application (3364.8ms)
+Completed 500 Internal Server Error in 3369ms (ActiveRecord: 0.0ms)
+
+
+  
+ActionView::Template::Error (Webpacker can't find application.js in /home/donat/Documents/react-rails/hello-rails-react/public/packs/manifest.json. Possible causes:
+1. You want to set webpacker.yml value of compile to true for your environment
+   unless you are using the `webpack -w` or the webpack-dev-server.
+2. webpack has not yet re-run to reflect updates.
+3. You have misconfigured Webpacker's config/webpacker.yml file.
+4. Your webpack configuration is not creating a manifest.
+Your manifest contains:
+{
+}
+):
+    1: <% javascript_pack_tag 'application' %>
+    2: <h1>Welcome on my first rails-react app</h1>
+    3: <%= react_component("App")%>
+  
+app/views/pages/index.html.erb:1:in `_app_views_pages_index_html_erb___2372926383071344373_35260'
+Started GET "/" for 127.0.0.1 at 2021-10-12 11:47:31 +0300
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (0.9ms)
+[Webpacker] Compiling...
+[Webpacker] Compilation failed:
+yarn run v1.22.15
+info Visit https://yarnpkg.com/en/docs/cli/run for documentation about this command.
+
+
+error Command "webpack" not found.
+
+Completed 500 Internal Server Error in 3243ms (ActiveRecord: 0.0ms)
+
+
+  
+ActionView::Template::Error (Webpacker can't find application.js in /home/donat/Documents/react-rails/hello-rails-react/public/packs/manifest.json. Possible causes:
+1. You want to set webpacker.yml value of compile to true for your environment
+   unless you are using the `webpack -w` or the webpack-dev-server.
+2. webpack has not yet re-run to reflect updates.
+3. You have misconfigured Webpacker's config/webpacker.yml file.
+4. Your webpack configuration is not creating a manifest.
+Your manifest contains:
+{
+}
+):
+     7: 
+     8:     <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track': 'reload' %>
+     9:     <%= javascript_include_tag 'application', 'data-turbolinks-track': 'reload' %>
+    10:     <%= javascript_pack_tag 'application' %>
+    11:   </head>
+    12: 
+    13:   <body>
+  
+app/views/layouts/application.html.erb:10:in `_app_views_layouts_application_html_erb___3702437225685026780_35800'
+Started GET "/" for 127.0.0.1 at 2021-10-12 11:47:56 +0300
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (0.9ms)
+Completed 200 OK in 50ms (Views: 48.4ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/" for 127.0.0.1 at 2021-10-12 11:48:57 +0300
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (1.0ms)
+Completed 200 OK in 41ms (Views: 38.7ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/" for 127.0.0.1 at 2021-10-12 11:49:06 +0300
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (1.0ms)
+Completed 200 OK in 50ms (Views: 46.9ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/" for 127.0.0.1 at 2021-10-12 11:50:01 +0300
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (0.8ms)
+Completed 200 OK in 53ms (Views: 51.3ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/" for 127.0.0.1 at 2021-10-12 11:50:55 +0300
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (1.6ms)
+[Webpacker] Compiling...
+[Webpacker] Compilation failed:
+yarn run v1.22.15
+info Visit https://yarnpkg.com/en/docs/cli/run for documentation about this command.
+
+
+error Command "webpack" not found.
+
+Completed 500 Internal Server Error in 3303ms (ActiveRecord: 0.0ms)
+
+
+  
+ActionView::Template::Error (Webpacker can't find application.js in /home/donat/Documents/react-rails/hello-rails-react/public/packs/manifest.json. Possible causes:
+1. You want to set webpacker.yml value of compile to true for your environment
+   unless you are using the `webpack -w` or the webpack-dev-server.
+2. webpack has not yet re-run to reflect updates.
+3. You have misconfigured Webpacker's config/webpacker.yml file.
+4. Your webpack configuration is not creating a manifest.
+Your manifest contains:
+{
+}
+):
+     7: 
+     8:     <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track': 'reload' %>
+     9:     <%= javascript_include_tag 'application', 'data-turbolinks-track': 'reload' %>
+    10:     <%= javascript_pack_tag 'application' %>
+    11:   </head>
+    12: 
+    13:   <body>
+  
+app/views/layouts/application.html.erb:10:in `_app_views_layouts_application_html_erb___3702437225685026780_41620'
+Started GET "/" for 127.0.0.1 at 2021-10-12 12:01:37 +0300
+  [1m[35m (1.2ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+  ↳ vendor/bundle/ruby/2.7.0/gems/activerecord-5.2.6/lib/active_record/log_subscriber.rb:98
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (2.4ms)
+Completed 200 OK in 2110ms (Views: 2098.7ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/" for 127.0.0.1 at 2021-10-12 12:05:20 +0300
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (1.9ms)
+Completed 200 OK in 52ms (Views: 50.8ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/" for 127.0.0.1 at 2021-10-12 12:05:42 +0300
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (2.1ms)
+Completed 200 OK in 53ms (Views: 51.7ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/" for 127.0.0.1 at 2021-10-12 12:05:44 +0300
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (0.8ms)
+Completed 200 OK in 35ms (Views: 33.4ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/" for 127.0.0.1 at 2021-10-12 12:06:29 +0300
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (2.4ms)
+Completed 200 OK in 38ms (Views: 36.4ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/" for 127.0.0.1 at 2021-10-12 12:09:49 +0300
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (2.4ms)
+Completed 200 OK in 35ms (Views: 33.5ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/" for 127.0.0.1 at 2021-10-12 12:10:21 +0300
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (2.5ms)
+Completed 200 OK in 35ms (Views: 33.8ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/" for 127.0.0.1 at 2021-10-12 12:16:01 +0300
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (4.7ms)
+Completed 200 OK in 41ms (Views: 38.7ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/Greeting" for 127.0.0.1 at 2021-10-12 12:16:05 +0300
+Processing by PagesController#index as HTML
+  Parameters: {"pages"=>"Greeting"}
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (3.7ms)
+Completed 200 OK in 68ms (Views: 65.9ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/Greeting" for 127.0.0.1 at 2021-10-12 12:16:42 +0300
+  [1m[35m (1.7ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+  ↳ vendor/bundle/ruby/2.7.0/gems/activerecord-5.2.6/lib/active_record/log_subscriber.rb:98
+Processing by PagesController#index as HTML
+  Parameters: {"pages"=>"Greeting"}
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (2.8ms)
+Completed 200 OK in 1968ms (Views: 1957.0ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/" for 127.0.0.1 at 2021-10-12 12:16:52 +0300
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (2.6ms)
+Completed 200 OK in 48ms (Views: 46.2ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/" for 127.0.0.1 at 2021-10-12 12:17:41 +0300
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (3.4ms)
+Completed 200 OK in 70ms (Views: 66.3ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/" for 127.0.0.1 at 2021-10-12 12:17:49 +0300
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (3.9ms)
+Completed 200 OK in 77ms (Views: 75.5ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/" for 127.0.0.1 at 2021-10-12 12:17:52 +0300
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (2.5ms)
+Completed 200 OK in 33ms (Views: 31.9ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/" for 127.0.0.1 at 2021-10-12 12:18:07 +0300
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (3.0ms)
+Completed 200 OK in 46ms (Views: 43.3ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/" for 127.0.0.1 at 2021-10-12 12:18:10 +0300
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (3.3ms)
+Completed 200 OK in 51ms (Views: 49.1ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/" for 127.0.0.1 at 2021-10-12 12:23:45 +0300
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (2.4ms)
+Completed 200 OK in 34ms (Views: 32.2ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/" for 127.0.0.1 at 2021-10-12 12:23:47 +0300
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (2.4ms)
+Completed 200 OK in 42ms (Views: 40.5ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/" for 127.0.0.1 at 2021-10-12 12:25:49 +0300
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (2.5ms)
+Completed 200 OK in 34ms (Views: 32.0ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/" for 127.0.0.1 at 2021-10-12 12:26:07 +0300
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (2.6ms)
+Completed 200 OK in 37ms (Views: 35.8ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/" for 127.0.0.1 at 2021-10-12 12:26:11 +0300
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (2.0ms)
+Completed 200 OK in 49ms (Views: 44.3ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/" for 127.0.0.1 at 2021-10-12 12:26:35 +0300
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (2.9ms)
+Completed 200 OK in 36ms (Views: 34.6ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/" for 127.0.0.1 at 2021-10-12 12:27:51 +0300
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (4.2ms)
+Completed 200 OK in 41ms (Views: 38.9ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/" for 127.0.0.1 at 2021-10-12 12:28:14 +0300
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (2.8ms)
+Completed 200 OK in 41ms (Views: 39.2ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/" for 127.0.0.1 at 2021-10-12 12:28:30 +0300
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (4.3ms)
+Completed 200 OK in 43ms (Views: 41.6ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/" for 127.0.0.1 at 2021-10-12 12:28:44 +0300
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (3.1ms)
+Completed 200 OK in 47ms (Views: 44.4ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/" for 127.0.0.1 at 2021-10-12 12:28:46 +0300
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (2.9ms)
+Completed 200 OK in 34ms (Views: 32.3ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/" for 127.0.0.1 at 2021-10-12 12:29:12 +0300
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (2.6ms)
+Completed 200 OK in 45ms (Views: 43.1ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/" for 127.0.0.1 at 2021-10-12 12:29:15 +0300
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (2.9ms)
+Completed 200 OK in 41ms (Views: 39.3ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/" for 127.0.0.1 at 2021-10-12 12:29:51 +0300
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (2.4ms)
+Completed 200 OK in 61ms (Views: 56.7ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/" for 127.0.0.1 at 2021-10-12 12:29:54 +0300
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (2.5ms)
+Completed 200 OK in 32ms (Views: 30.8ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/Greeting" for 127.0.0.1 at 2021-10-12 12:30:17 +0300
+Processing by PagesController#index as HTML
+  Parameters: {"path"=>"Greeting"}
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (2.2ms)
+Completed 200 OK in 33ms (Views: 31.4ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/Greeting" for 127.0.0.1 at 2021-10-12 12:30:45 +0300
+Processing by PagesController#index as HTML
+  Parameters: {"path"=>"Greeting"}
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (5.1ms)
+Completed 200 OK in 59ms (Views: 56.4ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/Greeting" for 127.0.0.1 at 2021-10-12 12:30:49 +0300
+Processing by PagesController#index as HTML
+  Parameters: {"path"=>"Greeting"}
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (2.3ms)
+Completed 200 OK in 51ms (Views: 49.4ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/Greeting" for 127.0.0.1 at 2021-10-12 12:30:59 +0300
+Processing by PagesController#index as HTML
+  Parameters: {"path"=>"Greeting"}
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (2.4ms)
+Completed 200 OK in 44ms (Views: 42.4ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/Greeting" for 127.0.0.1 at 2021-10-12 12:32:08 +0300
+Processing by PagesController#index as HTML
+  Parameters: {"path"=>"Greeting"}
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (4.2ms)
+Completed 200 OK in 40ms (Views: 38.8ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/Greeting" for 127.0.0.1 at 2021-10-12 12:32:10 +0300
+Processing by PagesController#index as HTML
+  Parameters: {"path"=>"Greeting"}
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (2.8ms)
+Completed 200 OK in 63ms (Views: 59.8ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/" for 127.0.0.1 at 2021-10-12 12:32:14 +0300
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (3.0ms)
+Completed 200 OK in 46ms (Views: 43.8ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/" for 127.0.0.1 at 2021-10-12 12:32:42 +0300
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (76.5ms)
+Completed 500 Internal Server Error in 83ms (ActiveRecord: 0.0ms)
+
+
+  
+ActionView::Template::Error (Webpacker can't find index.js in /home/donat/Documents/react-rails/hello-rails-react/public/packs/manifest.json. Possible causes:
+1. You want to set webpacker.yml value of compile to true for your environment
+   unless you are using the `webpack -w` or the webpack-dev-server.
+2. webpack has not yet re-run to reflect updates.
+3. You have misconfigured Webpacker's config/webpacker.yml file.
+4. Your webpack configuration is not creating a manifest.
+Your manifest contains:
+{
+  "application.js": "/packs/js/application-0d1b069e29efd84aaefc.js",
+  "application.js.map": "/packs/js/application-0d1b069e29efd84aaefc.js.map",
+  "entrypoints": {
+    "application": {
+      "js": [
+        "/packs/js/application-0d1b069e29efd84aaefc.js"
+      ],
+      "js.map": [
+        "/packs/js/application-0d1b069e29efd84aaefc.js.map"
+      ]
+    },
+    "hello_react": {
+      "js": [
+        "/packs/js/hello_react-77a0fda7556cc9d1b204.js"
+      ],
+      "js.map": [
+        "/packs/js/hello_react-77a0fda7556cc9d1b204.js.map"
+      ]
+    },
+    "server_rendering": {
+      "js": [
+        "/packs/js/server_rendering-b5117ae304f080c69fa8.js"
+      ],
+      "js.map": [
+        "/packs/js/server_rendering-b5117ae304f080c69fa8.js.map"
+      ]
+    }
+  },
+  "hello_react.js": "/packs/js/hello_react-77a0fda7556cc9d1b204.js",
+  "hello_react.js.map": "/packs/js/hello_react-77a0fda7556cc9d1b204.js.map",
+  "server_rendering.js": "/packs/js/server_rendering-b5117ae304f080c69fa8.js",
+  "server_rendering.js.map": "/packs/js/server_rendering-b5117ae304f080c69fa8.js.map"
+}
+):
+    1: <%= javascript_pack_tag 'index' %>
+    2: <h1>Welcome on my first rails-react app</h1>
+    3: <%= react_component("Greeting")%>
+  
+app/views/pages/index.html.erb:1:in `_app_views_pages_index_html_erb__2821327948222899385_47640'
+Started GET "/" for 127.0.0.1 at 2021-10-12 12:33:08 +0300
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (4.4ms)
+Completed 500 Internal Server Error in 7ms (ActiveRecord: 0.0ms)
+
+
+  
+ActionView::Template::Error (Webpacker can't find Greeting.js in /home/donat/Documents/react-rails/hello-rails-react/public/packs/manifest.json. Possible causes:
+1. You want to set webpacker.yml value of compile to true for your environment
+   unless you are using the `webpack -w` or the webpack-dev-server.
+2. webpack has not yet re-run to reflect updates.
+3. You have misconfigured Webpacker's config/webpacker.yml file.
+4. Your webpack configuration is not creating a manifest.
+Your manifest contains:
+{
+  "application.js": "/packs/js/application-0d1b069e29efd84aaefc.js",
+  "application.js.map": "/packs/js/application-0d1b069e29efd84aaefc.js.map",
+  "entrypoints": {
+    "application": {
+      "js": [
+        "/packs/js/application-0d1b069e29efd84aaefc.js"
+      ],
+      "js.map": [
+        "/packs/js/application-0d1b069e29efd84aaefc.js.map"
+      ]
+    },
+    "hello_react": {
+      "js": [
+        "/packs/js/hello_react-77a0fda7556cc9d1b204.js"
+      ],
+      "js.map": [
+        "/packs/js/hello_react-77a0fda7556cc9d1b204.js.map"
+      ]
+    },
+    "server_rendering": {
+      "js": [
+        "/packs/js/server_rendering-b5117ae304f080c69fa8.js"
+      ],
+      "js.map": [
+        "/packs/js/server_rendering-b5117ae304f080c69fa8.js.map"
+      ]
+    }
+  },
+  "hello_react.js": "/packs/js/hello_react-77a0fda7556cc9d1b204.js",
+  "hello_react.js.map": "/packs/js/hello_react-77a0fda7556cc9d1b204.js.map",
+  "server_rendering.js": "/packs/js/server_rendering-b5117ae304f080c69fa8.js",
+  "server_rendering.js.map": "/packs/js/server_rendering-b5117ae304f080c69fa8.js.map"
+}
+):
+    1: <%= javascript_pack_tag 'Greeting' %>
+    2: <h1>Welcome on my first rails-react app</h1>
+    3: <%= react_component("Greeting")%>
+  
+app/views/pages/index.html.erb:1:in `_app_views_pages_index_html_erb__2821327948222899385_48160'
+Started GET "/" for 127.0.0.1 at 2021-10-12 12:33:27 +0300
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (0.9ms)
+Completed 200 OK in 48ms (Views: 46.2ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/" for 127.0.0.1 at 2021-10-12 12:37:51 +0300
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (1.1ms)
+Completed 500 Internal Server Error in 7ms (ActiveRecord: 0.0ms)
+
+
+  
+SyntaxError (/home/donat/Documents/react-rails/hello-rails-react/app/views/pages/index.html.erb:8: unterminated string meets end of file
+          end
+             ^
+/home/donat/Documents/react-rails/hello-rails-react/app/views/pages/index.html.erb:8: syntax error, unexpected end-of-input, expecting ')'):
+  
+app/views/pages/index.html.erb:8: unterminated string meets end of file
+app/views/pages/index.html.erb:8: syntax error, unexpected end-of-input, expecting ')'
+Started GET "/" for 127.0.0.1 at 2021-10-12 12:38:16 +0300
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (1.0ms)
+Completed 200 OK in 45ms (Views: 43.2ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/" for 127.0.0.1 at 2021-10-12 12:39:30 +0300
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (0.9ms)
+Completed 200 OK in 37ms (Views: 35.5ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/" for 127.0.0.1 at 2021-10-12 12:39:33 +0300
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (0.8ms)
+Completed 200 OK in 35ms (Views: 33.7ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/" for 127.0.0.1 at 2021-10-12 12:41:12 +0300
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (0.9ms)
+Completed 200 OK in 46ms (Views: 44.5ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/" for 127.0.0.1 at 2021-10-12 12:41:14 +0300
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (0.9ms)
+Completed 200 OK in 40ms (Views: 38.1ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/" for 127.0.0.1 at 2021-10-12 12:47:35 +0300
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (1.5ms)
+Completed 200 OK in 72ms (Views: 68.3ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/" for 127.0.0.1 at 2021-10-12 12:49:08 +0300
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (1.0ms)
+Completed 200 OK in 54ms (Views: 49.8ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/" for 127.0.0.1 at 2021-10-12 12:49:11 +0300
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (1.1ms)
+Completed 200 OK in 56ms (Views: 54.7ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/" for 127.0.0.1 at 2021-10-12 12:58:56 +0300
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (4.7ms)
+Completed 200 OK in 75ms (Views: 69.3ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/" for 127.0.0.1 at 2021-10-12 12:59:42 +0300
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (3.3ms)
+Completed 200 OK in 64ms (Views: 60.7ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/" for 127.0.0.1 at 2021-10-12 12:59:45 +0300
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (3.5ms)
+Completed 200 OK in 72ms (Views: 69.6ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/" for 127.0.0.1 at 2021-10-12 12:59:56 +0300
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (2.8ms)
+Completed 200 OK in 52ms (Views: 49.8ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/" for 127.0.0.1 at 2021-10-12 13:00:00 +0300
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (3.6ms)
+Completed 200 OK in 70ms (Views: 68.3ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/" for 127.0.0.1 at 2021-10-12 13:00:02 +0300
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (4.9ms)
+Completed 200 OK in 62ms (Views: 60.2ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/" for 127.0.0.1 at 2021-10-12 13:02:02 +0300
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (3.6ms)
+Completed 200 OK in 67ms (Views: 63.8ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/" for 127.0.0.1 at 2021-10-12 13:02:05 +0300
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (4.4ms)
+Completed 200 OK in 68ms (Views: 66.4ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/" for 127.0.0.1 at 2021-10-12 13:02:07 +0300
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (3.3ms)
+Completed 200 OK in 54ms (Views: 52.0ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/" for 127.0.0.1 at 2021-10-12 13:03:05 +0300
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (3.3ms)
+Completed 200 OK in 62ms (Views: 59.8ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/" for 127.0.0.1 at 2021-10-12 13:03:18 +0300
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (3.3ms)
+Completed 200 OK in 55ms (Views: 49.4ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/Greeting" for 127.0.0.1 at 2021-10-12 13:03:35 +0300
+Processing by PagesController#index as HTML
+  Parameters: {"path"=>"Greeting"}
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (9.6ms)
+Completed 200 OK in 75ms (Views: 71.9ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/Greeting" for 127.0.0.1 at 2021-10-12 13:04:52 +0300
+Processing by PagesController#index as HTML
+  Parameters: {"path"=>"Greeting"}
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (2.4ms)
+Completed 200 OK in 49ms (Views: 46.6ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/Greeting" for 127.0.0.1 at 2021-10-12 13:04:56 +0300
+Processing by PagesController#index as HTML
+  Parameters: {"path"=>"Greeting"}
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (6.6ms)
+Completed 200 OK in 73ms (Views: 70.9ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/" for 127.0.0.1 at 2021-10-12 13:05:01 +0300
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (3.2ms)
+Completed 200 OK in 72ms (Views: 69.1ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/" for 127.0.0.1 at 2021-10-12 13:05:45 +0300
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (2.4ms)
+Completed 200 OK in 51ms (Views: 48.7ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/" for 127.0.0.1 at 2021-10-12 13:06:16 +0300
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (3.0ms)
+Completed 200 OK in 61ms (Views: 59.1ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/" for 127.0.0.1 at 2021-10-12 13:06:19 +0300
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (4.5ms)
+Completed 200 OK in 58ms (Views: 56.3ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/" for 127.0.0.1 at 2021-10-12 13:07:21 +0300
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (5.0ms)
+Completed 200 OK in 65ms (Views: 62.9ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/" for 127.0.0.1 at 2021-10-12 13:08:52 +0300
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (4.1ms)
+Completed 200 OK in 42ms (Views: 40.1ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/" for 127.0.0.1 at 2021-10-12 13:09:23 +0300
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (1.9ms)
+Completed 200 OK in 38ms (Views: 35.9ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/" for 127.0.0.1 at 2021-10-12 13:10:26 +0300
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (4.8ms)
+Completed 200 OK in 44ms (Views: 41.8ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/" for 127.0.0.1 at 2021-10-12 13:10:50 +0300
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (2.4ms)
+Completed 200 OK in 40ms (Views: 38.4ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/" for 127.0.0.1 at 2021-10-12 13:10:53 +0300
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (2.3ms)
+Completed 200 OK in 40ms (Views: 38.2ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/" for 127.0.0.1 at 2021-10-12 13:11:11 +0300
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (2.8ms)
+Completed 200 OK in 36ms (Views: 33.8ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/" for 127.0.0.1 at 2021-10-12 13:11:15 +0300
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (3.6ms)
+Completed 200 OK in 50ms (Views: 48.1ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/" for 127.0.0.1 at 2021-10-12 13:11:48 +0300
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (2.4ms)
+Completed 200 OK in 40ms (Views: 37.8ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/" for 127.0.0.1 at 2021-10-12 13:12:04 +0300
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (2.9ms)
+Completed 200 OK in 38ms (Views: 36.5ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/" for 127.0.0.1 at 2021-10-12 13:12:12 +0300
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (4.9ms)
+Completed 200 OK in 54ms (Views: 52.4ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/" for 127.0.0.1 at 2021-10-12 13:12:22 +0300
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (2.6ms)
+Completed 200 OK in 38ms (Views: 36.8ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/" for 127.0.0.1 at 2021-10-12 13:12:46 +0300
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (2.2ms)
+Completed 200 OK in 63ms (Views: 61.3ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/" for 127.0.0.1 at 2021-10-12 13:12:51 +0300
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (2.2ms)
+Completed 200 OK in 48ms (Views: 45.9ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/" for 127.0.0.1 at 2021-10-12 13:12:56 +0300
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (2.8ms)
+Completed 200 OK in 35ms (Views: 33.9ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/" for 127.0.0.1 at 2021-10-12 13:13:38 +0300
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (3.6ms)
+Completed 500 Internal Server Error in 11ms (ActiveRecord: 0.0ms)
+
+
+  
+ActionView::Template::Error (Webpacker can't find App.js in /home/donat/Documents/react-rails/hello-rails-react/public/packs/manifest.json. Possible causes:
+1. You want to set webpacker.yml value of compile to true for your environment
+   unless you are using the `webpack -w` or the webpack-dev-server.
+2. webpack has not yet re-run to reflect updates.
+3. You have misconfigured Webpacker's config/webpacker.yml file.
+4. Your webpack configuration is not creating a manifest.
+Your manifest contains:
+{
+  "application.js": "/packs/js/application-0a67181657a57ba7e417.js",
+  "application.js.map": "/packs/js/application-0a67181657a57ba7e417.js.map",
+  "entrypoints": {
+    "application": {
+      "js": [
+        "/packs/js/application-0a67181657a57ba7e417.js"
+      ],
+      "js.map": [
+        "/packs/js/application-0a67181657a57ba7e417.js.map"
+      ]
+    },
+    "hello_react": {
+      "js": [
+        "/packs/js/hello_react-31b8e48fe9330a437567.js"
+      ],
+      "js.map": [
+        "/packs/js/hello_react-31b8e48fe9330a437567.js.map"
+      ]
+    },
+    "server_rendering": {
+      "js": [
+        "/packs/js/server_rendering-0402f09fe623cefa9e08.js"
+      ],
+      "js.map": [
+        "/packs/js/server_rendering-0402f09fe623cefa9e08.js.map"
+      ]
+    }
+  },
+  "hello_react.js": "/packs/js/hello_react-31b8e48fe9330a437567.js",
+  "hello_react.js.map": "/packs/js/hello_react-31b8e48fe9330a437567.js.map",
+  "server_rendering.js": "/packs/js/server_rendering-0402f09fe623cefa9e08.js",
+  "server_rendering.js.map": "/packs/js/server_rendering-0402f09fe623cefa9e08.js.map"
+}
+):
+    1: <%= javascript_pack_tag 'App' %>
+    2: <h1>Welcome on my first rails-react app</h1>
+    3: <%= react_component("App")%>
+  
+app/views/pages/index.html.erb:1:in `_app_views_pages_index_html_erb__2821327948222899385_96620'
+Started GET "/" for 127.0.0.1 at 2021-10-12 13:14:25 +0300
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (3.9ms)
+Completed 200 OK in 39ms (Views: 36.2ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/" for 127.0.0.1 at 2021-10-12 13:15:05 +0300
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (1.6ms)
+Completed 200 OK in 48ms (Views: 46.1ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/" for 127.0.0.1 at 2021-10-12 13:16:02 +0300
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (197.9ms)
+Completed 200 OK in 226ms (Views: 224.1ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/" for 127.0.0.1 at 2021-10-12 13:16:06 +0300
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (2.3ms)
+Completed 200 OK in 44ms (Views: 42.6ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/" for 127.0.0.1 at 2021-10-12 13:17:28 +0300
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (2.7ms)
+Completed 200 OK in 34ms (Views: 32.2ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/" for 127.0.0.1 at 2021-10-12 13:18:00 +0300
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (2.1ms)
+Completed 200 OK in 37ms (Views: 34.0ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/" for 127.0.0.1 at 2021-10-12 13:18:02 +0300
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (3.3ms)
+Completed 200 OK in 35ms (Views: 33.9ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/" for 127.0.0.1 at 2021-10-12 13:18:25 +0300
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (5.0ms)
+Completed 200 OK in 52ms (Views: 49.7ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/" for 127.0.0.1 at 2021-10-12 13:18:26 +0300
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (3.2ms)
+Completed 200 OK in 40ms (Views: 36.7ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/" for 127.0.0.1 at 2021-10-12 13:19:23 +0300
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (1.8ms)
+Completed 200 OK in 32ms (Views: 30.6ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/" for 127.0.0.1 at 2021-10-12 13:19:24 +0300
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (2.8ms)
+Completed 200 OK in 37ms (Views: 34.6ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/" for 127.0.0.1 at 2021-10-12 13:19:38 +0300
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (4.8ms)
+Completed 200 OK in 44ms (Views: 42.3ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/" for 127.0.0.1 at 2021-10-12 13:20:14 +0300
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (6.0ms)
+Completed 200 OK in 54ms (Views: 51.4ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/" for 127.0.0.1 at 2021-10-12 13:20:17 +0300
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (2.2ms)
+Completed 200 OK in 47ms (Views: 45.7ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/" for 127.0.0.1 at 2021-10-12 13:21:07 +0300
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (2.5ms)
+Completed 200 OK in 41ms (Views: 39.5ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/" for 127.0.0.1 at 2021-10-12 13:21:18 +0300
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (2.7ms)
+Completed 200 OK in 41ms (Views: 37.6ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/" for 127.0.0.1 at 2021-10-12 13:21:21 +0300
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (3.2ms)
+Completed 200 OK in 46ms (Views: 44.3ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/" for 127.0.0.1 at 2021-10-12 13:21:42 +0300
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (2.5ms)
+Completed 200 OK in 47ms (Views: 44.7ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/" for 127.0.0.1 at 2021-10-12 13:22:19 +0300
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (2.1ms)
+Completed 200 OK in 29ms (Views: 27.5ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/Greating" for 127.0.0.1 at 2021-10-12 13:22:39 +0300
+Processing by PagesController#index as HTML
+  Parameters: {"path"=>"Greating"}
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (3.0ms)
+Completed 200 OK in 35ms (Views: 33.0ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/Greating" for 127.0.0.1 at 2021-10-12 13:23:57 +0300
+Processing by PagesController#index as HTML
+  Parameters: {"path"=>"Greating"}
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (2.1ms)
+Completed 200 OK in 41ms (Views: 39.1ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/Greating" for 127.0.0.1 at 2021-10-12 13:24:02 +0300
+Processing by PagesController#index as HTML
+  Parameters: {"path"=>"Greating"}
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (2.8ms)
+Completed 200 OK in 40ms (Views: 35.7ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/Greating" for 127.0.0.1 at 2021-10-12 13:24:42 +0300
+Processing by PagesController#index as HTML
+  Parameters: {"path"=>"Greating"}
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (3.1ms)
+Completed 500 Internal Server Error in 7ms (ActiveRecord: 0.0ms)
+
+
+  
+ActionView::Template::Error (Webpacker can't find App.js in /home/donat/Documents/react-rails/hello-rails-react/public/packs/manifest.json. Possible causes:
+1. You want to set webpacker.yml value of compile to true for your environment
+   unless you are using the `webpack -w` or the webpack-dev-server.
+2. webpack has not yet re-run to reflect updates.
+3. You have misconfigured Webpacker's config/webpacker.yml file.
+4. Your webpack configuration is not creating a manifest.
+Your manifest contains:
+{
+  "application.js": "/packs/js/application-f97cee74f6187a870ea5.js",
+  "application.js.map": "/packs/js/application-f97cee74f6187a870ea5.js.map",
+  "entrypoints": {
+    "application": {
+      "js": [
+        "/packs/js/application-f97cee74f6187a870ea5.js"
+      ],
+      "js.map": [
+        "/packs/js/application-f97cee74f6187a870ea5.js.map"
+      ]
+    },
+    "hello_react": {
+      "js": [
+        "/packs/js/hello_react-c10f1cea420931fe12f4.js"
+      ],
+      "js.map": [
+        "/packs/js/hello_react-c10f1cea420931fe12f4.js.map"
+      ]
+    },
+    "server_rendering": {
+      "js": [
+        "/packs/js/server_rendering-c505fffde3b183711d57.js"
+      ],
+      "js.map": [
+        "/packs/js/server_rendering-c505fffde3b183711d57.js.map"
+      ]
+    }
+  },
+  "hello_react.js": "/packs/js/hello_react-c10f1cea420931fe12f4.js",
+  "hello_react.js.map": "/packs/js/hello_react-c10f1cea420931fe12f4.js.map",
+  "server_rendering.js": "/packs/js/server_rendering-c505fffde3b183711d57.js",
+  "server_rendering.js.map": "/packs/js/server_rendering-c505fffde3b183711d57.js.map"
+}
+):
+    1: <%= javascript_pack_tag 'App' %>
+    2: <h1>Welcome on my first rails-react app</h1>
+    3: <%= react_component("App")%>
+  
+app/views/pages/index.html.erb:1:in `_app_views_pages_index_html_erb__2821327948222899385_128160'
+Started GET "/Greating" for 127.0.0.1 at 2021-10-12 13:39:52 +0300
+Processing by PagesController#index as HTML
+  Parameters: {"page"=>"Greating"}
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (3.9ms)
+Completed 200 OK in 52ms (Views: 50.7ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/" for 127.0.0.1 at 2021-10-12 13:40:02 +0300
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (3.5ms)
+Completed 200 OK in 58ms (Views: 54.7ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/" for 127.0.0.1 at 2021-10-12 13:42:01 +0300
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (2.4ms)
+Completed 200 OK in 32ms (Views: 30.3ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/" for 127.0.0.1 at 2021-10-12 13:44:02 +0300
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (2.6ms)
+Completed 200 OK in 36ms (Views: 33.9ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/" for 127.0.0.1 at 2021-10-12 13:44:24 +0300
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (2.1ms)
+Completed 200 OK in 34ms (Views: 32.5ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/Greating" for 127.0.0.1 at 2021-10-12 13:45:30 +0300
+Processing by PagesController#index as HTML
+  Parameters: {"page"=>"Greating"}
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (3.9ms)
+Completed 200 OK in 51ms (Views: 49.6ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/Greating" for 127.0.0.1 at 2021-10-12 13:45:45 +0300
+Processing by PagesController#index as HTML
+  Parameters: {"page"=>"Greating"}
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (2.0ms)
+Completed 200 OK in 43ms (Views: 40.3ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/Greating" for 127.0.0.1 at 2021-10-12 13:46:21 +0300
+Processing by PagesController#index as HTML
+  Parameters: {"page"=>"Greating"}
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (2.3ms)
+Completed 200 OK in 39ms (Views: 37.6ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/hello" for 127.0.0.1 at 2021-10-12 13:46:44 +0300
+Processing by PagesController#index as HTML
+  Parameters: {"page"=>"hello"}
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (3.2ms)
+Completed 200 OK in 45ms (Views: 42.9ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/hello" for 127.0.0.1 at 2021-10-12 13:47:18 +0300
+Processing by PagesController#index as HTML
+  Parameters: {"page"=>"hello"}
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (2.2ms)
+Completed 200 OK in 32ms (Views: 30.3ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/great" for 127.0.0.1 at 2021-10-12 13:47:35 +0300
+Processing by PagesController#index as HTML
+  Parameters: {"page"=>"great"}
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (2.9ms)
+Completed 200 OK in 36ms (Views: 34.7ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/great" for 127.0.0.1 at 2021-10-12 13:48:38 +0300
+Processing by PagesController#index as HTML
+  Parameters: {"page"=>"great"}
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (1.7ms)
+Completed 200 OK in 35ms (Views: 34.0ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/great" for 127.0.0.1 at 2021-10-12 13:48:57 +0300
+Processing by PagesController#index as HTML
+  Parameters: {"page"=>"great"}
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (2.0ms)
+Completed 200 OK in 36ms (Views: 34.6ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/great" for 127.0.0.1 at 2021-10-12 13:49:02 +0300
+Processing by PagesController#index as HTML
+  Parameters: {"page"=>"great"}
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (2.2ms)
+Completed 200 OK in 31ms (Views: 29.9ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/great" for 127.0.0.1 at 2021-10-12 13:49:06 +0300
+Processing by PagesController#index as HTML
+  Parameters: {"page"=>"great"}
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (2.6ms)
+Completed 200 OK in 41ms (Views: 39.3ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/great" for 127.0.0.1 at 2021-10-12 13:49:53 +0300
+Processing by PagesController#index as HTML
+  Parameters: {"page"=>"great"}
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (3.2ms)
+Completed 200 OK in 41ms (Views: 39.4ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/great" for 127.0.0.1 at 2021-10-12 13:49:55 +0300
+Processing by PagesController#index as HTML
+  Parameters: {"page"=>"great"}
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (2.3ms)
+Completed 200 OK in 46ms (Views: 44.2ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/" for 127.0.0.1 at 2021-10-12 13:49:58 +0300
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (2.7ms)
+Completed 200 OK in 37ms (Views: 35.8ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/" for 127.0.0.1 at 2021-10-12 13:50:07 +0300
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (3.7ms)
+Completed 200 OK in 42ms (Views: 39.6ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/" for 127.0.0.1 at 2021-10-12 13:50:11 +0300
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (2.6ms)
+Completed 200 OK in 44ms (Views: 42.3ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/" for 127.0.0.1 at 2021-10-12 13:50:36 +0300
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (3.2ms)
+Completed 200 OK in 32ms (Views: 30.8ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/great" for 127.0.0.1 at 2021-10-12 13:50:51 +0300
+Processing by PagesController#index as HTML
+  Parameters: {"page"=>"great"}
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (1.9ms)
+Completed 200 OK in 34ms (Views: 32.3ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/great" for 127.0.0.1 at 2021-10-12 13:57:11 +0300
+Processing by PagesController#index as HTML
+  Parameters: {"page"=>"great"}
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (2.3ms)
+Completed 200 OK in 46ms (Views: 42.7ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/Greating" for 127.0.0.1 at 2021-10-12 13:57:16 +0300
+Processing by PagesController#index as HTML
+  Parameters: {"page"=>"Greating"}
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (2.9ms)
+Completed 200 OK in 40ms (Views: 38.3ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/" for 127.0.0.1 at 2021-10-12 13:57:23 +0300
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (2.5ms)
+Completed 200 OK in 35ms (Views: 33.6ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/great" for 127.0.0.1 at 2021-10-12 13:57:36 +0300
+Processing by PagesController#index as HTML
+  Parameters: {"page"=>"great"}
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (7.2ms)
+Completed 200 OK in 45ms (Views: 43.8ms | ActiveRecord: 0.0ms)
+
+
