@@ -5,12 +5,17 @@
     "@babel/preset-react": "^7.14.5",
     "@rails/webpacker": "5.4.3",
     "babel-plugin-transform-react-remove-prop-types": "^0.4.24",
+    "babel-polyfill": "^6.26.0",
     "install": "^0.13.0",
     "prop-types": "^15.7.2",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
+    "react-redux": "^7.2.5",
     "react-router-dom": "^5.3.0",
-    "react_ujs": "^2.6.1"
+    "react_ujs": "^2.6.1",
+    "redux": "^4.1.1",
+    "redux-thunk": "^2.3.0",
+    "reselect": "^4.0.0"
   },
   "devDependencies": {
     "webpack": "^4.46.0",
