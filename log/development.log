@@ -58,3 +58,37 @@ Migrating to CreateMessages (20211012054855)
   [1m[35m (40.8ms)[0m  [1m[35mCOMMIT[0m
   [1m[36mMessage Load (0.9ms)[0m  [1m[34mSELECT  "messages".* FROM "messages" LIMIT $1[0m  [["LIMIT", 11]]
   [1m[36mMessage Load (0.6ms)[0m  [1m[34mSELECT  "messages".* FROM "messages" WHERE "messages"."id" = $1 LIMIT $2[0m  [["id", 3], ["LIMIT", 1]]
+Started GET "/api/messages/1" for 127.0.0.1 at 2021-10-12 09:23:35 +0300
+  [1m[35m (1.4ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+  ↳ vendor/bundle/ruby/2.7.0/gems/activerecord-5.2.6/lib/active_record/log_subscriber.rb:98
+Processing by Api::MessagesController#show as HTML
+  Parameters: {"id"=>"1"}
+Completed 500 Internal Server Error in 50ms (ActiveRecord: 4.1ms)
+
+
+  
+NoMethodError (undefined method `Validates' for #<Class:0x0000556f306633d0>
+Did you mean?  validates!
+               validate
+               validators
+               _validators):
+  
+app/models/message.rb:2:in `<class:Message>'
+app/models/message.rb:1:in `<main>'
+app/controllers/api/messages_controller.rb:9:in `show'
+Started GET "/api/messages/1" for 127.0.0.1 at 2021-10-12 09:24:10 +0300
+Processing by Api::MessagesController#show as HTML
+  Parameters: {"id"=>"1"}
+  [1m[36mMessage Load (0.8ms)[0m  [1m[34mSELECT  "messages".* FROM "messages" WHERE "messages"."id" = $1 LIMIT $2[0m  [["id", 1], ["LIMIT", 1]]
+  ↳ app/controllers/api/messages_controller.rb:9
+Completed 200 OK in 26ms (Views: 0.8ms | ActiveRecord: 8.3ms)
+
+
+Started GET "/api/messages/2" for 127.0.0.1 at 2021-10-12 09:24:25 +0300
+Processing by Api::MessagesController#show as HTML
+  Parameters: {"id"=>"2"}
+  [1m[36mMessage Load (0.7ms)[0m  [1m[34mSELECT  "messages".* FROM "messages" WHERE "messages"."id" = $1 LIMIT $2[0m  [["id", 2], ["LIMIT", 1]]
+  ↳ app/controllers/api/messages_controller.rb:9
+Completed 200 OK in 3ms (Views: 0.8ms | ActiveRecord: 0.7ms)
+
+
