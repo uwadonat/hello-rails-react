@@ -92,3 +92,10 @@ Processing by Api::MessagesController#show as HTML
 Completed 200 OK in 3ms (Views: 0.8ms | ActiveRecord: 0.7ms)
 
 
+Started GET "/" for 127.0.0.1 at 2021-10-12 09:32:25 +0300
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (0.6ms)
+Completed 200 OK in 5193ms (Views: 5190.7ms | ActiveRecord: 0.0ms)
+
+
