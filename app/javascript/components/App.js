@@ -2,9 +2,9 @@ import React from "react"
 import { BrowserRouter, Switch, Route } from 'react-router-dom'
 import { Provider } from 'react-redux'
 
-import Greeting from "./Greeting"
-import store from '../redux/ConfigureStore'
 
+import store from '../redux/ConfigureStore'
+import Greeting from "./Greeting"
 
 const App = () => {
  

@@ -5711,3 +5711,1276 @@ Processing by Api::MessagesController#index as */*
 Completed 200 OK in 7ms (Views: 5.5ms | ActiveRecord: 0.6ms)
 
 
+Started GET "/" for 127.0.0.1 at 2021-10-14 16:13:04 +0300
+  [1m[35m (39.3ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+  ↳ vendor/bundle/ruby/2.7.0/gems/activerecord-5.2.6/lib/active_record/log_subscriber.rb:98
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (2.9ms)
+Completed 200 OK in 3252ms (Views: 3222.9ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/api/messages" for 127.0.0.1 at 2021-10-14 16:13:09 +0300
+Processing by Api::MessagesController#index as */*
+  [1m[36mMessage Load (52.7ms)[0m  [1m[34mSELECT "messages".* FROM "messages"[0m
+  ↳ app/controllers/api/messages_controller.rb:5
+Completed 200 OK in 142ms (Views: 14.5ms | ActiveRecord: 100.3ms)
+
+
+Started GET "/api/messages" for 127.0.0.1 at 2021-10-14 16:13:09 +0300
+Processing by Api::MessagesController#index as */*
+  [1m[36mMessage Load (2.6ms)[0m  [1m[34mSELECT "messages".* FROM "messages"[0m
+  ↳ app/controllers/api/messages_controller.rb:5
+Completed 200 OK in 10ms (Views: 6.5ms | ActiveRecord: 2.6ms)
+
+
+Started GET "/" for 127.0.0.1 at 2021-10-14 16:20:11 +0300
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (2.2ms)
+Completed 200 OK in 40ms (Views: 37.8ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/" for 127.0.0.1 at 2021-10-14 16:33:02 +0300
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (3.5ms)
+Completed 200 OK in 44ms (Views: 42.3ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/" for 127.0.0.1 at 2021-10-14 16:37:36 +0300
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (3.7ms)
+Completed 200 OK in 41ms (Views: 39.4ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/" for 127.0.0.1 at 2021-10-14 16:38:39 +0300
+  [1m[35m (1.7ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+  ↳ vendor/bundle/ruby/2.7.0/gems/activerecord-5.2.6/lib/active_record/log_subscriber.rb:98
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (2.5ms)
+Completed 200 OK in 2339ms (Views: 2327.9ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/" for 127.0.0.1 at 2021-10-14 16:40:48 +0300
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (7.8ms)
+Completed 200 OK in 63ms (Views: 61.1ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/" for 127.0.0.1 at 2021-10-14 16:41:13 +0300
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (2.2ms)
+Completed 200 OK in 27ms (Views: 23.5ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/" for 127.0.0.1 at 2021-10-14 16:41:18 +0300
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (3.3ms)
+Completed 200 OK in 24ms (Views: 18.9ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/" for 127.0.0.1 at 2021-10-14 16:42:29 +0300
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (2.6ms)
+Completed 200 OK in 51ms (Views: 49.5ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/" for 127.0.0.1 at 2021-10-14 16:42:50 +0300
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (3.6ms)
+Completed 200 OK in 33ms (Views: 31.5ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/" for 127.0.0.1 at 2021-10-14 16:43:16 +0300
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (2.1ms)
+Completed 200 OK in 37ms (Views: 35.0ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/" for 127.0.0.1 at 2021-10-14 16:43:46 +0300
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (2.4ms)
+Completed 200 OK in 45ms (Views: 42.8ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/" for 127.0.0.1 at 2021-10-14 16:43:51 +0300
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (7.1ms)
+Completed 200 OK in 51ms (Views: 48.4ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/" for 127.0.0.1 at 2021-10-14 16:44:01 +0300
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (2.4ms)
+Completed 200 OK in 60ms (Views: 58.9ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/" for 127.0.0.1 at 2021-10-14 16:44:11 +0300
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (4.2ms)
+Completed 200 OK in 49ms (Views: 46.9ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/" for 127.0.0.1 at 2021-10-14 16:44:14 +0300
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (28.5ms)
+Completed 200 OK in 67ms (Views: 64.8ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/" for 127.0.0.1 at 2021-10-14 16:44:21 +0300
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (2.7ms)
+Completed 200 OK in 48ms (Views: 46.6ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/" for 127.0.0.1 at 2021-10-14 16:44:36 +0300
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (2.2ms)
+Completed 200 OK in 34ms (Views: 32.6ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/api/messages" for 127.0.0.1 at 2021-10-14 16:44:38 +0300
+Processing by Api::MessagesController#index as */*
+Started GET "/api/messages" for 127.0.0.1 at 2021-10-14 16:44:38 +0300
+Processing by Api::MessagesController#index as */*
+  [1m[36mMessage Load (1.3ms)[0m  [1m[34mSELECT "messages".* FROM "messages"[0m
+  ↳ app/controllers/api/messages_controller.rb:5
+  [1m[36mMessage Load (1.4ms)[0m  [1m[34mSELECT "messages".* FROM "messages"[0m
+  ↳ app/controllers/api/messages_controller.rb:5
+Completed 200 OK in 43ms (Views: 17.5ms | ActiveRecord: 14.4ms)
+
+
+Completed 200 OK in 40ms (Views: 4.2ms | ActiveRecord: 18.1ms)
+
+
+Started GET "/" for 127.0.0.1 at 2021-10-14 16:46:23 +0300
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (2.9ms)
+Completed 200 OK in 42ms (Views: 40.8ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/" for 127.0.0.1 at 2021-10-14 16:46:38 +0300
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (3.8ms)
+Completed 200 OK in 45ms (Views: 42.9ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/api/messages" for 127.0.0.1 at 2021-10-14 16:46:40 +0300
+Processing by Api::MessagesController#index as */*
+  [1m[36mMessage Load (0.7ms)[0m  [1m[34mSELECT "messages".* FROM "messages"[0m
+  ↳ app/controllers/api/messages_controller.rb:5
+Started GET "/api/messages" for 127.0.0.1 at 2021-10-14 16:46:40 +0300
+Completed 200 OK in 30ms (Views: 14.2ms | ActiveRecord: 7.8ms)
+
+
+Processing by Api::MessagesController#index as */*
+  [1m[36mMessage Load (1.7ms)[0m  [1m[34mSELECT "messages".* FROM "messages"[0m
+  ↳ app/controllers/api/messages_controller.rb:5
+Completed 200 OK in 6ms (Views: 3.7ms | ActiveRecord: 1.7ms)
+
+
+Started GET "/" for 127.0.0.1 at 2021-10-14 17:59:08 +0300
+  [1m[35m (1.2ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+  ↳ vendor/bundle/ruby/2.7.0/gems/activerecord-5.2.6/lib/active_record/log_subscriber.rb:98
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (12.1ms)
+Completed 200 OK in 19515ms (Views: 19474.6ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/api/messages" for 127.0.0.1 at 2021-10-14 17:59:29 +0300
+Processing by Api::MessagesController#index as */*
+Started GET "/api/messages" for 127.0.0.1 at 2021-10-14 17:59:29 +0300
+Processing by Api::MessagesController#index as */*
+  [1m[36mMessage Load (0.9ms)[0m  [1m[34mSELECT "messages".* FROM "messages"[0m
+  ↳ app/controllers/api/messages_controller.rb:5
+  [1m[36mMessage Load (1.5ms)[0m  [1m[34mSELECT "messages".* FROM "messages"[0m
+  ↳ app/controllers/api/messages_controller.rb:5
+Completed 200 OK in 86ms (Views: 16.3ms | ActiveRecord: 17.2ms)
+
+
+Completed 200 OK in 92ms (Views: 11.8ms | ActiveRecord: 23.6ms)
+
+
+Started GET "/" for 127.0.0.1 at 2021-10-14 18:03:51 +0300
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (2.2ms)
+Completed 200 OK in 42ms (Views: 40.5ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/" for 127.0.0.1 at 2021-10-14 18:03:58 +0300
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (1.9ms)
+Completed 200 OK in 37ms (Views: 35.7ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/" for 127.0.0.1 at 2021-10-14 18:04:20 +0300
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (2.0ms)
+Completed 200 OK in 35ms (Views: 34.0ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/api/messages" for 127.0.0.1 at 2021-10-14 18:04:21 +0300
+Processing by Api::MessagesController#index as */*
+  [1m[36mMessage Load (1.7ms)[0m  [1m[34mSELECT "messages".* FROM "messages"[0m
+  ↳ app/controllers/api/messages_controller.rb:5
+Started GET "/api/messages" for 127.0.0.1 at 2021-10-14 18:04:21 +0300
+Processing by Api::MessagesController#index as */*
+  [1m[36mMessage Load (1.6ms)[0m  [1m[34mSELECT "messages".* FROM "messages"[0m
+  ↳ app/controllers/api/messages_controller.rb:5
+Completed 200 OK in 56ms (Views: 23.2ms | ActiveRecord: 28.0ms)
+
+
+Completed 200 OK in 46ms (Views: 11.3ms | ActiveRecord: 33.2ms)
+
+
+Started GET "/" for 127.0.0.1 at 2021-10-14 18:07:35 +0300
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (3.5ms)
+Completed 200 OK in 53ms (Views: 51.7ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/api/messages" for 127.0.0.1 at 2021-10-14 18:07:37 +0300
+Processing by Api::MessagesController#index as */*
+  [1m[36mMessage Load (1.0ms)[0m  [1m[34mSELECT "messages".* FROM "messages"[0m
+  ↳ app/controllers/api/messages_controller.rb:5
+Completed 200 OK in 5ms (Views: 3.4ms | ActiveRecord: 1.0ms)
+
+
+Started GET "/api/messages" for 127.0.0.1 at 2021-10-14 18:07:37 +0300
+Processing by Api::MessagesController#index as */*
+  [1m[36mMessage Load (1.8ms)[0m  [1m[34mSELECT "messages".* FROM "messages"[0m
+  ↳ app/controllers/api/messages_controller.rb:5
+Completed 200 OK in 7ms (Views: 4.5ms | ActiveRecord: 1.8ms)
+
+
+Started GET "/" for 127.0.0.1 at 2021-10-14 18:08:40 +0300
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (1.6ms)
+Completed 200 OK in 33ms (Views: 31.5ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/" for 127.0.0.1 at 2021-10-14 18:09:04 +0300
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (3.4ms)
+Completed 200 OK in 41ms (Views: 39.6ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/" for 127.0.0.1 at 2021-10-14 18:09:12 +0300
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (2.1ms)
+Completed 200 OK in 63ms (Views: 61.5ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/" for 127.0.0.1 at 2021-10-14 18:10:53 +0300
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (1.9ms)
+Completed 200 OK in 35ms (Views: 33.8ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/" for 127.0.0.1 at 2021-10-14 18:10:57 +0300
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (6.1ms)
+Completed 200 OK in 44ms (Views: 42.2ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/api/messages" for 127.0.0.1 at 2021-10-14 18:10:59 +0300
+Processing by Api::MessagesController#index as */*
+Started GET "/api/messages" for 127.0.0.1 at 2021-10-14 18:10:59 +0300
+Processing by Api::MessagesController#index as */*
+  [1m[36mMessage Load (6.2ms)[0m  [1m[34mSELECT "messages".* FROM "messages"[0m
+  ↳ app/controllers/api/messages_controller.rb:5
+  [1m[36mMessage Load (2.2ms)[0m  [1m[34mSELECT "messages".* FROM "messages"[0m
+  ↳ app/controllers/api/messages_controller.rb:5
+Completed 200 OK in 26ms (Views: 11.2ms | ActiveRecord: 10.3ms)
+
+
+Completed 200 OK in 18ms (Views: 15.1ms | ActiveRecord: 2.2ms)
+
+
+Started GET "/" for 127.0.0.1 at 2021-10-14 18:32:30 +0300
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (4.4ms)
+Completed 200 OK in 73ms (Views: 70.9ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/api/messages" for 127.0.0.1 at 2021-10-14 18:32:32 +0300
+Processing by Api::MessagesController#index as */*
+  [1m[36mMessage Load (1.2ms)[0m  [1m[34mSELECT "messages".* FROM "messages"[0m
+  ↳ app/controllers/api/messages_controller.rb:5
+Completed 200 OK in 41ms (Views: 13.5ms | ActiveRecord: 23.8ms)
+
+
+Started GET "/api/messages" for 127.0.0.1 at 2021-10-14 18:32:32 +0300
+Processing by Api::MessagesController#index as */*
+  [1m[36mMessage Load (0.6ms)[0m  [1m[34mSELECT "messages".* FROM "messages"[0m
+  ↳ app/controllers/api/messages_controller.rb:5
+Completed 200 OK in 7ms (Views: 5.1ms | ActiveRecord: 0.6ms)
+
+
+Started GET "/" for 127.0.0.1 at 2021-10-14 18:35:59 +0300
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (5.7ms)
+Completed 200 OK in 67ms (Views: 65.1ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/" for 127.0.0.1 at 2021-10-14 18:36:08 +0300
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (2.4ms)
+Completed 200 OK in 73ms (Views: 70.9ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/" for 127.0.0.1 at 2021-10-14 18:37:04 +0300
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (4.2ms)
+Completed 200 OK in 54ms (Views: 51.7ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/api/messages" for 127.0.0.1 at 2021-10-14 18:37:07 +0300
+Processing by Api::MessagesController#index as */*
+  [1m[36mMessage Load (1.6ms)[0m  [1m[34mSELECT "messages".* FROM "messages"[0m
+  ↳ app/controllers/api/messages_controller.rb:5
+Completed 200 OK in 58ms (Views: 28.1ms | ActiveRecord: 18.1ms)
+
+
+Started GET "/api/messages" for 127.0.0.1 at 2021-10-14 18:37:07 +0300
+Processing by Api::MessagesController#index as */*
+  [1m[36mMessage Load (1.6ms)[0m  [1m[34mSELECT "messages".* FROM "messages"[0m
+  ↳ app/controllers/api/messages_controller.rb:5
+Completed 200 OK in 6ms (Views: 3.9ms | ActiveRecord: 1.6ms)
+
+
+Started GET "/" for 127.0.0.1 at 2021-10-14 18:37:12 +0300
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (2.5ms)
+Completed 200 OK in 91ms (Views: 88.9ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/api/messages" for 127.0.0.1 at 2021-10-14 18:37:15 +0300
+Processing by Api::MessagesController#index as */*
+  [1m[36mMessage Load (0.9ms)[0m  [1m[34mSELECT "messages".* FROM "messages"[0m
+  ↳ app/controllers/api/messages_controller.rb:5
+Completed 200 OK in 8ms (Views: 5.3ms | ActiveRecord: 0.9ms)
+
+
+Started GET "/api/messages" for 127.0.0.1 at 2021-10-14 18:37:15 +0300
+Processing by Api::MessagesController#index as */*
+  [1m[36mMessage Load (0.8ms)[0m  [1m[34mSELECT "messages".* FROM "messages"[0m
+  ↳ app/controllers/api/messages_controller.rb:5
+Completed 200 OK in 7ms (Views: 4.9ms | ActiveRecord: 0.8ms)
+
+
+Started GET "/" for 127.0.0.1 at 2021-10-14 18:38:25 +0300
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (3.7ms)
+Completed 200 OK in 62ms (Views: 59.4ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/" for 127.0.0.1 at 2021-10-14 18:38:38 +0300
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (6.6ms)
+Completed 200 OK in 66ms (Views: 64.0ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/" for 127.0.0.1 at 2021-10-14 18:38:49 +0300
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (6.0ms)
+Completed 200 OK in 78ms (Views: 75.8ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/" for 127.0.0.1 at 2021-10-14 18:41:55 +0300
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (2.6ms)
+Completed 200 OK in 68ms (Views: 66.0ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/api/messages" for 127.0.0.1 at 2021-10-14 18:41:57 +0300
+Processing by Api::MessagesController#index as */*
+  [1m[36mMessage Load (0.8ms)[0m  [1m[34mSELECT "messages".* FROM "messages"[0m
+  ↳ app/controllers/api/messages_controller.rb:5
+Completed 200 OK in 34ms (Views: 17.8ms | ActiveRecord: 10.5ms)
+
+
+Started GET "/api/messages" for 127.0.0.1 at 2021-10-14 18:41:58 +0300
+Processing by Api::MessagesController#index as */*
+  [1m[36mMessage Load (1.3ms)[0m  [1m[34mSELECT "messages".* FROM "messages"[0m
+  ↳ app/controllers/api/messages_controller.rb:5
+Completed 200 OK in 10ms (Views: 6.3ms | ActiveRecord: 1.3ms)
+
+
+Started GET "/" for 127.0.0.1 at 2021-10-14 18:42:05 +0300
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (5.5ms)
+Completed 200 OK in 92ms (Views: 90.4ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/api/messages" for 127.0.0.1 at 2021-10-14 18:42:08 +0300
+Processing by Api::MessagesController#index as */*
+  [1m[36mMessage Load (1.0ms)[0m  [1m[34mSELECT "messages".* FROM "messages"[0m
+  ↳ app/controllers/api/messages_controller.rb:5
+Completed 200 OK in 10ms (Views: 7.8ms | ActiveRecord: 1.0ms)
+
+
+Started GET "/api/messages" for 127.0.0.1 at 2021-10-14 18:42:09 +0300
+Processing by Api::MessagesController#index as */*
+  [1m[36mMessage Load (0.7ms)[0m  [1m[34mSELECT "messages".* FROM "messages"[0m
+  ↳ app/controllers/api/messages_controller.rb:5
+Completed 200 OK in 6ms (Views: 4.0ms | ActiveRecord: 0.7ms)
+
+
+Started GET "/" for 127.0.0.1 at 2021-10-14 18:42:56 +0300
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (2.8ms)
+Completed 200 OK in 57ms (Views: 49.8ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/api/messages" for 127.0.0.1 at 2021-10-14 18:42:59 +0300
+Processing by Api::MessagesController#index as */*
+  [1m[36mMessage Load (1.6ms)[0m  [1m[34mSELECT "messages".* FROM "messages"[0m
+  ↳ app/controllers/api/messages_controller.rb:5
+Completed 200 OK in 50ms (Views: 23.4ms | ActiveRecord: 14.2ms)
+
+
+Started GET "/api/messages" for 127.0.0.1 at 2021-10-14 18:43:00 +0300
+Processing by Api::MessagesController#index as */*
+  [1m[36mMessage Load (0.8ms)[0m  [1m[34mSELECT "messages".* FROM "messages"[0m
+  ↳ app/controllers/api/messages_controller.rb:5
+Completed 200 OK in 6ms (Views: 4.4ms | ActiveRecord: 0.8ms)
+
+
+Started GET "/" for 127.0.0.1 at 2021-10-14 18:46:03 +0300
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (3.7ms)
+Completed 200 OK in 53ms (Views: 50.7ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/" for 127.0.0.1 at 2021-10-14 18:46:16 +0300
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (2.5ms)
+Completed 200 OK in 63ms (Views: 60.8ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/" for 127.0.0.1 at 2021-10-14 18:47:06 +0300
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (2.9ms)
+Completed 200 OK in 63ms (Views: 60.3ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/api/messages" for 127.0.0.1 at 2021-10-14 18:47:09 +0300
+Started GET "/api/messages" for 127.0.0.1 at 2021-10-14 18:47:09 +0300
+Processing by Api::MessagesController#index as */*
+Processing by Api::MessagesController#index as */*
+  [1m[36mMessage Load (1.0ms)[0m  [1m[34mSELECT "messages".* FROM "messages"[0m
+  [1m[36mMessage Load (1.2ms)[0m  [1m[34mSELECT "messages".* FROM "messages"[0m
+  ↳ app/controllers/api/messages_controller.rb:5
+  ↳ app/controllers/api/messages_controller.rb:5
+Completed 200 OK in 45ms (Views: 25.9ms | ActiveRecord: 1.0ms)
+
+
+Completed 200 OK in 43ms (Views: 7.2ms | ActiveRecord: 29.2ms)
+
+
+Started GET "/" for 127.0.0.1 at 2021-10-14 18:48:32 +0300
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (3.4ms)
+Completed 200 OK in 58ms (Views: 54.8ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/api/messages" for 127.0.0.1 at 2021-10-14 18:48:34 +0300
+Processing by Api::MessagesController#index as */*
+  [1m[36mMessage Load (3.7ms)[0m  [1m[34mSELECT "messages".* FROM "messages"[0m
+  ↳ app/controllers/api/messages_controller.rb:5
+Completed 200 OK in 36ms (Views: 25.8ms | ActiveRecord: 3.7ms)
+
+
+Started GET "/api/messages" for 127.0.0.1 at 2021-10-14 18:48:35 +0300
+Processing by Api::MessagesController#index as */*
+  [1m[36mMessage Load (0.7ms)[0m  [1m[34mSELECT "messages".* FROM "messages"[0m
+  ↳ app/controllers/api/messages_controller.rb:5
+Completed 200 OK in 5ms (Views: 3.2ms | ActiveRecord: 0.7ms)
+
+
+Started GET "/" for 127.0.0.1 at 2021-10-14 18:48:43 +0300
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (4.7ms)
+Completed 200 OK in 72ms (Views: 66.8ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/api/messages" for 127.0.0.1 at 2021-10-14 18:48:46 +0300
+Processing by Api::MessagesController#index as */*
+  [1m[36mMessage Load (2.1ms)[0m  [1m[34mSELECT "messages".* FROM "messages"[0m
+  ↳ app/controllers/api/messages_controller.rb:5
+Completed 200 OK in 9ms (Views: 6.3ms | ActiveRecord: 2.1ms)
+
+
+Started GET "/api/messages" for 127.0.0.1 at 2021-10-14 18:48:46 +0300
+Processing by Api::MessagesController#index as */*
+  [1m[36mMessage Load (0.8ms)[0m  [1m[34mSELECT "messages".* FROM "messages"[0m
+  ↳ app/controllers/api/messages_controller.rb:5
+Completed 200 OK in 5ms (Views: 3.6ms | ActiveRecord: 0.8ms)
+
+
+Started GET "/" for 127.0.0.1 at 2021-10-14 18:49:49 +0300
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (5.0ms)
+Completed 200 OK in 63ms (Views: 57.1ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/api/messages" for 127.0.0.1 at 2021-10-14 18:49:51 +0300
+Processing by Api::MessagesController#index as */*
+  [1m[36mMessage Load (0.7ms)[0m  [1m[34mSELECT "messages".* FROM "messages"[0m
+  ↳ app/controllers/api/messages_controller.rb:5
+Completed 200 OK in 35ms (Views: 15.2ms | ActiveRecord: 11.1ms)
+
+
+Started GET "/api/messages" for 127.0.0.1 at 2021-10-14 18:49:51 +0300
+Processing by Api::MessagesController#index as */*
+  [1m[36mMessage Load (1.0ms)[0m  [1m[34mSELECT "messages".* FROM "messages"[0m
+  ↳ app/controllers/api/messages_controller.rb:5
+Completed 200 OK in 7ms (Views: 4.0ms | ActiveRecord: 1.0ms)
+
+
+Started GET "/" for 127.0.0.1 at 2021-10-14 18:49:56 +0300
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (3.9ms)
+Completed 200 OK in 69ms (Views: 67.7ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/api/messages" for 127.0.0.1 at 2021-10-14 18:49:59 +0300
+Processing by Api::MessagesController#index as */*
+  [1m[36mMessage Load (0.7ms)[0m  [1m[34mSELECT "messages".* FROM "messages"[0m
+  ↳ app/controllers/api/messages_controller.rb:5
+Completed 200 OK in 7ms (Views: 5.1ms | ActiveRecord: 0.7ms)
+
+
+Started GET "/api/messages" for 127.0.0.1 at 2021-10-14 18:49:59 +0300
+Processing by Api::MessagesController#index as */*
+  [1m[36mMessage Load (1.6ms)[0m  [1m[34mSELECT "messages".* FROM "messages"[0m
+  ↳ app/controllers/api/messages_controller.rb:5
+Completed 200 OK in 9ms (Views: 5.7ms | ActiveRecord: 1.6ms)
+
+
+Started GET "/" for 127.0.0.1 at 2021-10-14 18:50:23 +0300
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (3.7ms)
+Completed 200 OK in 70ms (Views: 68.2ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/api/messages" for 127.0.0.1 at 2021-10-14 18:50:26 +0300
+Processing by Api::MessagesController#index as */*
+  [1m[36mMessage Load (1.1ms)[0m  [1m[34mSELECT "messages".* FROM "messages"[0m
+  ↳ app/controllers/api/messages_controller.rb:5
+Completed 200 OK in 35ms (Views: 17.0ms | ActiveRecord: 10.2ms)
+
+
+Started GET "/api/messages" for 127.0.0.1 at 2021-10-14 18:50:26 +0300
+Processing by Api::MessagesController#index as */*
+  [1m[36mMessage Load (0.7ms)[0m  [1m[34mSELECT "messages".* FROM "messages"[0m
+  ↳ app/controllers/api/messages_controller.rb:5
+Completed 200 OK in 9ms (Views: 6.6ms | ActiveRecord: 0.7ms)
+
+
+Started GET "/" for 127.0.0.1 at 2021-10-14 18:50:36 +0300
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (5.3ms)
+Completed 200 OK in 72ms (Views: 70.7ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/api/messages" for 127.0.0.1 at 2021-10-14 18:50:38 +0300
+Processing by Api::MessagesController#index as */*
+  [1m[36mMessage Load (0.7ms)[0m  [1m[34mSELECT "messages".* FROM "messages"[0m
+  ↳ app/controllers/api/messages_controller.rb:5
+Completed 200 OK in 7ms (Views: 5.1ms | ActiveRecord: 0.7ms)
+
+
+Started GET "/api/messages" for 127.0.0.1 at 2021-10-14 18:50:39 +0300
+Processing by Api::MessagesController#index as */*
+  [1m[36mMessage Load (1.8ms)[0m  [1m[34mSELECT "messages".* FROM "messages"[0m
+  ↳ app/controllers/api/messages_controller.rb:5
+Completed 200 OK in 9ms (Views: 6.0ms | ActiveRecord: 1.8ms)
+
+
+Started GET "/" for 127.0.0.1 at 2021-10-14 18:51:21 +0300
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (6.4ms)
+Completed 200 OK in 60ms (Views: 57.1ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/api/messages" for 127.0.0.1 at 2021-10-14 18:51:23 +0300
+Processing by Api::MessagesController#index as */*
+  [1m[36mMessage Load (0.7ms)[0m  [1m[34mSELECT "messages".* FROM "messages"[0m
+  ↳ app/controllers/api/messages_controller.rb:5
+Completed 200 OK in 43ms (Views: 20.4ms | ActiveRecord: 16.8ms)
+
+
+Started GET "/api/messages" for 127.0.0.1 at 2021-10-14 18:51:23 +0300
+Processing by Api::MessagesController#index as */*
+  [1m[36mMessage Load (0.7ms)[0m  [1m[34mSELECT "messages".* FROM "messages"[0m
+  ↳ app/controllers/api/messages_controller.rb:5
+Completed 200 OK in 7ms (Views: 4.6ms | ActiveRecord: 0.7ms)
+
+
+Started GET "/" for 127.0.0.1 at 2021-10-14 18:52:36 +0300
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (6.6ms)
+Completed 200 OK in 79ms (Views: 76.4ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/api/messages" for 127.0.0.1 at 2021-10-14 18:52:39 +0300
+Processing by Api::MessagesController#index as */*
+  [1m[36mMessage Load (6.1ms)[0m  [1m[34mSELECT "messages".* FROM "messages"[0m
+  ↳ app/controllers/api/messages_controller.rb:5
+Completed 200 OK in 42ms (Views: 17.3ms | ActiveRecord: 15.2ms)
+
+
+Started GET "/api/messages" for 127.0.0.1 at 2021-10-14 18:52:39 +0300
+Processing by Api::MessagesController#index as */*
+  [1m[36mMessage Load (2.4ms)[0m  [1m[34mSELECT "messages".* FROM "messages"[0m
+  ↳ app/controllers/api/messages_controller.rb:5
+Completed 200 OK in 7ms (Views: 3.9ms | ActiveRecord: 2.4ms)
+
+
+Started GET "/" for 127.0.0.1 at 2021-10-14 18:53:16 +0300
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (5.9ms)
+Completed 200 OK in 71ms (Views: 68.6ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/api/messages" for 127.0.0.1 at 2021-10-14 18:53:19 +0300
+Processing by Api::MessagesController#index as */*
+  [1m[36mMessage Load (0.7ms)[0m  [1m[34mSELECT "messages".* FROM "messages"[0m
+  ↳ app/controllers/api/messages_controller.rb:5
+Completed 200 OK in 45ms (Views: 25.0ms | ActiveRecord: 13.0ms)
+
+
+Started GET "/api/messages" for 127.0.0.1 at 2021-10-14 18:53:19 +0300
+Processing by Api::MessagesController#index as */*
+  [1m[36mMessage Load (0.8ms)[0m  [1m[34mSELECT "messages".* FROM "messages"[0m
+  ↳ app/controllers/api/messages_controller.rb:5
+Completed 200 OK in 5ms (Views: 3.3ms | ActiveRecord: 0.8ms)
+
+
+Started GET "/" for 127.0.0.1 at 2021-10-14 18:53:34 +0300
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (3.1ms)
+Completed 200 OK in 62ms (Views: 58.3ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/api/messages" for 127.0.0.1 at 2021-10-14 18:53:37 +0300
+Processing by Api::MessagesController#index as */*
+Started GET "/api/messages" for 127.0.0.1 at 2021-10-14 18:53:37 +0300
+  [1m[36mMessage Load (7.3ms)[0m  [1m[34mSELECT "messages".* FROM "messages"[0m
+  ↳ app/controllers/api/messages_controller.rb:5
+Processing by Api::MessagesController#index as */*
+  [1m[36mMessage Load (2.5ms)[0m  [1m[34mSELECT "messages".* FROM "messages"[0m
+  ↳ app/controllers/api/messages_controller.rb:5
+Completed 200 OK in 56ms (Views: 20.6ms | ActiveRecord: 21.6ms)
+
+
+Completed 200 OK in 34ms (Views: 8.7ms | ActiveRecord: 24.5ms)
+
+
+Started GET "/" for 127.0.0.1 at 2021-10-14 18:53:52 +0300
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (7.0ms)
+Completed 200 OK in 81ms (Views: 78.4ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/api/messages" for 127.0.0.1 at 2021-10-14 18:53:54 +0300
+Processing by Api::MessagesController#index as */*
+  [1m[36mMessage Load (3.1ms)[0m  [1m[34mSELECT "messages".* FROM "messages"[0m
+  ↳ app/controllers/api/messages_controller.rb:5
+Completed 200 OK in 13ms (Views: 8.3ms | ActiveRecord: 3.1ms)
+
+
+Started GET "/api/messages" for 127.0.0.1 at 2021-10-14 18:53:54 +0300
+Processing by Api::MessagesController#index as */*
+  [1m[36mMessage Load (0.8ms)[0m  [1m[34mSELECT "messages".* FROM "messages"[0m
+  ↳ app/controllers/api/messages_controller.rb:5
+Completed 200 OK in 10ms (Views: 7.9ms | ActiveRecord: 0.8ms)
+
+
+Started GET "/" for 127.0.0.1 at 2021-10-14 18:54:12 +0300
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (3.3ms)
+Completed 200 OK in 58ms (Views: 56.1ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/api/messages" for 127.0.0.1 at 2021-10-14 18:54:15 +0300
+Processing by Api::MessagesController#index as */*
+  [1m[36mMessage Load (1.2ms)[0m  [1m[34mSELECT "messages".* FROM "messages"[0m
+  ↳ app/controllers/api/messages_controller.rb:5
+Completed 200 OK in 47ms (Views: 18.3ms | ActiveRecord: 14.1ms)
+
+
+Started GET "/api/messages" for 127.0.0.1 at 2021-10-14 18:54:15 +0300
+Processing by Api::MessagesController#index as */*
+  [1m[36mMessage Load (0.9ms)[0m  [1m[34mSELECT "messages".* FROM "messages"[0m
+  ↳ app/controllers/api/messages_controller.rb:5
+Completed 200 OK in 11ms (Views: 9.2ms | ActiveRecord: 0.9ms)
+
+
+Started GET "/" for 127.0.0.1 at 2021-10-14 18:54:42 +0300
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (5.8ms)
+Completed 200 OK in 63ms (Views: 60.1ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/api/messages" for 127.0.0.1 at 2021-10-14 18:54:45 +0300
+Processing by Api::MessagesController#index as */*
+  [1m[36mMessage Load (1.2ms)[0m  [1m[34mSELECT "messages".* FROM "messages"[0m
+  ↳ app/controllers/api/messages_controller.rb:5
+Completed 200 OK in 33ms (Views: 27.7ms | ActiveRecord: 1.2ms)
+
+
+Started GET "/api/messages" for 127.0.0.1 at 2021-10-14 18:54:45 +0300
+Processing by Api::MessagesController#index as */*
+  [1m[36mMessage Load (0.8ms)[0m  [1m[34mSELECT "messages".* FROM "messages"[0m
+  ↳ app/controllers/api/messages_controller.rb:5
+Completed 200 OK in 6ms (Views: 4.1ms | ActiveRecord: 0.8ms)
+
+
+Started GET "/" for 127.0.0.1 at 2021-10-14 18:55:40 +0300
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (3.1ms)
+Completed 200 OK in 64ms (Views: 61.1ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/api/messages" for 127.0.0.1 at 2021-10-14 18:55:42 +0300
+Processing by Api::MessagesController#index as */*
+  [1m[36mMessage Load (2.9ms)[0m  [1m[34mSELECT "messages".* FROM "messages"[0m
+  ↳ app/controllers/api/messages_controller.rb:5
+Completed 200 OK in 43ms (Views: 22.1ms | ActiveRecord: 15.5ms)
+
+
+Started GET "/api/messages" for 127.0.0.1 at 2021-10-14 18:55:43 +0300
+Processing by Api::MessagesController#index as */*
+  [1m[36mMessage Load (1.0ms)[0m  [1m[34mSELECT "messages".* FROM "messages"[0m
+  ↳ app/controllers/api/messages_controller.rb:5
+Completed 200 OK in 9ms (Views: 6.5ms | ActiveRecord: 1.0ms)
+
+
+Started GET "/" for 127.0.0.1 at 2021-10-14 18:57:45 +0300
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (3.3ms)
+Completed 200 OK in 61ms (Views: 58.5ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/api/messages" for 127.0.0.1 at 2021-10-14 18:57:48 +0300
+Processing by Api::MessagesController#index as */*
+  [1m[36mMessage Load (1.0ms)[0m  [1m[34mSELECT "messages".* FROM "messages"[0m
+  ↳ app/controllers/api/messages_controller.rb:5
+Completed 200 OK in 35ms (Views: 14.6ms | ActiveRecord: 12.6ms)
+
+
+Started GET "/api/messages" for 127.0.0.1 at 2021-10-14 18:57:48 +0300
+Processing by Api::MessagesController#index as */*
+  [1m[36mMessage Load (0.7ms)[0m  [1m[34mSELECT "messages".* FROM "messages"[0m
+  ↳ app/controllers/api/messages_controller.rb:5
+Completed 200 OK in 5ms (Views: 3.0ms | ActiveRecord: 0.7ms)
+
+
+Started GET "/" for 127.0.0.1 at 2021-10-14 18:57:56 +0300
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (5.3ms)
+Completed 200 OK in 86ms (Views: 82.4ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/api/messages" for 127.0.0.1 at 2021-10-14 18:57:59 +0300
+Processing by Api::MessagesController#index as */*
+  [1m[36mMessage Load (1.1ms)[0m  [1m[34mSELECT "messages".* FROM "messages"[0m
+  ↳ app/controllers/api/messages_controller.rb:5
+Completed 200 OK in 8ms (Views: 6.0ms | ActiveRecord: 1.1ms)
+
+
+Started GET "/api/messages" for 127.0.0.1 at 2021-10-14 18:57:59 +0300
+Processing by Api::MessagesController#index as */*
+  [1m[36mMessage Load (0.7ms)[0m  [1m[34mSELECT "messages".* FROM "messages"[0m
+  ↳ app/controllers/api/messages_controller.rb:5
+Completed 200 OK in 9ms (Views: 6.9ms | ActiveRecord: 0.7ms)
+
+
+Started GET "/" for 127.0.0.1 at 2021-10-14 18:58:40 +0300
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (3.9ms)
+Completed 200 OK in 59ms (Views: 56.8ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/api/messages" for 127.0.0.1 at 2021-10-14 18:58:42 +0300
+Processing by Api::MessagesController#index as */*
+  [1m[36mMessage Load (0.8ms)[0m  [1m[34mSELECT "messages".* FROM "messages"[0m
+  ↳ app/controllers/api/messages_controller.rb:5
+Completed 200 OK in 41ms (Views: 34.0ms | ActiveRecord: 0.8ms)
+
+
+Started GET "/api/messages" for 127.0.0.1 at 2021-10-14 18:58:42 +0300
+Processing by Api::MessagesController#index as */*
+  [1m[36mMessage Load (1.2ms)[0m  [1m[34mSELECT "messages".* FROM "messages"[0m
+  ↳ app/controllers/api/messages_controller.rb:5
+Completed 200 OK in 7ms (Views: 4.1ms | ActiveRecord: 1.2ms)
+
+
+Started GET "/" for 127.0.0.1 at 2021-10-14 19:01:55 +0300
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (2.5ms)
+Completed 200 OK in 50ms (Views: 48.0ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/" for 127.0.0.1 at 2021-10-14 19:02:04 +0300
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (5.9ms)
+Completed 200 OK in 76ms (Views: 73.1ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/" for 127.0.0.1 at 2021-10-14 19:02:21 +0300
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (2.6ms)
+Completed 200 OK in 60ms (Views: 57.0ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/api/messages" for 127.0.0.1 at 2021-10-14 19:02:23 +0300
+Processing by Api::MessagesController#index as */*
+  [1m[36mMessage Load (3.7ms)[0m  [1m[34mSELECT "messages".* FROM "messages"[0m
+  ↳ app/controllers/api/messages_controller.rb:5
+Completed 200 OK in 43ms (Views: 18.4ms | ActiveRecord: 16.7ms)
+
+
+Started GET "/api/messages" for 127.0.0.1 at 2021-10-14 19:02:24 +0300
+Processing by Api::MessagesController#index as */*
+  [1m[36mMessage Load (0.8ms)[0m  [1m[34mSELECT "messages".* FROM "messages"[0m
+  ↳ app/controllers/api/messages_controller.rb:5
+Completed 200 OK in 6ms (Views: 3.5ms | ActiveRecord: 0.8ms)
+
+
+Started GET "/" for 127.0.0.1 at 2021-10-14 19:05:05 +0300
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (2.8ms)
+Completed 200 OK in 66ms (Views: 64.1ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/api/messages" for 127.0.0.1 at 2021-10-14 19:05:07 +0300
+Processing by Api::MessagesController#index as */*
+  [1m[36mMessage Load (3.6ms)[0m  [1m[34mSELECT "messages".* FROM "messages"[0m
+  ↳ app/controllers/api/messages_controller.rb:5
+Completed 200 OK in 31ms (Views: 20.0ms | ActiveRecord: 3.6ms)
+
+
+Started GET "/api/messages" for 127.0.0.1 at 2021-10-14 19:05:08 +0300
+Processing by Api::MessagesController#index as */*
+  [1m[36mMessage Load (0.7ms)[0m  [1m[34mSELECT "messages".* FROM "messages"[0m
+  ↳ app/controllers/api/messages_controller.rb:5
+Completed 200 OK in 5ms (Views: 3.4ms | ActiveRecord: 0.7ms)
+
+
+Started GET "/" for 127.0.0.1 at 2021-10-14 19:06:11 +0300
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (2.7ms)
+Completed 200 OK in 49ms (Views: 46.8ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/api/messages" for 127.0.0.1 at 2021-10-14 19:06:13 +0300
+Processing by Api::MessagesController#index as */*
+  [1m[36mMessage Load (1.8ms)[0m  [1m[34mSELECT "messages".* FROM "messages"[0m
+  ↳ app/controllers/api/messages_controller.rb:5
+Completed 200 OK in 36ms (Views: 19.7ms | ActiveRecord: 8.8ms)
+
+
+Started GET "/api/messages" for 127.0.0.1 at 2021-10-14 19:06:13 +0300
+Processing by Api::MessagesController#index as */*
+  [1m[36mMessage Load (0.8ms)[0m  [1m[34mSELECT "messages".* FROM "messages"[0m
+  ↳ app/controllers/api/messages_controller.rb:5
+Completed 200 OK in 11ms (Views: 8.7ms | ActiveRecord: 0.8ms)
+
+
+Started GET "/" for 127.0.0.1 at 2021-10-14 19:07:27 +0300
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (4.7ms)
+Completed 200 OK in 60ms (Views: 57.2ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/api/messages" for 127.0.0.1 at 2021-10-14 19:07:30 +0300
+Processing by Api::MessagesController#index as */*
+  [1m[36mMessage Load (1.4ms)[0m  [1m[34mSELECT "messages".* FROM "messages"[0m
+  ↳ app/controllers/api/messages_controller.rb:5
+Completed 200 OK in 48ms (Views: 24.7ms | ActiveRecord: 12.4ms)
+
+
+Started GET "/api/messages" for 127.0.0.1 at 2021-10-14 19:07:30 +0300
+Processing by Api::MessagesController#index as */*
+  [1m[36mMessage Load (0.7ms)[0m  [1m[34mSELECT "messages".* FROM "messages"[0m
+  ↳ app/controllers/api/messages_controller.rb:5
+Completed 200 OK in 11ms (Views: 8.7ms | ActiveRecord: 0.7ms)
+
+
+Started GET "/" for 127.0.0.1 at 2021-10-14 19:08:27 +0300
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (2.9ms)
+Completed 200 OK in 56ms (Views: 53.3ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/" for 127.0.0.1 at 2021-10-14 19:08:50 +0300
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (2.6ms)
+Completed 200 OK in 67ms (Views: 59.0ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/" for 127.0.0.1 at 2021-10-14 19:09:11 +0300
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (2.9ms)
+Completed 200 OK in 63ms (Views: 60.2ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/api/messages" for 127.0.0.1 at 2021-10-14 19:09:13 +0300
+Processing by Api::MessagesController#index as */*
+  [1m[36mMessage Load (0.8ms)[0m  [1m[34mSELECT "messages".* FROM "messages"[0m
+  ↳ app/controllers/api/messages_controller.rb:5
+Completed 200 OK in 39ms (Views: 18.3ms | ActiveRecord: 10.8ms)
+
+
+Started GET "/api/messages" for 127.0.0.1 at 2021-10-14 19:09:13 +0300
+Processing by Api::MessagesController#index as */*
+  [1m[36mMessage Load (0.8ms)[0m  [1m[34mSELECT "messages".* FROM "messages"[0m
+  ↳ app/controllers/api/messages_controller.rb:5
+Completed 200 OK in 6ms (Views: 3.5ms | ActiveRecord: 0.8ms)
+
+
+Started GET "/" for 127.0.0.1 at 2021-10-14 19:16:31 +0300
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (5.1ms)
+Completed 200 OK in 86ms (Views: 84.1ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/api/messages" for 127.0.0.1 at 2021-10-14 19:16:34 +0300
+Processing by Api::MessagesController#index as */*
+  [1m[36mMessage Load (2.3ms)[0m  [1m[34mSELECT "messages".* FROM "messages"[0m
+  ↳ app/controllers/api/messages_controller.rb:5
+Completed 200 OK in 42ms (Views: 20.5ms | ActiveRecord: 17.0ms)
+
+
+Started GET "/api/messages" for 127.0.0.1 at 2021-10-14 19:16:34 +0300
+Processing by Api::MessagesController#index as */*
+  [1m[36mMessage Load (1.3ms)[0m  [1m[34mSELECT "messages".* FROM "messages"[0m
+  ↳ app/controllers/api/messages_controller.rb:5
+Completed 200 OK in 8ms (Views: 4.7ms | ActiveRecord: 1.3ms)
+
+
+Started GET "/" for 127.0.0.1 at 2021-10-14 19:16:39 +0300
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (2.8ms)
+Completed 200 OK in 82ms (Views: 77.9ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/api/messages" for 127.0.0.1 at 2021-10-14 19:16:42 +0300
+Processing by Api::MessagesController#index as */*
+  [1m[36mMessage Load (2.6ms)[0m  [1m[34mSELECT "messages".* FROM "messages"[0m
+  ↳ app/controllers/api/messages_controller.rb:5
+Completed 200 OK in 10ms (Views: 5.5ms | ActiveRecord: 2.6ms)
+
+
+Started GET "/api/messages" for 127.0.0.1 at 2021-10-14 19:16:42 +0300
+Processing by Api::MessagesController#index as */*
+  [1m[36mMessage Load (0.7ms)[0m  [1m[34mSELECT "messages".* FROM "messages"[0m
+  ↳ app/controllers/api/messages_controller.rb:5
+Completed 200 OK in 6ms (Views: 3.8ms | ActiveRecord: 0.7ms)
+
+
+Started GET "/" for 127.0.0.1 at 2021-10-14 19:16:50 +0300
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (8.2ms)
+Completed 200 OK in 91ms (Views: 87.4ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/api/messages" for 127.0.0.1 at 2021-10-14 19:16:52 +0300
+Processing by Api::MessagesController#index as */*
+  [1m[36mMessage Load (0.7ms)[0m  [1m[34mSELECT "messages".* FROM "messages"[0m
+  ↳ app/controllers/api/messages_controller.rb:5
+Completed 200 OK in 6ms (Views: 4.3ms | ActiveRecord: 0.7ms)
+
+
+Started GET "/api/messages" for 127.0.0.1 at 2021-10-14 19:16:52 +0300
+Processing by Api::MessagesController#index as */*
+  [1m[36mMessage Load (1.5ms)[0m  [1m[34mSELECT "messages".* FROM "messages"[0m
+  ↳ app/controllers/api/messages_controller.rb:5
+Completed 200 OK in 7ms (Views: 3.9ms | ActiveRecord: 1.5ms)
+
+
+Started GET "/" for 127.0.0.1 at 2021-10-14 19:16:57 +0300
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (3.8ms)
+Completed 200 OK in 83ms (Views: 81.5ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/api/messages" for 127.0.0.1 at 2021-10-14 19:16:59 +0300
+Processing by Api::MessagesController#index as */*
+  [1m[36mMessage Load (1.5ms)[0m  [1m[34mSELECT "messages".* FROM "messages"[0m
+  ↳ app/controllers/api/messages_controller.rb:5
+Completed 200 OK in 10ms (Views: 7.5ms | ActiveRecord: 1.5ms)
+
+
+Started GET "/api/messages" for 127.0.0.1 at 2021-10-14 19:16:59 +0300
+Processing by Api::MessagesController#index as */*
+  [1m[36mMessage Load (3.4ms)[0m  [1m[34mSELECT "messages".* FROM "messages"[0m
+  ↳ app/controllers/api/messages_controller.rb:5
+Completed 200 OK in 11ms (Views: 6.4ms | ActiveRecord: 3.4ms)
+
+
+Started GET "/" for 127.0.0.1 at 2021-10-14 19:17:04 +0300
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (7.2ms)
+Completed 200 OK in 93ms (Views: 88.7ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/api/messages" for 127.0.0.1 at 2021-10-14 19:17:07 +0300
+Processing by Api::MessagesController#index as */*
+  [1m[36mMessage Load (1.0ms)[0m  [1m[34mSELECT "messages".* FROM "messages"[0m
+  ↳ app/controllers/api/messages_controller.rb:5
+Completed 200 OK in 8ms (Views: 5.9ms | ActiveRecord: 1.0ms)
+
+
+Started GET "/api/messages" for 127.0.0.1 at 2021-10-14 19:17:07 +0300
+Processing by Api::MessagesController#index as */*
+  [1m[36mMessage Load (0.9ms)[0m  [1m[34mSELECT "messages".* FROM "messages"[0m
+  ↳ app/controllers/api/messages_controller.rb:5
+Completed 200 OK in 8ms (Views: 6.1ms | ActiveRecord: 0.9ms)
+
+
+Started GET "/" for 127.0.0.1 at 2021-10-14 19:17:11 +0300
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (5.8ms)
+Completed 200 OK in 71ms (Views: 68.1ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/api/messages" for 127.0.0.1 at 2021-10-14 19:17:13 +0300
+Processing by Api::MessagesController#index as */*
+  [1m[36mMessage Load (3.5ms)[0m  [1m[34mSELECT "messages".* FROM "messages"[0m
+  ↳ app/controllers/api/messages_controller.rb:5
+Completed 200 OK in 9ms (Views: 4.6ms | ActiveRecord: 3.5ms)
+
+
+Started GET "/api/messages" for 127.0.0.1 at 2021-10-14 19:17:13 +0300
+Processing by Api::MessagesController#index as */*
+  [1m[36mMessage Load (0.7ms)[0m  [1m[34mSELECT "messages".* FROM "messages"[0m
+  ↳ app/controllers/api/messages_controller.rb:5
+Completed 200 OK in 6ms (Views: 3.9ms | ActiveRecord: 0.7ms)
+
+
+Started GET "/" for 127.0.0.1 at 2021-10-14 19:17:16 +0300
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (8.4ms)
+Completed 200 OK in 94ms (Views: 90.1ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/api/messages" for 127.0.0.1 at 2021-10-14 19:17:18 +0300
+Processing by Api::MessagesController#index as */*
+  [1m[36mMessage Load (0.8ms)[0m  [1m[34mSELECT "messages".* FROM "messages"[0m
+  ↳ app/controllers/api/messages_controller.rb:5
+Completed 200 OK in 13ms (Views: 6.3ms | ActiveRecord: 0.8ms)
+
+
+Started GET "/api/messages" for 127.0.0.1 at 2021-10-14 19:17:18 +0300
+Processing by Api::MessagesController#index as */*
+  [1m[36mMessage Load (0.8ms)[0m  [1m[34mSELECT "messages".* FROM "messages"[0m
+  ↳ app/controllers/api/messages_controller.rb:5
+Completed 200 OK in 10ms (Views: 5.1ms | ActiveRecord: 0.8ms)
+
+
+Started GET "/" for 127.0.0.1 at 2021-10-14 19:17:30 +0300
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (3.9ms)
+Completed 200 OK in 83ms (Views: 81.1ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/api/messages" for 127.0.0.1 at 2021-10-14 19:17:32 +0300
+Processing by Api::MessagesController#index as */*
+  [1m[36mMessage Load (1.7ms)[0m  [1m[34mSELECT "messages".* FROM "messages"[0m
+  ↳ app/controllers/api/messages_controller.rb:5
+Completed 200 OK in 10ms (Views: 7.1ms | ActiveRecord: 1.7ms)
+
+
+Started GET "/api/messages" for 127.0.0.1 at 2021-10-14 19:17:32 +0300
+Processing by Api::MessagesController#index as */*
+  [1m[36mMessage Load (2.2ms)[0m  [1m[34mSELECT "messages".* FROM "messages"[0m
+  ↳ app/controllers/api/messages_controller.rb:5
+Completed 200 OK in 7ms (Views: 3.7ms | ActiveRecord: 2.2ms)
+
+
+Started GET "/" for 127.0.0.1 at 2021-10-14 19:23:16 +0300
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (3.2ms)
+Completed 200 OK in 54ms (Views: 51.2ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/api/messages" for 127.0.0.1 at 2021-10-14 19:23:18 +0300
+Processing by Api::MessagesController#index as */*
+  [1m[36mMessage Load (1.9ms)[0m  [1m[34mSELECT "messages".* FROM "messages"[0m
+  ↳ app/controllers/api/messages_controller.rb:5
+Completed 200 OK in 56ms (Views: 23.0ms | ActiveRecord: 22.4ms)
+
+
+Started GET "/api/messages" for 127.0.0.1 at 2021-10-14 19:23:19 +0300
+Processing by Api::MessagesController#index as */*
+  [1m[36mMessage Load (1.5ms)[0m  [1m[34mSELECT "messages".* FROM "messages"[0m
+  ↳ app/controllers/api/messages_controller.rb:5
+Completed 200 OK in 7ms (Views: 4.2ms | ActiveRecord: 1.5ms)
+
+
+Started GET "/" for 127.0.0.1 at 2021-10-14 19:25:57 +0300
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (4.2ms)
+Completed 200 OK in 73ms (Views: 70.5ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/api/messages" for 127.0.0.1 at 2021-10-14 19:26:00 +0300
+Processing by Api::MessagesController#index as */*
+  [1m[36mMessage Load (1.3ms)[0m  [1m[34mSELECT "messages".* FROM "messages"[0m
+  ↳ app/controllers/api/messages_controller.rb:5
+Completed 200 OK in 63ms (Views: 17.0ms | ActiveRecord: 29.8ms)
+
+
+Started GET "/api/messages" for 127.0.0.1 at 2021-10-14 19:26:00 +0300
+Processing by Api::MessagesController#index as */*
+  [1m[36mMessage Load (0.7ms)[0m  [1m[34mSELECT "messages".* FROM "messages"[0m
+  ↳ app/controllers/api/messages_controller.rb:5
+Completed 200 OK in 6ms (Views: 3.9ms | ActiveRecord: 0.7ms)
+
+
+Started GET "/" for 127.0.0.1 at 2021-10-14 19:26:17 +0300
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (3.0ms)
+Completed 200 OK in 97ms (Views: 95.3ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/api/messages" for 127.0.0.1 at 2021-10-14 19:26:19 +0300
+Processing by Api::MessagesController#index as */*
+  [1m[36mMessage Load (0.6ms)[0m  [1m[34mSELECT "messages".* FROM "messages"[0m
+  ↳ app/controllers/api/messages_controller.rb:5
+Completed 200 OK in 8ms (Views: 5.9ms | ActiveRecord: 0.6ms)
+
+
+Started GET "/api/messages" for 127.0.0.1 at 2021-10-14 19:26:19 +0300
+Processing by Api::MessagesController#index as */*
+  [1m[36mMessage Load (0.7ms)[0m  [1m[34mSELECT "messages".* FROM "messages"[0m
+  ↳ app/controllers/api/messages_controller.rb:5
+Completed 200 OK in 5ms (Views: 3.2ms | ActiveRecord: 0.7ms)
+
+
+Started GET "/" for 127.0.0.1 at 2021-10-14 19:26:34 +0300
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (8.9ms)
+Completed 200 OK in 107ms (Views: 104.4ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/api/messages" for 127.0.0.1 at 2021-10-14 19:26:37 +0300
+Processing by Api::MessagesController#index as */*
+  [1m[36mMessage Load (0.7ms)[0m  [1m[34mSELECT "messages".* FROM "messages"[0m
+  ↳ app/controllers/api/messages_controller.rb:5
+Completed 200 OK in 11ms (Views: 9.5ms | ActiveRecord: 0.7ms)
+
+
+Started GET "/api/messages" for 127.0.0.1 at 2021-10-14 19:26:37 +0300
+Processing by Api::MessagesController#index as */*
+  [1m[36mMessage Load (2.3ms)[0m  [1m[34mSELECT "messages".* FROM "messages"[0m
+  ↳ app/controllers/api/messages_controller.rb:5
+Completed 200 OK in 9ms (Views: 5.9ms | ActiveRecord: 2.3ms)
+
+
+Started GET "/" for 127.0.0.1 at 2021-10-14 19:26:44 +0300
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (4.3ms)
+Completed 200 OK in 78ms (Views: 75.6ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/api/messages" for 127.0.0.1 at 2021-10-14 19:26:46 +0300
+Processing by Api::MessagesController#index as */*
+  [1m[36mMessage Load (0.8ms)[0m  [1m[34mSELECT "messages".* FROM "messages"[0m
+  ↳ app/controllers/api/messages_controller.rb:5
+Completed 200 OK in 12ms (Views: 10.1ms | ActiveRecord: 0.8ms)
+
+
+Started GET "/api/messages" for 127.0.0.1 at 2021-10-14 19:26:46 +0300
+Processing by Api::MessagesController#index as */*
+  [1m[36mMessage Load (0.7ms)[0m  [1m[34mSELECT "messages".* FROM "messages"[0m
+  ↳ app/controllers/api/messages_controller.rb:5
+Completed 200 OK in 5ms (Views: 3.2ms | ActiveRecord: 0.7ms)
+
+

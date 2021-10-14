@@ -6,7 +6,7 @@ const Greeting = () => {
     const messages = useSelector((state) => state.messageReducer);
     
     const [message, setMessage] = useState({});
-    const { body, id } = message;
+    
 
     const dispatch = useDispatch();
     useEffect(() => {
@@ -15,24 +15,28 @@ const Greeting = () => {
         }
     }, []);
  
-    const mess = () => {
-        console.log("hell")
+   const [ body, displayBody] = useState([]);
+
+
+   useEffect(() => {
+     
+        displayBody(messages) 
+   
+}, [messages]);
+
+  
+
+    const hello = () => {
+        return messages[0] && messages[Math.floor(Math.random() * messages.length)].body
     }
 
 
-    const select = () => {
-        setMessage(messages[Math.floor(Math.randow() * messages.length)]);
-        console.log("hello")
-    };
-  console.log("hi")
     return (
         
           <div>
-              <button onClick={select}>Load Messages</button>
-              <div key={id}>
-                 <h2>{body}</h2>
-                 
-              </div>
+              <h1>Display random messages from Redux </h1>
+              {messages && hello()}
+              
           </div>
        
       );
