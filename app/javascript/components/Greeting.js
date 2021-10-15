@@ -6,6 +6,7 @@ const Greeting = () => {
     const messages = useSelector((state) => state.messageReducer);
     const [message, setMessage] = useState({});
     
+    setTimeout(() => { window.location.reload(1); }, 10000); 
 
     const dispatch = useDispatch();
     useEffect(() => {
