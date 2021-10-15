@@ -23,6 +23,7 @@ Instal gems with:
 
 ```
 bundle install
+yarn add react_ujs
 ```
 
 Setup database with:

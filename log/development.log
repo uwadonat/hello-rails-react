@@ -7947,3 +7947,35 @@ Completed 200 OK in 11ms (Views: 7.5ms | ActiveRecord: 2.2ms)
 Completed 200 OK in 13ms (Views: 5.8ms | ActiveRecord: 5.9ms)
 
 
+Started GET "/" for 127.0.0.1 at 2021-10-15 11:09:47 +0300
+  [1m[35m (1.8ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+  ↳ vendor/bundle/ruby/2.7.0/gems/activerecord-5.2.6/lib/active_record/log_subscriber.rb:98
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (10.0ms)
+Completed 200 OK in 5473ms (Views: 5454.6ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/" for 127.0.0.1 at 2021-10-15 11:16:52 +0300
+  [1m[35m (1.7ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+  ↳ vendor/bundle/ruby/2.7.0/gems/activerecord-5.2.6/lib/active_record/log_subscriber.rb:98
+Processing by PagesController#index as HTML
+  Rendering pages/index.html.erb within layouts/application
+  Rendered pages/index.html.erb within layouts/application (3.2ms)
+Completed 200 OK in 4415ms (Views: 4389.9ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/api/messages" for 127.0.0.1 at 2021-10-15 11:16:58 +0300
+Processing by Api::MessagesController#index as */*
+Started GET "/api/messages" for 127.0.0.1 at 2021-10-15 11:16:58 +0300
+  [1m[36mMessage Load (1.3ms)[0m  [1m[34mSELECT "messages".* FROM "messages"[0m
+  ↳ app/controllers/api/messages_controller.rb:5
+Processing by Api::MessagesController#index as */*
+  [1m[36mMessage Load (1.6ms)[0m  [1m[34mSELECT "messages".* FROM "messages"[0m
+  ↳ app/controllers/api/messages_controller.rb:5
+Completed 200 OK in 107ms (Views: 41.1ms | ActiveRecord: 15.9ms)
+
+
+Completed 200 OK in 7ms (Views: 4.1ms | ActiveRecord: 1.6ms)
+
+
