@@ -3,7 +3,6 @@ require 'concurrent/executor/abstract_executor_service'
 require 'concurrent/executor/serial_executor_service'
 
 module Concurrent
-
   # An executor service which runs all operations on the current thread,
   # blocking as necessary. Operations are performed in the order they are
   # received and no two operations can be performed simultaneously.
@@ -23,10 +22,10 @@ module Concurrent
     end
 
     # @!macro executor_service_method_post
-    def post(*args, &task)
-      raise ArgumentError.new('no block given') unless block_given?
+    def post(*args)
+      raise ArgumentError, 'no block given' unless block_given?
       return false unless running?
-      task.call(*args)
+      yield(*args)
       true
     end
 
@@ -38,7 +37,7 @@ module Concurrent
 
     # @!macro executor_service_method_running_question
     def running?
-      ! shutdown?
+      !shutdown?
     end
 
     # @!macro executor_service_method_shuttingdown_question
@@ -56,7 +55,7 @@ module Concurrent
       @stopped.set
       true
     end
-    alias_method :kill, :shutdown
+    alias kill shutdown
 
     # @!macro executor_service_method_wait_for_termination
     def wait_for_termination(timeout = nil)

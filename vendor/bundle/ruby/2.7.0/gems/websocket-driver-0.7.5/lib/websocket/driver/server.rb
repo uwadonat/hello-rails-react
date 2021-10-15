@@ -1,8 +1,7 @@
 module WebSocket
   class Driver
-
     class Server < Driver
-      EVENTS = %w[open message error close ping pong]
+      EVENTS = %w[open message error close ping pong].freeze
 
       def initialize(socket, options = {})
         super
@@ -17,9 +16,9 @@ module WebSocket
       def url
         return nil unless e = env
 
-        url  = "ws://#{ e['HTTP_HOST'] }"
+        url = "ws://#{e['HTTP_HOST']}"
         url << e['PATH_INFO']
-        url << "?#{ e['QUERY_STRING'] }" unless e['QUERY_STRING'] == ''
+        url << "?#{e['QUERY_STRING']}" unless e['QUERY_STRING'] == ''
         url
       end
 
@@ -61,7 +60,7 @@ module WebSocket
         @socket.write(buffer)
       end
 
-    private
+      private
 
       def fail_request(message)
         emit(:error, ProtocolError.new(message))
@@ -75,6 +74,5 @@ module WebSocket
         @queue = []
       end
     end
-
   end
 end

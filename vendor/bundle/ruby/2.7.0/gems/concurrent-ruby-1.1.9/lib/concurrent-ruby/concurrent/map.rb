@@ -6,19 +6,17 @@ require 'concurrent/utility/engine'
 module Concurrent
   # @!visibility private
   module Collection
-
     # @!visibility private
-    MapImplementation = case
-                        when Concurrent.on_jruby?
+    MapImplementation = if Concurrent.on_jruby?
                           # noinspection RubyResolve
                           JRubyMapBackend
-                        when Concurrent.on_cruby?
+                        elsif Concurrent.on_cruby?
                           require 'concurrent/collection/map/mri_map_backend'
                           MriMapBackend
-                        when Concurrent.on_truffleruby? && defined?(::TruffleRuby::ConcurrentMap)
+                        elsif Concurrent.on_truffleruby? && defined?(::TruffleRuby::ConcurrentMap)
                           require 'concurrent/collection/map/truffleruby_map_backend'
                           TruffleRubyMapBackend
-                        when Concurrent.on_truffleruby? || Concurrent.on_rbx?
+                        elsif Concurrent.on_truffleruby? || Concurrent.on_rbx?
                           require 'concurrent/collection/map/atomic_reference_map_backend'
                           AtomicReferenceMapBackend
                         else
@@ -35,7 +33,6 @@ module Concurrent
   # does. For most uses it should do fine though, and we recommend you consider
   # `Concurrent::Map` instead of `Concurrent::Hash` for your concurrency-safe hash needs.
   class Map < Collection::MapImplementation
-
     # @!macro map.atomic_method
     #   This method is atomic.
 
@@ -119,7 +116,7 @@ module Concurrent
 
     #
     def initialize(options = nil, &block)
-      if options.kind_of?(::Hash)
+      if options.is_a?(::Hash)
         validate_options_hash!(options)
       else
         options = nil
@@ -139,7 +136,7 @@ module Concurrent
         # a key => value mapping might have already been created by a different thread (key?(key) would then return true, this elsif branch wouldn't be taken and an incorrent +nil+ value
         # would be returned)
         # note: nil == value check is not technically necessary
-      elsif @default_proc && nil == value && NULL == (value = get_or_default(key, NULL))
+      elsif @default_proc && value.nil? && NULL == (value = get_or_default(key, NULL))
         @default_proc.call(self, key)
       else
         value
@@ -154,8 +151,8 @@ module Concurrent
       super
     end
 
-    alias_method :get, :[]
-    alias_method :put, :[]=
+    alias get []
+    alias put []=
 
     # Get a value with key, or default_value when key is absent,
     # or fail when no default_value is given.
@@ -208,14 +205,16 @@ module Concurrent
     # @param [Object] key
     # @param [Object] value
     # @return [Object, nil] the previous value when key was present or nil when there was no key
-    def put_if_absent(key, value)
-      computed = false
-      result   = compute_if_absent(key) do
-        computed = true
-        value
+    unless method_defined?(:put_if_absent)
+      def put_if_absent(key, value)
+        computed = false
+        result = compute_if_absent(key) do
+          computed = true
+          value
+        end
+        computed ? nil : result
       end
-      computed ? nil : result
-    end unless method_defined?(:put_if_absent)
+    end
 
     # Is the value stored in the map. Iterates over all values.
     # @param [Object] value
@@ -229,37 +228,45 @@ module Concurrent
 
     # All keys
     # @return [::Array<Object>] keys
-    def keys
-      arr = []
-      each_pair { |k, v| arr << k }
-      arr
-    end unless method_defined?(:keys)
+    unless method_defined?(:keys)
+      def keys
+        arr = []
+        each_pair { |k, _v| arr << k }
+        arr
+      end
+    end
 
     # All values
     # @return [::Array<Object>] values
-    def values
-      arr = []
-      each_pair { |k, v| arr << v }
-      arr
-    end unless method_defined?(:values)
+    unless method_defined?(:values)
+      def values
+        arr = []
+        each_pair { |_k, v| arr << v }
+        arr
+      end
+    end
 
     # Iterates over each key.
     # @yield for each key in the map
     # @yieldparam key [Object]
     # @return [self]
     # @!macro map.atomic_method_with_block
-    def each_key
-      each_pair { |k, v| yield k }
-    end unless method_defined?(:each_key)
+    unless method_defined?(:each_key)
+      def each_key
+        each_pair { |k, _v| yield k }
+      end
+    end
 
     # Iterates over each value.
     # @yield for each value in the map
     # @yieldparam value [Object]
     # @return [self]
     # @!macro map.atomic_method_with_block
-    def each_value
-      each_pair { |k, v| yield v }
-    end unless method_defined?(:each_value)
+    unless method_defined?(:each_value)
+      def each_value
+        each_pair { |_k, v| yield v }
+      end
+    end
 
     # Iterates over each key value pair.
     # @yield for each key value pair in the map
@@ -272,31 +279,37 @@ module Concurrent
       super
     end
 
-    alias_method :each, :each_pair unless method_defined?(:each)
+    alias each each_pair unless method_defined?(:each)
 
     # Find key of a value.
     # @param [Object] value
     # @return [Object, nil] key or nil when not found
-    def key(value)
-      each_pair { |k, v| return k if v == value }
-      nil
-    end unless method_defined?(:key)
-    alias_method :index, :key if RUBY_VERSION < '1.9'
+    unless method_defined?(:key)
+      def key(value)
+        each_pair { |k, v| return k if v == value }
+        nil
+      end
+    end
+    alias index key if RUBY_VERSION < '1.9'
 
     # Is map empty?
     # @return [true, false]
-    def empty?
-      each_pair { |k, v| return false }
-      true
-    end unless method_defined?(:empty?)
+    unless method_defined?(:empty?)
+      def empty?
+        each_pair { |_k, _v| return false }
+        true
+      end
+    end
 
     # The size of map.
     # @return [Integer] size
-    def size
-      count = 0
-      each_pair { |k, v| count += 1 }
-      count
-    end unless method_defined?(:size)
+    unless method_defined?(:size)
+      def size
+        count = 0
+        each_pair { |_k, _v| count += 1 }
+        count
+      end
+    end
 
     # @!visibility private
     def marshal_dump
@@ -336,11 +349,11 @@ module Concurrent
     end
 
     def validate_options_hash!(options)
-      if (initial_capacity = options[:initial_capacity]) && (!initial_capacity.kind_of?(Integer) || initial_capacity < 0)
-        raise ArgumentError, ":initial_capacity must be a positive Integer"
+      if (initial_capacity = options[:initial_capacity]) && (!initial_capacity.is_a?(Integer) || initial_capacity < 0)
+        raise ArgumentError, ':initial_capacity must be a positive Integer'
       end
-      if (load_factor = options[:load_factor]) && (!load_factor.kind_of?(Numeric) || load_factor <= 0 || load_factor > 1)
-        raise ArgumentError, ":load_factor must be a number between 0 and 1"
+      if (load_factor = options[:load_factor]) && (!load_factor.is_a?(Numeric) || load_factor <= 0 || load_factor > 1)
+        raise ArgumentError, ':load_factor must be a number between 0 and 1'
       end
     end
   end

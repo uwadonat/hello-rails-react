@@ -1,13 +1,13 @@
-require "spring/configuration"
+require 'spring/configuration'
 
 module Spring
   class CommandWrapper
     attr_reader :name, :command
 
     def initialize(name, command = nil)
-      @name    = name
+      @name = name
       @command = command
-      @setup   = false
+      @setup = false
     end
 
     def description
@@ -26,10 +26,10 @@ module Spring
       if !setup? && command.respond_to?(:setup)
         command.setup
         @setup = true
-        return true
+        true
       else
         @setup = true
-        return false
+        false
       end
     end
 
@@ -74,9 +74,7 @@ module Spring
     end
 
     def env(args)
-      if command.respond_to?(:env)
-        command.env(args)
-      end
+      command.env(args) if command.respond_to?(:env)
     end
   end
 end

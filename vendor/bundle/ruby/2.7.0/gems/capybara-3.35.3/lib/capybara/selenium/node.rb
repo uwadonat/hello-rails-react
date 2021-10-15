@@ -307,7 +307,7 @@ private
     end
   end
 
-  def set_date(value) # rubocop:disable Naming/AccessorMethodName
+  def set_date(value)
     value = SettableValue.new(value)
     return set_text(value) unless value.dateable?
 
@@ -315,7 +315,7 @@ private
     update_value_js(value.to_date_str)
   end
 
-  def set_time(value) # rubocop:disable Naming/AccessorMethodName
+  def set_time(value)
     value = SettableValue.new(value)
     return set_text(value) unless value.timeable?
 
@@ -323,7 +323,7 @@ private
     update_value_js(value.to_time_str)
   end
 
-  def set_datetime_local(value) # rubocop:disable Naming/AccessorMethodName
+  def set_datetime_local(value)
     value = SettableValue.new(value)
     return set_text(value) unless value.timeable?
 
@@ -331,11 +331,11 @@ private
     update_value_js(value.to_datetime_str)
   end
 
-  def set_color(value) # rubocop:disable Naming/AccessorMethodName
+  def set_color(value)
     update_value_js(value)
   end
 
-  def set_range(value) # rubocop:disable Naming/AccessorMethodName
+  def set_range(value)
     update_value_js(value)
   end
 
@@ -353,7 +353,7 @@ private
     JS
   end
 
-  def set_file(value) # rubocop:disable Naming/AccessorMethodName
+  def set_file(value)
     with_file_detector do
       path_names = value.to_s.empty? ? [] : value
       file_names = Array(path_names).map do |pn|
@@ -381,7 +381,7 @@ private
     end
   end
 
-  def set_content_editable(value) # rubocop:disable Naming/AccessorMethodName
+  def set_content_editable(value)
     # Ensure we are focused on the element
     click
 

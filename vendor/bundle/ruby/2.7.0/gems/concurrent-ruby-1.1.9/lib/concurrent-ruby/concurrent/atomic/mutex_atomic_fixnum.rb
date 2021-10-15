@@ -2,12 +2,10 @@ require 'concurrent/synchronization'
 require 'concurrent/utility/native_integer'
 
 module Concurrent
-
   # @!macro atomic_fixnum
   # @!visibility private
   # @!macro internal_implementation_note
   class MutexAtomicFixnum < Synchronization::LockableObject
-
     # @!macro atomic_fixnum_method_initialize
     def initialize(initial = 0)
       super()
@@ -29,14 +27,14 @@ module Concurrent
       synchronize { ns_set(@value + delta.to_i) }
     end
 
-    alias_method :up, :increment
+    alias up increment
 
     # @!macro atomic_fixnum_method_decrement
     def decrement(delta = 1)
       synchronize { ns_set(@value - delta.to_i) }
     end
 
-    alias_method :down, :decrement
+    alias down decrement
 
     # @!macro atomic_fixnum_method_compare_and_set
     def compare_and_set(expect, update)

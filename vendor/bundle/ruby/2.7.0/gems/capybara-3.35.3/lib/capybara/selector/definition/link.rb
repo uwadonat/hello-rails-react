@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 Capybara.add_selector(:link, locator_type: [String, Symbol]) do
   xpath do |locator, href: true, alt: nil, title: nil, **|
     xpath = XPath.descendant(:a)

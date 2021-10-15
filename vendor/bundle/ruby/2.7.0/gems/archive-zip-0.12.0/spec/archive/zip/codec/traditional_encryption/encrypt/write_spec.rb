@@ -1,5 +1,3 @@
-# encoding: UTF-8
-
 require 'minitest/autorun'
 
 require File.expand_path('../../fixtures/classes', __FILE__)
@@ -7,8 +5,8 @@ require File.expand_path('../../fixtures/classes', __FILE__)
 require 'archive/zip/codec/traditional_encryption'
 require 'archive/support/binary_stringio'
 
-describe "Archive::Zip::Codec::TraditionalEncryption::Encrypt#write" do
-  it "writes encrypted data to the delegate" do
+describe 'Archive::Zip::Codec::TraditionalEncryption::Encrypt#write' do
+  it 'writes encrypted data to the delegate' do
     # Ensure repeatable test data is used for encryption header.
     srand(0)
     encrypted_data = BinaryStringIO.new
@@ -22,13 +20,13 @@ describe "Archive::Zip::Codec::TraditionalEncryption::Encrypt#write" do
     encrypted_data.string.must_equal(TraditionalEncryptionSpecs.encrypted_data)
   end
 
-  it "writes encrypted data to a delegate that only performs partial writes" do
+  it 'writes encrypted data to a delegate that only performs partial writes' do
     # Ensure repeatable test data is used for encryption header.
     srand(0)
     encrypted_data = BinaryStringIO.new
     # Override encrypted_data.write to perform writes 1 byte at a time.
     class << encrypted_data
-      alias :write_orig :write
+      alias_method :write_orig, :write
       def write(buffer)
         write_orig(buffer.slice(0, 1))
       end
@@ -44,17 +42,17 @@ describe "Archive::Zip::Codec::TraditionalEncryption::Encrypt#write" do
     encrypted_data.string.must_equal(TraditionalEncryptionSpecs.encrypted_data)
   end
 
-  it "writes encrypted data to a delegate that raises Errno::EAGAIN" do
+  it 'writes encrypted data to a delegate that raises Errno::EAGAIN' do
     # Ensure repeatable test data is used for encryption header.
     srand(0)
     encrypted_data = BinaryStringIO.new
     # Override encrypted_data.write to raise Errno::EAGAIN every other time it's
     # called.
     class << encrypted_data
-      alias :write_orig :write
+      alias_method :write_orig, :write
       def write(buffer)
         @error_raised ||= false
-        if @error_raised then
+        if @error_raised
           @error_raised = false
           write_orig(buffer)
         else
@@ -78,17 +76,17 @@ describe "Archive::Zip::Codec::TraditionalEncryption::Encrypt#write" do
     encrypted_data.string.must_equal(TraditionalEncryptionSpecs.encrypted_data)
   end
 
-  it "writes encrypted data to a delegate that raises Errno::EINTR" do
+  it 'writes encrypted data to a delegate that raises Errno::EINTR' do
     # Ensure repeatable test data is used for encryption header.
     srand(0)
     encrypted_data = BinaryStringIO.new
     # Override encrypted_data.write to raise Errno::EINTR every other time it's
     # called.
     class << encrypted_data
-      alias :write_orig :write
+      alias_method :write_orig, :write
       def write(buffer)
         @error_raised ||= false
-        if @error_raised then
+        if @error_raised
           @error_raised = false
           write_orig(buffer)
         else

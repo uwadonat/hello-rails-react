@@ -2,7 +2,6 @@ require 'concurrent/utility/engine'
 require 'concurrent/executor/thread_pool_executor'
 
 module Concurrent
-
   # @!macro thread_pool_executor_constant_default_max_pool_size
   #   Default maximum number of threads that will be created in the pool.
 
@@ -71,10 +70,6 @@ module Concurrent
   #   @return [Integer] Number of tasks that may be enqueued before reaching `max_queue` and rejecting
   #     new tasks. A value of -1 indicates that the queue may grow without bound.
 
-
-
-
-
   # @!macro thread_pool_executor_public_api
   #
   #   @!macro abstract_executor_service_public_api
@@ -111,9 +106,6 @@ module Concurrent
   #
   #   @!method can_overflow?
   #     @!macro executor_service_method_can_overflow_question
-
-
-
 
   # @!macro thread_pool_options
   #
@@ -169,10 +161,6 @@ module Concurrent
   #   @see http://docs.oracle.com/javase/8/docs/api/java/util/concurrent/ExecutorService.html Java ExecutorService interface
   #   @see https://docs.oracle.com/javase/8/docs/api/java/lang/Thread.html#setDaemon-boolean-
 
-
-
-
-
   # @!macro fixed_thread_pool
   #
   #   A thread pool that reuses a fixed number of threads operating off an unbounded queue.
@@ -185,7 +173,6 @@ module Concurrent
   #
   # @!macro thread_pool_options
   class FixedThreadPool < ThreadPoolExecutor
-
     # @!macro fixed_thread_pool_method_initialize
     #
     #   Create a new thread pool.
@@ -199,9 +186,9 @@ module Concurrent
     #
     #   @see http://docs.oracle.com/javase/8/docs/api/java/util/concurrent/Executors.html#newFixedThreadPool-int-
     def initialize(num_threads, opts = {})
-      raise ArgumentError.new('number of threads must be greater than zero') if num_threads.to_i < 1
-      defaults  = { max_queue:   DEFAULT_MAX_QUEUE_SIZE,
-                    idletime:    DEFAULT_THREAD_IDLETIMEOUT }
+      raise ArgumentError, 'number of threads must be greater than zero' if num_threads.to_i < 1
+      defaults = { max_queue:   DEFAULT_MAX_QUEUE_SIZE,
+                   idletime:    DEFAULT_THREAD_IDLETIMEOUT }
       overrides = { min_threads: num_threads,
                     max_threads: num_threads }
       super(defaults.merge(opts).merge(overrides))

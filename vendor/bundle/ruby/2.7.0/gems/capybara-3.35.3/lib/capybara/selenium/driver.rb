@@ -367,7 +367,7 @@ private
     else
       begin
         @browser&.execute_script('window.sessionStorage.clear()')
-      rescue # rubocop:disable Style/RescueStandardError
+      rescue
         unless options[:clear_session_storage].nil?
           warn 'sessionStorage clear requested but is not supported by this driver'
         end
@@ -381,7 +381,7 @@ private
     else
       begin
         @browser&.execute_script('window.localStorage.clear()')
-      rescue # rubocop:disable Style/RescueStandardError
+      rescue
         unless options[:clear_local_storage].nil?
           warn 'localStorage clear requested but is not supported by this driver'
         end
@@ -489,7 +489,7 @@ private
 
   def specialize_driver
     browser_type = browser.browser
-    Capybara::Selenium::Driver.specializations.select { |k, _v| k === browser_type }.each_value do |specialization| # rubocop:disable Style/CaseEquality
+    Capybara::Selenium::Driver.specializations.select { |k, _v| k === browser_type }.each_value do |specialization|
       extend specialization
     end
   end

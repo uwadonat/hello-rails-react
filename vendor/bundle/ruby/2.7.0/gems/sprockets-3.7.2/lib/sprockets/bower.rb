@@ -5,7 +5,7 @@ module Sprockets
     # Internal: All supported bower.json files.
     #
     # https://github.com/bower/json/blob/0.4.0/lib/json.js#L7
-    POSSIBLE_BOWER_JSONS = ['bower.json', 'component.json', '.bower.json']
+    POSSIBLE_BOWER_JSONS = ['bower.json', 'component.json', '.bower.json'].freeze
 
     # Internal: Override resolve_alternates to install bower.json behavior.
     #
@@ -17,12 +17,12 @@ module Sprockets
       candidates, deps = super
 
       # bower.json can only be nested one level deep
-      if !logical_path.index('/')
+      unless logical_path.index('/')
         dirname = File.join(load_path, logical_path)
 
         if directory?(dirname)
           filenames = POSSIBLE_BOWER_JSONS.map { |basename| File.join(dirname, basename) }
-          filename  = filenames.detect { |fn| self.file?(fn) }
+          filename = filenames.detect { |fn| file?(fn) }
 
           if filename
             deps << build_file_digest_uri(filename)
@@ -33,7 +33,7 @@ module Sprockets
         end
       end
 
-      return candidates, deps
+      [candidates, deps]
     end
 
     # Internal: Read bower.json's main directive.

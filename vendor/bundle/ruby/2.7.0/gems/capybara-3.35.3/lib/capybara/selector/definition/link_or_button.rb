@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 Capybara.add_selector(:link_or_button, locator_type: [String, Symbol]) do
   label 'link or button'
   xpath do |locator, **options|

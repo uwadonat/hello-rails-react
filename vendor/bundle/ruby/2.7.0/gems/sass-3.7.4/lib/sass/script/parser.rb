@@ -51,12 +51,13 @@ module Sass
         expr = assert_expr :expr
         assert_tok :end_interpolation
         expr = Sass::Script::Tree::Interpolation.new(
-          nil, expr, nil, false, false, :warn_for_color => warn_for_color)
+          nil, expr, nil, false, false, warn_for_color: warn_for_color
+        )
         check_for_interpolation expr
         expr.options = @options
         node(expr, start_pos)
       rescue Sass::SyntaxError => e
-        e.modify_backtrace :line => @lexer.line, :filename => @options[:filename]
+        e.modify_backtrace line: @lexer.line, filename: @options[:filename]
         raise e
       end
 
@@ -71,7 +72,7 @@ module Sass
         check_for_interpolation expr
         expr
       rescue Sass::SyntaxError => e
-        e.modify_backtrace :line => @lexer.line, :filename => @options[:filename]
+        e.modify_backtrace line: @lexer.line, filename: @options[:filename]
         raise e
       end
 
@@ -89,7 +90,7 @@ module Sass
         check_for_interpolation expr
         expr
       rescue Sass::SyntaxError => e
-        e.modify_backtrace :line => @lexer.line, :filename => @options[:filename]
+        e.modify_backtrace line: @lexer.line, filename: @options[:filename]
         raise e
       end
 
@@ -103,7 +104,8 @@ module Sass
       #   splat argument(s). Keyword arguments are in a hash from names to values.
       # @raise [Sass::SyntaxError] if the argument list isn't valid SassScript
       def parse_mixin_include_arglist
-        args, keywords = [], {}
+        args = []
+        keywords = {}
         if try_tok(:lparen)
           args, keywords, splat, kwarg_splat = mixin_arglist
           assert_tok(:rparen)
@@ -132,7 +134,7 @@ module Sass
 
         return args, keywords, splat, kwarg_splat
       rescue Sass::SyntaxError => e
-        e.modify_backtrace :line => @lexer.line, :filename => @options[:filename]
+        e.modify_backtrace line: @lexer.line, filename: @options[:filename]
         raise e
       end
 
@@ -162,7 +164,7 @@ module Sass
 
         return args, splat
       rescue Sass::SyntaxError => e
-        e.modify_backtrace :line => @lexer.line, :filename => @options[:filename]
+        e.modify_backtrace line: @lexer.line, filename: @options[:filename]
         raise e
       end
 
@@ -192,7 +194,7 @@ module Sass
 
         return args, splat
       rescue Sass::SyntaxError => e
-        e.modify_backtrace :line => @lexer.line, :filename => @options[:filename]
+        e.modify_backtrace line: @lexer.line, filename: @options[:filename]
         raise e
       end
 
@@ -203,9 +205,9 @@ module Sass
       # @raise [Sass::SyntaxError] if the string isn't valid SassScript
       def parse_string
         unless (peek = @lexer.peek) &&
-            (peek.type == :string ||
-            (peek.type == :funcall && peek.value.downcase == 'url'))
-          lexer.expected!("string")
+               (peek.type == :string ||
+               (peek.type == :funcall && peek.value.casecmp('url').zero?))
+          lexer.expected!('string')
         end
 
         expr = assert_expr :funcall
@@ -214,7 +216,7 @@ module Sass
         @lexer.unpeek!
         expr
       rescue Sass::SyntaxError => e
-        e.modify_backtrace :line => @lexer.line, :filename => @options[:filename]
+        e.modify_backtrace line: @lexer.line, filename: @options[:filename]
         raise e
       end
 
@@ -230,13 +232,13 @@ module Sass
 
       PRECEDENCE = [
         :comma, :single_eq, :space, :or, :and,
-        [:eq, :neq],
-        [:gt, :gte, :lt, :lte],
-        [:plus, :minus],
-        [:times, :div, :mod],
-      ]
+        %i[eq neq],
+        %i[gt gte lt lte],
+        %i[plus minus],
+        %i[times div mod]
+      ].freeze
 
-      ASSOCIATIVE = [:plus, :times]
+      ASSOCIATIVE = %i[plus times].freeze
 
       class << self
         # Returns an integer representing the precedence
@@ -271,7 +273,7 @@ module Sass
               return interp if interp
               return unless e = #{sub}
 
-              while tok = peek_toks(#{ops.map {|o| o.inspect}.join(', ')})
+              while tok = peek_toks(#{ops.map(&:inspect).join(', ')})
                 return e if @stop_at && @stop_at.include?(tok.type)
                 @lexer.next
 
@@ -313,7 +315,9 @@ RUBY
       end
 
       # @private
-      def lexer_class; Lexer; end
+      def lexer_class
+        Lexer
+      end
 
       def map
         start_pos = source_position
@@ -335,7 +339,7 @@ RUBY
       def map_pair(key = nil)
         return unless key ||= interpolation
         assert_tok :colon
-        return key, assert_expr(:interpolation)
+        [key, assert_expr(:interpolation)]
       end
 
       def expr
@@ -374,17 +378,19 @@ RUBY
 
         deprecation =
           case op.type
-          when :comma; :potential
-          when :div, :single_eq; :none
-          when :plus; unary ? :none : :immediate
-          when :minus; @lexer.whitespace?(@lexer.peek) ? :immediate : :none
+          when :comma then :potential
+          when :div, :single_eq then :none
+          when :plus then unary ? :none : :immediate
+          when :minus then @lexer.whitespace?(@lexer.peek) ? :immediate : :none
           else; :immediate
           end
 
         interp = node(
           Script::Tree::Interpolation.new(
-            prev, str, nil, wb, false, :originally_text => true, :deprecation => deprecation),
-          (prev || str).source_range.start_pos)
+            prev, str, nil, wb, false, originally_text: true, deprecation: deprecation
+          ),
+          (prev || str).source_range.start_pos
+        )
         interpolation(first: interp)
       end
 
@@ -405,16 +411,18 @@ RUBY
 
         deprecation =
           case op.type
-          when :comma; :potential
-          when :div, :single_eq; :none
-          when :minus; @lexer.whitespace?(op) ? :immediate : :none
+          when :comma then :potential
+          when :div, :single_eq then :none
+          when :minus then @lexer.whitespace?(op) ? :immediate : :none
           else; :immediate
           end
         interp = node(
           Script::Tree::Interpolation.new(
             prev, str, assert_expr(name), false, wa,
-            :originally_text => true, :deprecation => deprecation),
-          (prev || str).source_range.start_pos)
+            originally_text: true, deprecation: deprecation
+          ),
+          (prev || str).source_range.start_pos
+        )
         interp
       end
 
@@ -423,7 +431,7 @@ RUBY
         while (interp = try_tok(:begin_interpolation))
           wb = @lexer.whitespace?(interp)
           char_before = @lexer.char(interp.pos - 1)
-          mid = without_stop_at {assert_expr :expr}
+          mid = without_stop_at { assert_expr :expr }
           assert_tok :end_interpolation
           wa = @lexer.whitespace?
           char_after = @lexer.char
@@ -444,8 +452,9 @@ RUBY
             end
 
           e = node(
-            Script::Tree::Interpolation.new(e, mid, after, wb, wa, :deprecation => deprecation),
-            (e || interp).source_range.start_pos)
+            Script::Tree::Interpolation.new(e, mid, after, wb, wa, deprecation: deprecation),
+            (e || interp).source_range.start_pos
+          )
         end
         e
       end
@@ -510,11 +519,11 @@ RUBY
         name = @lexer.next
         if (color = Sass::Script::Value::Color::COLOR_NAMES[name.value.downcase])
           literal_node(Sass::Script::Value::Color.new(color, name.value), name.source_range)
-        elsif name.value == "true"
+        elsif name.value == 'true'
           literal_node(Sass::Script::Value::Bool.new(true), name.source_range)
-        elsif name.value == "false"
+        elsif name.value == 'false'
           literal_node(Sass::Script::Value::Bool.new(false), name.source_range)
-        elsif name.value == "null"
+        elsif name.value == 'null'
           literal_node(Sass::Script::Value::Null.new, name.source_range)
         else
           literal_node(Sass::Script::Value::String.new(name.value, :identifier), name.source_range)
@@ -549,12 +558,12 @@ RUBY
           end
 
           if try_tok(:rparen)
-            result << ")"
+            result << ')'
             return result
           elsif tok = try_tok(:plus) || try_tok(:minus) || try_tok(:times) || try_tok(:div)
             result << " #{Lexer::OPERATORS_REVERSE[tok.type]} "
           elsif allow_comma && try_tok(:comma)
-            result << ", "
+            result << ', '
           else
             return
           end
@@ -565,7 +574,7 @@ RUBY
         without_stop_at do
           tok = try_tok(:begin_interpolation)
           return unless tok
-          expr = without_stop_at {assert_expr :expr}
+          expr = without_stop_at { assert_expr :expr }
           assert_tok :end_interpolation
           expr
         end
@@ -582,7 +591,7 @@ RUBY
 
       def min_max_calc
         return unless tok = peek_tok(:special_fun)
-        return unless tok.value.value.downcase.start_with?("calc(")
+        return unless tok.value.value.downcase.start_with?('calc(')
         @lexer.next.value
       end
 
@@ -622,9 +631,9 @@ RUBY
             assert_tok :end_interpolation
           elsif tok = try_toks(:lcurly, :lparen, :lsquare)
             brackets << case tok.type
-                        when :lcurly; :end_interpolation
-                        when :lparen; :rparen
-                        when :lsquare; :rsquare
+                        when :lcurly then :end_interpolation
+                        when :lparen then :rparen
+                        when :lsquare then :rsquare
                         end
             result << Lexer::OPERATORS_REVERSE[tok.type]
           elsif brackets.empty?
@@ -643,7 +652,7 @@ RUBY
         args, keywords, splat, kwarg_splat = fn_arglist
         assert_tok(:rparen)
         node(Script::Tree::Funcall.new(tok.value, args, keywords, splat, kwarg_splat),
-          tok.source_range.start_pos, source_position)
+             tok.source_range.start_pos, source_position)
       end
 
       def defn_arglist!(must_have_parens)
@@ -668,8 +677,7 @@ RUBY
               splat = var
               break
             elsif must_have_default
-              raise SyntaxError.new(
-                "Required argument #{var.inspect} must come before any optional arguments.")
+              raise SyntaxError, "Required argument #{var.inspect} must come before any optional arguments."
             end
             res << [var, val]
             break unless try_tok(:comma)
@@ -680,11 +688,11 @@ RUBY
       end
 
       def fn_arglist
-        arglist(:equals, "function argument")
+        arglist(:equals, 'function argument')
       end
 
       def mixin_arglist
-        arglist(:interpolation, "mixin argument")
+        arglist(:interpolation, 'mixin argument')
       end
 
       def arglist(subexpr, description)
@@ -695,23 +703,22 @@ RUBY
           while (e = send(subexpr))
             if @lexer.peek && @lexer.peek.type == :colon
               name = e
-              @lexer.expected!("comma") unless name.is_a?(Tree::Variable)
+              @lexer.expected!('comma') unless name.is_a?(Tree::Variable)
               assert_tok(:colon)
               value = assert_expr(subexpr, description)
 
-              if keywords[name.name]
-                raise SyntaxError.new("Keyword argument \"#{name.to_sass}\" passed more than once")
-              end
+              raise SyntaxError, "Keyword argument \"#{name.to_sass}\" passed more than once" if keywords[name.name]
 
               keywords[name.name] = value
             else
               if try_tok(:splat)
                 return args, keywords, splat, e if splat
-                splat, e = e, nil
+                splat = e
+                e = nil
               elsif splat
-                raise SyntaxError.new("Only keyword arguments may follow variable arguments (...).")
+                raise SyntaxError, 'Only keyword arguments may follow variable arguments (...).'
               elsif !keywords.empty?
-                raise SyntaxError.new("Positional arguments must come before keyword arguments.")
+                raise SyntaxError, 'Positional arguments must come before keyword arguments.'
               end
               args << e if e
             end
@@ -733,12 +740,13 @@ RUBY
         return square_list unless first
         str = literal_node(first.value, first.source_range)
         return str unless try_tok(:string_interpolation)
-        mid = without_stop_at {assert_expr :expr}
+        mid = without_stop_at { assert_expr :expr }
         assert_tok :end_interpolation
         last = assert_expr(:special_fun)
         node(
           Tree::Interpolation.new(str, mid, last, false, false),
-          first.source_range.start_pos)
+          first.source_range.start_pos
+        )
       end
 
       def square_list
@@ -763,7 +771,8 @@ RUBY
                   else
                     node(
                       Sass::Script::Tree::ListLiteral.new(elements, separator: :space),
-                      space_start_pos)
+                      space_start_pos
+                    )
                   end
               elements = [e]
 
@@ -813,7 +822,7 @@ RUBY
         return str unless try_tok(:string_interpolation)
         mid = assert_expr :expr
         assert_tok :end_interpolation
-        last = without_stop_at {assert_expr(:string)}
+        last = without_stop_at { assert_expr(:string) }
         node(Tree::StringInterpolation.new(str, mid, last), first.source_range.start_pos)
       end
 
@@ -841,13 +850,13 @@ RUBY
       # but detecting the method/token difference turns out to be quite expensive.
 
       EXPR_NAMES = {
-        :string => "string",
-        :default => "expression (e.g. 1px, bold)",
-        :mixin_arglist => "mixin argument",
-        :fn_arglist => "function argument",
-        :splat => "...",
-        :special_fun => '")"',
-      }
+        string: 'string',
+        default: 'expression (e.g. 1px, bold)',
+        mixin_arglist: 'mixin argument',
+        fn_arglist: 'function argument',
+        splat: '...',
+        special_fun: '")"'
+      }.freeze
 
       def assert_expr(name, expected = nil)
         e = send(name)
@@ -865,7 +874,7 @@ RUBY
       def assert_toks(*names)
         t = try_toks(*names)
         return t if t
-        @lexer.expected!(names.map {|tok| Lexer::TOKEN_NAMES[tok] || tok}.join(" or "))
+        @lexer.expected!(names.map { |tok| Lexer::TOKEN_NAMES[tok] || tok }.join(' or '))
       end
 
       def peek_tok(name)
@@ -947,16 +956,20 @@ RUBY
         Sass::Util.merge_adjacent_strings(array).reverse.inject(nil) do |after, value|
           if value.is_a?(::String)
             literal = Sass::Script::Tree::Literal.new(
-              Sass::Script::Value::String.new(value))
+              Sass::Script::Value::String.new(value)
+            )
             next literal unless after
             Sass::Script::Tree::StringInterpolation.new(literal, after.mid, after.after)
           else
             Sass::Script::Tree::StringInterpolation.new(
               Sass::Script::Tree::Literal.new(
-                Sass::Script::Value::String.new('')),
+                Sass::Script::Value::String.new('')
+              ),
               value,
               after || Sass::Script::Tree::Literal.new(
-                Sass::Script::Value::String.new('')))
+                Sass::Script::Value::String.new('')
+              )
+            )
           end
         end
       end

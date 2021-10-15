@@ -14,7 +14,7 @@ module Sass::Script::Tree
     # @param name [String] See \{#name}
     def initialize(name)
       @name = name
-      @underscored_name = name.tr("-", "_")
+      @underscored_name = name.tr('-', '_')
       super()
     end
 
@@ -22,7 +22,7 @@ module Sass::Script::Tree
     def inspect(opts = {})
       "$#{dasherize(name, opts)}"
     end
-    alias_method :to_sass, :inspect
+    alias to_sass inspect
 
     # Returns an empty array.
     #
@@ -46,7 +46,7 @@ module Sass::Script::Tree
     # @raise [Sass::SyntaxError] if the variable is undefined
     def _perform(environment)
       val = environment.var(name)
-      raise Sass::SyntaxError.new("Undefined variable: \"$#{name}\".") unless val
+      raise Sass::SyntaxError, "Undefined variable: \"$#{name}\"." unless val
       if val.is_a?(Sass::Script::Value::Number) && val.original
         val = val.dup
         val.original = nil

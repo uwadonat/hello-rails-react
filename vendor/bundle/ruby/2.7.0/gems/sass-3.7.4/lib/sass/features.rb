@@ -7,13 +7,7 @@ module Sass
     #
     # When this is updated, the documentation of `feature-exists()` should be
     # updated as well.
-    KNOWN_FEATURES = Set[*%w(
-      global-variable-shadowing
-      extend-selector-pseudoclass
-      units-level-3
-      at-error
-      custom-property
-    )]
+    KNOWN_FEATURES = Set['global-variable-shadowing', 'extend-selector-pseudoclass', 'units-level-3', 'at-error', 'custom-property']
 
     # Check if a feature exists by name. This is used to implement
     # the Sass function `feature-exists($feature)`
@@ -37,9 +31,7 @@ module Sass
     # @param feature_name [String] The case sensitive name of the feature to
     #   to add to Sass. Must begin with a dash.
     def add_feature(feature_name)
-      unless feature_name[0] == ?-
-        raise ArgumentError.new("Plugin feature names must begin with a dash")
-      end
+      raise ArgumentError, 'Plugin feature names must begin with a dash' unless feature_name[0] == '-'
       KNOWN_FEATURES << feature_name
     end
   end

@@ -1,4 +1,4 @@
-# encoding: UTF-8
+
 # -*- ruby -*-
 
 require 'rubygems'
@@ -29,7 +29,7 @@ SPEC = eval(File.read(GEMSPEC), nil, GEMSPEC)
 # distribution.
 PKG_FILES = FileList.new(Dir.glob('**/*', File::FNM_DOTMATCH)) do |files|
   # Exclude anything that doesn't exist as well as directories.
-  files.exclude {|file| ! File.exist?(file) || File.directory?(file)}
+  files.exclude { |file| !File.exist?(file) || File.directory?(file) }
   # Exclude Git administrative files.
   files.exclude(%r{(^|[/\\])\.git(ignore|modules|keep)?([/\\]|$)})
   # Exclude editor swap/temporary files.
@@ -61,9 +61,7 @@ CLEAN.include('**/.*.sw?')
 # exception.
 def get_version_argument
   version = ENV['VERSION']
-  if version.to_s.empty?
-    raise "No version specified: Add VERSION=X.Y.Z to the command line"
-  end
+  raise 'No version specified: Add VERSION=X.Y.Z to the command line' if version.to_s.empty?
   begin
     Gem::Version.create(version.dup)
   rescue ArgumentError
@@ -104,13 +102,13 @@ def word_wrap(text, line_width = 80)
 end
 
 desc 'Alias for build:gem'
-task :build => 'build:gem'
+task build: 'build:gem'
 
 # Build related tasks.
 namespace :build do
   # Ensure that the manifest is consulted when building the gem.  Any
   # generated/compiled files should be available at that time.
-  task :gem => :check_manifest
+  task gem: :check_manifest
 
   # Create the gem and package tasks.
   Gem::PackageTask.new(SPEC).define
@@ -119,17 +117,13 @@ namespace :build do
   task :check_manifest do
     manifest_files = (SPEC.files + SPEC.test_files).sort.uniq
     pkg_files = PKG_FILES.sort.uniq
-    if manifest_files != pkg_files then
+    if manifest_files != pkg_files
       common_files = manifest_files & pkg_files
       manifest_files -= common_files
       pkg_files -= common_files
-      message = ["The manifest does not match the automatic file list."]
-      unless manifest_files.empty? then
-        message << "  Extraneous files:\n    " + manifest_files.join("\n    ")
-      end
-      unless pkg_files.empty?
-        message << "  Missing files:\n    " + pkg_files.join("\n    ")
-      end
+      message = ['The manifest does not match the automatic file list.']
+      message << "  Extraneous files:\n    " + manifest_files.join("\n    ") unless manifest_files.empty?
+      message << "  Missing files:\n    " + pkg_files.join("\n    ") unless pkg_files.empty?
       raise message.join("\n")
     end
   end
@@ -147,20 +141,20 @@ namespace :build do
 end
 
 # Ensure that the clobber task also clobbers package files.
-task :clobber => 'build:clobber_package'
+task clobber: 'build:clobber_package'
 
 # Ensure that the README file is (re)generated before generating documentation.
-task :yard => 'README.md'
+task yard: 'README.md'
 # Create the documentation task.
 YARD::Rake::YardocTask.new
 
 # Gem related tasks.
 namespace :gem do
   desc 'Alias for build:gem'
-  task :build => 'build:gem'
+  task build: 'build:gem'
 
   desc 'Publish the gemfile'
-  task :publish => ['version:check', :test, 'repo:tag', :build] do
+  task publish: ['version:check', :test, 'repo:tag', :build] do
     sh "gem push pkg/#{SPEC.name}-#{SPEC.version}*.gem"
   end
 end
@@ -168,7 +162,7 @@ end
 # Create the test task.
 desc 'Run tests'
 task :test do
-  sh "mspec"
+  sh 'mspec'
 end
 
 # Version string management tasks.
@@ -184,7 +178,7 @@ namespace :version do
   end
 
   desc 'Check that all version strings are correctly set'
-  task :check => ['version:check:spec', 'version:check:news']
+  task check: ['version:check:spec', 'version:check:news']
 
   namespace :check do
     desc 'Check that the version in the gemspec is correctly set'
@@ -200,7 +194,7 @@ namespace :version do
       version = get_version_argument
       begin
         File.open('NEWS.md') do |news|
-          unless news.each_line.any? {|l| l =~ /^## v#{Regexp.escape(version.to_s)} /}
+          unless news.each_line.any? { |l| l =~ /^## v#{Regexp.escape(version.to_s)} / }
             raise "The NEWS.md file does not mention version `#{version}'"
           end
         end
@@ -214,13 +208,13 @@ end
 # Repository and workspace management tasks.
 namespace :repo do
   desc 'Tag the current HEAD with the version string'
-  task :tag => :check_workspace do
+  task tag: :check_workspace do
     version = get_version_argument
     sh "git tag -s -m 'Release v#{version}' v#{version}"
   end
 
   desc 'Ensure the workspace is fully committed and clean'
-  task :check_workspace => ['README.md'] do
+  task check_workspace: ['README.md'] do
     unless `git status --untracked-files=all --porcelain`.empty?
       raise 'Workspace has been modified.  Commit pending changes and try again.'
     end

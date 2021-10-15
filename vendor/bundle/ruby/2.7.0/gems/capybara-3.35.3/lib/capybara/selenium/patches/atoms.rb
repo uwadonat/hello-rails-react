@@ -1,7 +1,5 @@
-# frozen_string_literal: true
-
 module CapybaraAtoms
-private
+  private
 
   def read_atom(function)
     @atoms ||= Hash.new do |hash, key|

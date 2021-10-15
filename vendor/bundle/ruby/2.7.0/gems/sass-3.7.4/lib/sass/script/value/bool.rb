@@ -4,7 +4,7 @@ module Sass::Script::Value
     # The true value in SassScript.
     #
     # This is assigned before new is overridden below so that we use the default implementation.
-    TRUE  = new(true)
+    TRUE = new(true)
 
     # The false value in SassScript.
     #
@@ -24,12 +24,12 @@ module Sass::Script::Value
     #
     # @return [Boolean]
     attr_reader :value
-    alias_method :to_bool, :value
+    alias to_bool value
 
     # @return [String] "true" or "false"
-    def to_s(opts = {})
+    def to_s(_opts = {})
       @value.to_s
     end
-    alias_method :to_sass, :to_s
+    alias to_sass to_s
   end
 end

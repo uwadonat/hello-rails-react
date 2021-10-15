@@ -3,7 +3,6 @@ require 'concurrent/ivar'
 require 'concurrent/synchronization/lockable_object'
 
 module Concurrent
-
   # A mixin module that provides simple asynchronous behavior to a class,
   # turning it into a simple actor. Loosely based on Erlang's
   # [gen_server](http://www.erlang.org/doc/man/gen_server.html), but without
@@ -215,7 +214,6 @@ module Concurrent
   # @see http://www.erlang.org/doc/man/gen_server.html Erlang gen_server
   # @see http://c2.com/cgi/wiki?LetItCrash "Let It Crash" at http://c2.com/
   module Async
-
     # @!method self.new(*args, &block)
     #
     #   Instanciate a new object and ensure proper initialization of the
@@ -252,9 +250,9 @@ module Concurrent
       arity = obj.method(method).arity
 
       if arity >= 0 && argc != arity
-        raise ArgumentError.new("wrong number of arguments (#{argc} for #{arity})")
+        raise ArgumentError, "wrong number of arguments (#{argc} for #{arity})"
       elsif arity < 0 && (arity = (arity + 1).abs) > argc
-        raise ArgumentError.new("wrong number of arguments (#{argc} for #{arity}..*)")
+        raise ArgumentError, "wrong number of arguments (#{argc} for #{arity}..*)"
       end
     end
 
@@ -289,7 +287,7 @@ module Concurrent
         @delegate = delegate
         @queue = []
         @executor = Concurrent.global_io_executor
-        @ruby_pid = $$
+        @ruby_pid = $PROCESS_ID
       end
 
       # Delegates method calls to the wrapped object.
@@ -303,7 +301,7 @@ module Concurrent
       # @raise [ArgumentError] the given `args` do not match the arity of `method`
       def method_missing(method, *args, &block)
         super unless @delegate.respond_to?(method)
-        Async::validate_argc(@delegate, method, *args)
+        Async.validate_argc(@delegate, method, *args)
 
         ivar = Concurrent::IVar.new
         synchronize do
@@ -333,7 +331,7 @@ module Concurrent
 
           begin
             ivar.set(@delegate.send(method, *args, &block))
-          rescue => error
+          rescue StandardError => error
             ivar.fail(error)
           end
 
@@ -345,9 +343,9 @@ module Concurrent
       end
 
       def reset_if_forked
-        if $$ != @ruby_pid
+        if $PROCESS_ID != @ruby_pid
           @queue.clear
-          @ruby_pid = $$
+          @ruby_pid = $PROCESS_ID
         end
       end
     end
@@ -357,7 +355,6 @@ module Concurrent
     #
     # @!visibility private
     class AwaitDelegator
-
       # Create a new delegator object wrapping the given delegate.
       #
       # @param [AsyncDelegator] delegate the object to wrap and delegate method calls to
@@ -411,7 +408,7 @@ module Concurrent
     def async
       @__async_delegator__
     end
-    alias_method :cast, :async
+    alias cast async
 
     # Causes the chained method call to be performed synchronously on the
     # current thread. The delegated will return a future in either the
@@ -429,7 +426,7 @@ module Concurrent
     def await
       @__await_delegator__
     end
-    alias_method :call, :await
+    alias call await
 
     # Initialize the internal serializer and other stnchronization mechanisms.
     #

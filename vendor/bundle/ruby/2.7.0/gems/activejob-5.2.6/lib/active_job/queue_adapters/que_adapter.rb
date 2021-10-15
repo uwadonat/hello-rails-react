@@ -1,6 +1,4 @@
-# frozen_string_literal: true
-
-require "que"
+require 'que'
 
 module ActiveJob
   module QueueAdapters
@@ -19,13 +17,13 @@ module ActiveJob
     class QueAdapter
       def enqueue(job) #:nodoc:
         que_job = JobWrapper.enqueue job.serialize, priority: job.priority
-        job.provider_job_id = que_job.attrs["job_id"]
+        job.provider_job_id = que_job.attrs['job_id']
         que_job
       end
 
       def enqueue_at(job, timestamp) #:nodoc:
         que_job = JobWrapper.enqueue job.serialize, priority: job.priority, run_at: Time.at(timestamp)
-        job.provider_job_id = que_job.attrs["job_id"]
+        job.provider_job_id = que_job.attrs['job_id']
         que_job
       end
 

@@ -8,7 +8,7 @@ module Sass::Exec
       super(args)
       @options[:sourcemap] = :auto
       @options[:for_engine] = {
-        :load_paths => default_sass_path
+        load_paths: default_sass_path
       }
       @default_syntax = default_syntax
     end
@@ -38,7 +38,7 @@ END
       require 'sass'
 
       if !@options[:update] && !@options[:watch] &&
-          @args.first && colon_path?(@args.first)
+         @args.first && colon_path?(@args.first)
         if @args.size == 1
           @args = split_colon_path(@args.first)
         else
@@ -86,12 +86,12 @@ END
         @options[:for_engine][:style] = name.to_sym
       end
 
-      opts.on("-?", "-h", "--help", "Show this help message.") do
+      opts.on('-?', '-h', '--help', 'Show this help message.') do
         puts opts
         exit
       end
 
-      opts.on("-v", "--version", "Print the Sass version.") do
+      opts.on('-v', '--version', 'Print the Sass version.') do
         puts("Ruby Sass #{Sass.version[:string]}")
         exit
       end
@@ -102,32 +102,32 @@ END
       opts.separator 'Watching and Updating:'
 
       opts.on('--watch', 'Watch files or directories for changes.',
-                         'The location of the generated CSS can be set using a colon:',
-                         "  #{@default_syntax} --watch input.#{@default_syntax}:output.css",
-                         "  #{@default_syntax} --watch input-dir:output-dir") do
+              'The location of the generated CSS can be set using a colon:',
+              "  #{@default_syntax} --watch input.#{@default_syntax}:output.css",
+              "  #{@default_syntax} --watch input-dir:output-dir") do
         @options[:watch] = true
       end
 
       # Polling is used by default on Windows.
       unless Sass::Util.windows?
         opts.on('--poll', 'Check for file changes manually, rather than relying on the OS.',
-                          'Only meaningful for --watch.') do
+                'Only meaningful for --watch.') do
           @options[:poll] = true
         end
       end
 
       opts.on('--update', 'Compile files or directories to CSS.',
-                          'Locations are set like --watch.') do
+              'Locations are set like --watch.') do
         @options[:update] = true
       end
 
       opts.on('-f', '--force', 'Recompile every Sass file, even if the CSS file is newer.',
-                               'Only meaningful for --update.') do
+              'Only meaningful for --update.') do
         @options[:force] = true
       end
 
       opts.on('--stop-on-error', 'If a file fails to compile, exit immediately.',
-                                 'Only meaningful for --watch and --update.') do
+              'Only meaningful for --watch and --update.') do
         @options[:stop_on_error] = true
       end
     end
@@ -151,14 +151,14 @@ END
       # This is optional for backwards-compatibility with Sass 3.3, which didn't
       # enable sourcemaps by default and instead used "--sourcemap" to do so.
       opts.on(:OPTIONAL, '--sourcemap=TYPE',
-          'How to link generated output to the source files.',
-          '  auto (default): relative paths where possible, file URIs elsewhere',
-          '  file: always absolute file URIs',
-          '  inline: include the source text in the sourcemap',
-          '  none: no sourcemaps') do |type|
-        if type && !%w(auto file inline none).include?(type)
-          $stderr.puts "Unknown sourcemap type #{type}.\n\n"
-          $stderr.puts opts
+              'How to link generated output to the source files.',
+              '  auto (default): relative paths where possible, file URIs elsewhere',
+              '  file: always absolute file URIs',
+              '  inline: include the source text in the sourcemap',
+              '  none: no sourcemaps') do |type|
+        if type && !%w[auto file inline none].include?(type)
+          warn "Unknown sourcemap type #{type}.\n\n"
+          warn opts
           exit
         elsif type.nil?
           Sass::Util.sass_warn <<MESSAGE.rstrip
@@ -179,7 +179,7 @@ MESSAGE
       encoding_option(opts)
 
       opts.on('--unix-newlines', 'Use Unix-style newlines in written files.',
-                                 ('Always true on Unix.' unless Sass::Util.windows?)) do
+              ('Always true on Unix.' unless Sass::Util.windows?)) do
         @options[:unix_newlines] = true if Sass::Util.windows?
       end
 
@@ -210,7 +210,7 @@ MESSAGE
       end
 
       opts.on('--precision NUMBER_OF_DIGITS', Integer,
-              "How many digits of precision to use when outputting decimal numbers.",
+              'How many digits of precision to use when outputting decimal numbers.',
               "Defaults to #{Sass::Script::Value::Number.precision}.") do |precision|
         Sass::Script::Value::Number.precision = precision
       end
@@ -241,7 +241,7 @@ MESSAGE
         begin
           require 'compass'
         rescue LoadError
-          puts "ERROR: Cannot load compass."
+          puts 'ERROR: Cannot load compass.'
           exit 1
         end
       end
@@ -264,7 +264,7 @@ MESSAGE
       Sass::Plugin.options[:sourcemap] = @options[:sourcemap]
 
       if @options[:force]
-        raise "The --force flag may only be used with --update." unless @options[:update]
+        raise 'The --force flag may only be used with --update.' unless @options[:update]
         Sass::Plugin.options[:always_update] = true
       end
 
@@ -275,12 +275,12 @@ What files should I watch? Did you mean something like:
 MSG
 
       if !colon_path?(@args[0]) && probably_dest_dir?(@args[1])
-        flag = @options[:update] ? "--update" : "--watch"
+        flag = @options[:update] ? '--update' : '--watch'
         err =
           if !File.exist?(@args[1])
             "doesn't exist"
           elsif @args[1] =~ /\.css$/
-            "is a CSS file"
+            'is a CSS file'
           end
         raise <<MSG if err
 File #{@args[1]} #{err}.
@@ -288,8 +288,8 @@ File #{@args[1]} #{err}.
 MSG
       end
 
-      dirs, files = @args.map {|name| split_colon_path(name)}.
-        partition {|i, _| File.directory? i}
+      dirs, files = @args.map { |name| split_colon_path(name) }
+        .partition { |i, _| File.directory? i }
 
       if @fake_update && !dirs.empty?
         # Issue 1602.
@@ -305,7 +305,7 @@ WARNING
         sourcemap = Sass::Util.sourcemap_name(to) if @options[:sourcemap]
         [from, to, sourcemap]
       end
-      dirs.map! {|from, to| [from, to || from]}
+      dirs.map! { |from, to| [from, to || from] }
       Sass::Plugin.options[:template_location] = dirs
 
       Sass::Plugin.on_updated_stylesheet do |_, css, sourcemap|
@@ -316,9 +316,9 @@ WARNING
       end
 
       had_error = false
-      Sass::Plugin.on_creating_directory {|dirname| puts_action :directory, :green, dirname}
-      Sass::Plugin.on_deleting_css {|filename| puts_action :delete, :yellow, filename}
-      Sass::Plugin.on_deleting_sourcemap {|filename| puts_action :delete, :yellow, filename}
+      Sass::Plugin.on_creating_directory { |dirname| puts_action :directory, :green, dirname }
+      Sass::Plugin.on_deleting_css { |filename| puts_action :delete, :yellow, filename }
+      Sass::Plugin.on_deleting_sourcemap { |filename| puts_action :delete, :yellow, filename }
       Sass::Plugin.on_compilation_error do |error, _, _|
         if error.is_a?(SystemCallError) && !@options[:stop_on_error]
           had_error = true
@@ -330,7 +330,7 @@ WARNING
         raise error unless error.is_a?(Sass::SyntaxError) && !@options[:stop_on_error]
         had_error = true
         puts_action :error, :red,
-          "#{error.sass_filename} (Line #{error.sass_line}: #{error.message})"
+                    "#{error.sass_filename} (Line #{error.sass_line}: #{error.message})"
         STDOUT.flush
       end
 
@@ -340,7 +340,7 @@ WARNING
         return
       end
 
-      puts ">>> Sass is watching for changes. Press Ctrl-C to stop."
+      puts '>>> Sass is watching for changes. Press Ctrl-C to stop.'
 
       Sass::Plugin.on_template_modified do |template|
         puts ">>> Change detected to: #{template}"
@@ -364,7 +364,7 @@ WARNING
 
       if input == $stdin
         # See issue 1745
-        (@options[:for_engine][:load_paths] ||= []) << ::Sass::Importers::DeprecatedPath.new(".")
+        (@options[:for_engine][:load_paths] ||= []) << ::Sass::Importers::DeprecatedPath.new('.')
       end
 
       @options[:for_engine][:syntax] ||= :scss if input.is_a?(File) && input.path =~ /\.scss$/
@@ -383,15 +383,18 @@ WARNING
 
       if @options[:sourcemap] != :none && @options[:sourcemap_filename]
         relative_sourcemap_path = Sass::Util.relative_path_from(
-          @options[:sourcemap_filename], Sass::Util.pathname(@options[:output_filename]).dirname)
+          @options[:sourcemap_filename], Sass::Util.pathname(@options[:output_filename]).dirname
+        )
         rendered, mapping = engine.render_with_sourcemap(relative_sourcemap_path.to_s)
         write_output(rendered, output)
         write_output(
           mapping.to_json(
-            :type => @options[:sourcemap],
-            :css_path => @options[:output_filename],
-            :sourcemap_path => @options[:sourcemap_filename]) + "\n",
-          @options[:sourcemap_filename])
+            type: @options[:sourcemap],
+            css_path: @options[:output_filename],
+            sourcemap_path: @options[:sourcemap_filename]
+          ) + "\n",
+          @options[:sourcemap_filename]
+        )
       else
         write_output(engine.render, output)
       end
@@ -409,13 +412,13 @@ WARNING
     def split_colon_path(path)
       one, two = path.split(':', 2)
       if one && two && Sass::Util.windows? &&
-          one =~ /\A[A-Za-z]\Z/ && two =~ %r{\A[/\\]}
+         one =~ /\A[A-Za-z]\Z/ && two =~ %r{\A[/\\]}
         # If we're on Windows and we were passed a drive letter path,
         # don't split on that colon.
         one2, two = two.split(':', 2)
         one = one + ':' + one2
       end
-      return one, two
+      [one, two]
     end
 
     # Whether path is likely to be meant as the destination
@@ -423,14 +426,14 @@ WARNING
     def probably_dest_dir?(path)
       return false unless path
       return false if colon_path?(path)
-      Sass::Util.glob(File.join(path, "*.s[ca]ss")).empty?
+      Sass::Util.glob(File.join(path, '*.s[ca]ss')).empty?
     end
 
     def default_sass_path
       return unless ENV['SASS_PATH']
       # The select here prevents errors when the environment's
       # load paths specified do not exist.
-      ENV['SASS_PATH'].split(File::PATH_SEPARATOR).select {|d| File.directory?(d)}
+      ENV['SASS_PATH'].split(File::PATH_SEPARATOR).select { |d| File.directory?(d) }
     end
   end
 end

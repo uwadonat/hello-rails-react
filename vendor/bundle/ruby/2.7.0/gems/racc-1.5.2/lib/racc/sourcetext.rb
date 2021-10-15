@@ -11,7 +11,6 @@
 #++
 
 module Racc
-
   class SourceText
     def initialize(text, filename, lineno)
       @text = text
@@ -24,12 +23,11 @@ module Racc
     attr_reader :lineno
 
     def to_s
-      "#<SourceText #{location()}>"
+      "#<SourceText #{location}>"
     end
 
     def location
       "#{@filename}:#{@lineno}"
     end
   end
-
 end

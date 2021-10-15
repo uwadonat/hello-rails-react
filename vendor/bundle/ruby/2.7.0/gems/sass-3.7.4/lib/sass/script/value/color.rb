@@ -20,7 +20,7 @@ module Sass::Script::Value
     # @param color [Integer]
     # @return [Array<Integer>] Array of 4 numbers representing r,g,b and alpha
     def self.int_to_rgba(color)
-      rgba = (0..3).map {|n| color >> (n << 3) & 0xff}.reverse
+      rgba = (0..3).map { |n| color >> (n << 3) & 0xff }.reverse
       rgba[-1] = rgba[-1] / 255.0
       rgba
     end
@@ -35,8 +35,9 @@ module Sass::Script::Value
         'grey'                 => 0x808080FF,
         'lightgrey'            => 0xD3D3D3FF,
         'lightslategrey'       => 0x778899FF,
-        'slategrey'            => 0x708090FF,
-      }, &method(:int_to_rgba))
+        'slategrey'            => 0x708090FF
+      }, &method(:int_to_rgba)
+    )
 
     # A hash from color names to `[red, green, blue]` value arrays.
     COLOR_NAMES = Sass::Util.map_vals(
@@ -181,7 +182,8 @@ module Sass::Script::Value
         'whitesmoke'           => 0xF5F5F5FF,
         'yellow'               => 0xFFFF00FF,
         'yellowgreen'          => 0x9ACD32FF
-      }, &method(:int_to_rgba))
+      }, &method(:int_to_rgba)
+    )
 
     # A hash from `[red, green, blue, alpha]` value arrays to color names.
     COLOR_NAMES_REVERSE = COLOR_NAMES.invert.freeze
@@ -230,26 +232,24 @@ module Sass::Script::Value
       super(nil)
 
       if attrs.is_a?(Array)
-        unless (3..4).include?(attrs.size)
-          raise ArgumentError.new("Color.new(array) expects a three- or four-element array")
-        end
+        raise ArgumentError, 'Color.new(array) expects a three- or four-element array' unless (3..4).cover?(attrs.size)
 
-        red, green, blue = attrs[0...3].map {|c| Sass::Util.round(c)}
-        @attrs = {:red => red, :green => green, :blue => blue}
+        red, green, blue = attrs[0...3].map { |c| Sass::Util.round(c) }
+        @attrs = { red: red, green: green, blue: blue }
         @attrs[:alpha] = attrs[3] ? attrs[3].to_f : 1
         @representation = representation
       else
-        attrs = attrs.reject {|_k, v| v.nil?}
-        hsl = [:hue, :saturation, :lightness] & attrs.keys
-        rgb = [:red, :green, :blue] & attrs.keys
+        attrs = attrs.reject { |_k, v| v.nil? }
+        hsl = %i[hue saturation lightness] & attrs.keys
+        rgb = %i[red green blue] & attrs.keys
         if !allow_both_rgb_and_hsl && !hsl.empty? && !rgb.empty?
-          raise ArgumentError.new("Color.new(hash) may not have both HSL and RGB keys specified")
+          raise ArgumentError, 'Color.new(hash) may not have both HSL and RGB keys specified'
         elsif hsl.empty? && rgb.empty?
-          raise ArgumentError.new("Color.new(hash) must have either HSL or RGB keys specified")
+          raise ArgumentError, 'Color.new(hash) must have either HSL or RGB keys specified'
         elsif !hsl.empty? && hsl.size != 3
-          raise ArgumentError.new("Color.new(hash) must have all three HSL values specified")
+          raise ArgumentError, 'Color.new(hash) must have all three HSL values specified'
         elsif !rgb.empty? && rgb.size != 3
-          raise ArgumentError.new("Color.new(hash) must have all three RGB values specified")
+          raise ArgumentError, 'Color.new(hash) must have all three RGB values specified'
         end
 
         @attrs = attrs
@@ -258,12 +258,12 @@ module Sass::Script::Value
         @representation = @attrs.delete(:representation)
       end
 
-      [:red, :green, :blue].each do |k|
+      %i[red green blue].each do |k|
         next if @attrs[k].nil?
         @attrs[k] = Sass::Util.restrict(Sass::Util.round(@attrs[k]), 0..255)
       end
 
-      [:saturation, :lightness].each do |k|
+      %i[saturation lightness].each do |k|
         next if @attrs[k].nil?
         @attrs[k] = Sass::Util.restrict(@attrs[k], 0..100)
       end
@@ -279,15 +279,15 @@ module Sass::Script::Value
     def self.from_hex(hex_string, alpha = nil)
       unless hex_string =~ /^#?([0-9a-f]{2})([0-9a-f]{2})([0-9a-f]{2})([0-9a-f]{2})?$/i ||
              hex_string =~ /^#?([0-9a-f])([0-9a-f])([0-9a-f])([0-9a-f])?$/i
-        raise ArgumentError.new("#{hex_string.inspect} is not a valid hex color.")
+        raise ArgumentError, "#{hex_string.inspect} is not a valid hex color."
       end
-      red   = $1.ljust(2, $1).to_i(16)
-      green = $2.ljust(2, $2).to_i(16)
-      blue  = $3.ljust(2, $3).to_i(16)
-      alpha = $4.ljust(2, $4).to_i(16).to_f / 0xff if $4
+      red = Regexp.last_match(1).ljust(2, Regexp.last_match(1)).to_i(16)
+      green = Regexp.last_match(2).ljust(2, Regexp.last_match(2)).to_i(16)
+      blue = Regexp.last_match(3).ljust(2, Regexp.last_match(3)).to_i(16)
+      alpha = Regexp.last_match(4).ljust(2, Regexp.last_match(4)).to_i(16).to_f / 0xff if Regexp.last_match(4)
 
-      hex_string = "##{hex_string}" unless hex_string[0] == ?#
-      attrs = {:red => red, :green => green, :blue => blue, :representation => hex_string}
+      hex_string = "##{hex_string}" unless hex_string[0] == '#'
+      attrs = { red: red, green: green, blue: blue, representation: hex_string }
       attrs[:alpha] = alpha if alpha
       new(attrs)
     end
@@ -397,7 +397,8 @@ module Sass::Script::Value
     #   false otherwise
     def eq(other)
       Sass::Script::Value::Bool.new(
-        other.is_a?(Color) && rgb == other.rgb && alpha == other.alpha)
+        other.is_a?(Color) && rgb == other.rgb && alpha == other.alpha
+      )
     end
 
     def hash
@@ -424,17 +425,15 @@ module Sass::Script::Value
     # @return [Color] The new Color object
     # @raise [ArgumentError] if both RGB and HSL keys are specified
     def with(attrs)
-      attrs = attrs.reject {|_k, v| v.nil?}
-      hsl = !([:hue, :saturation, :lightness] & attrs.keys).empty?
-      rgb = !([:red, :green, :blue] & attrs.keys).empty?
-      if hsl && rgb
-        raise ArgumentError.new("Cannot specify HSL and RGB values for a color at the same time")
-      end
+      attrs = attrs.reject { |_k, v| v.nil? }
+      hsl = !(%i[hue saturation lightness] & attrs.keys).empty?
+      rgb = !(%i[red green blue] & attrs.keys).empty?
+      raise ArgumentError, 'Cannot specify HSL and RGB values for a color at the same time' if hsl && rgb
 
       if hsl
-        [:hue, :saturation, :lightness].each {|k| attrs[k] ||= send(k)}
+        %i[hue saturation lightness].each { |k| attrs[k] ||= send(k) }
       elsif rgb
-        [:red, :green, :blue].each {|k| attrs[k] ||= send(k)}
+        %i[red green blue].each { |k| attrs[k] ||= send(k) }
       else
         # If we're just changing the alpha channel,
         # keep all the HSL/RGB stuff we've calculated
@@ -528,7 +527,7 @@ module Sass::Script::Value
     # @raise [Sass::SyntaxError] if `other` is a number with units
     def div(other)
       if other.is_a?(Sass::Script::Value::Number) ||
-          other.is_a?(Sass::Script::Value::Color)
+         other.is_a?(Sass::Script::Value::Color)
         piecewise(other, :/)
       else
         super
@@ -549,7 +548,7 @@ module Sass::Script::Value
     # @raise [Sass::SyntaxError] if `other` is a number with units
     def mod(other)
       if other.is_a?(Sass::Script::Value::Number) ||
-          other.is_a?(Sass::Script::Value::Color)
+         other.is_a?(Sass::Script::Value::Color)
         piecewise(other, :%)
       else
         raise NoMethodError.new(nil, :mod)
@@ -561,7 +560,7 @@ module Sass::Script::Value
     # but if the color has a name that's used instead.
     #
     # @return [String] The string representation
-    def to_s(opts = {})
+    def to_s(_opts = {})
       return smallest if options[:style] == :compressed
       return representation if representation
 
@@ -572,7 +571,7 @@ module Sass::Script::Value
       return name if name
       alpha? ? rgba_str : hex_str
     end
-    alias_method :to_sass, :to_s
+    alias to_sass to_s
 
     # Returns a string representation of the color.
     #
@@ -592,8 +591,8 @@ module Sass::Script::Value
 
     def smallest
       small_explicit_str = alpha? ? rgba_str : hex_str.gsub(/^#(.)\1(.)\2(.)\3$/, '#\1\2\3')
-      [representation, COLOR_NAMES_REVERSE[rgba], small_explicit_str].
-          compact.min_by {|str| str.size}
+      [representation, COLOR_NAMES_REVERSE[rgba], small_explicit_str]
+        .compact.min_by(&:size)
     end
 
     def rgba_str
@@ -602,31 +601,29 @@ module Sass::Script::Value
     end
 
     def hex_str
-      red, green, blue = rgb.map {|num| num.to_s(16).rjust(2, '0')}
+      red, green, blue = rgb.map { |num| num.to_s(16).rjust(2, '0') }
       "##{red}#{green}#{blue}"
     end
 
     def operation_name(operation)
       case operation
       when :+
-        "add"
+        'add'
       when :-
-        "subtract"
+        'subtract'
       when :*
-        "multiply"
+        'multiply'
       when :/
-        "divide"
+        'divide'
       when :%
-        "modulo"
+        'modulo'
       end
     end
 
     def piecewise(other, operation)
       other_num = other.is_a? Number
       if other_num && !other.unitless?
-        raise Sass::SyntaxError.new(
-          "Cannot #{operation_name(operation)} a number with units (#{other}) to a color (#{self})."
-        )
+        raise Sass::SyntaxError, "Cannot #{operation_name(operation)} a number with units (#{other}) to a color (#{self})."
       end
 
       result = []
@@ -636,10 +633,10 @@ module Sass::Script::Value
       end
 
       if !other_num && other.alpha != alpha
-        raise Sass::SyntaxError.new("Alpha channels must be equal: #{self} #{operation} #{other}")
+        raise Sass::SyntaxError, "Alpha channels must be equal: #{self} #{operation} #{other}"
       end
 
-      with(:red => result[0], :green => result[1], :blue => result[2])
+      with(red: result[0], green: result[1], blue: result[2])
     end
 
     def hsl_to_rgb!
@@ -656,7 +653,7 @@ module Sass::Script::Value
         hue_to_rgb(m1, m2, h + 1.0 / 3),
         hue_to_rgb(m1, m2, h),
         hue_to_rgb(m1, m2, h - 1.0 / 3)
-      ].map {|c| Sass::Util.round(c * 0xff)}
+      ].map { |c| Sass::Util.round(c * 0xff) }
     end
 
     def hue_to_rgb(m1, m2, h)
@@ -670,7 +667,7 @@ module Sass::Script::Value
 
     def rgb_to_hsl!
       return if @attrs[:hue] && @attrs[:saturation] && @attrs[:lightness]
-      r, g, b = [:red, :green, :blue].map {|k| @attrs[k] / 255.0}
+      r, g, b = %i[red green blue].map { |k| @attrs[k] / 255.0 }
 
       # Algorithm from http://en.wikipedia.org/wiki/HSL_and_HSV#Conversion_from_RGB_to_HSL_or_HSV
       max = [r, g, b].max
@@ -679,10 +676,10 @@ module Sass::Script::Value
 
       h =
         case max
-        when min; 0
-        when r; 60 * (g - b) / d
-        when g; 60 * (b - r) / d + 120
-        when b; 60 * (r - g) / d + 240
+        when min then 0
+        when r then 60 * (g - b) / d
+        when g then 60 * (b - r) / d + 120
+        when b then 60 * (r - g) / d + 240
         end
 
       l = (max + min) / 2.0

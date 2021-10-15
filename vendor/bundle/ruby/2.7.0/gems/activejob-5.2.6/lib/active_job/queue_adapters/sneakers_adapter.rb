@@ -1,7 +1,5 @@
-# frozen_string_literal: true
-
-require "sneakers"
-require "monitor"
+require 'sneakers'
+require 'monitor'
 
 module ActiveJob
   module QueueAdapters
@@ -29,13 +27,13 @@ module ActiveJob
         end
       end
 
-      def enqueue_at(job, timestamp) #:nodoc:
-        raise NotImplementedError, "This queueing backend does not support scheduling jobs. To see what features are supported go to http://api.rubyonrails.org/classes/ActiveJob/QueueAdapters.html"
+      def enqueue_at(_job, _timestamp) #:nodoc:
+        raise NotImplementedError, 'This queueing backend does not support scheduling jobs. To see what features are supported go to http://api.rubyonrails.org/classes/ActiveJob/QueueAdapters.html'
       end
 
       class JobWrapper #:nodoc:
         include Sneakers::Worker
-        from_queue "default"
+        from_queue 'default'
 
         def work(msg)
           job_data = ActiveSupport::JSON.decode(msg)

@@ -1,12 +1,10 @@
-# frozen_string_literal: true
-
 require 'spec_helper'
 
 RSpec.describe Capybara do
   describe 'default_max_wait_time' do
     before { @previous_default_time = described_class.default_max_wait_time }
 
-    after { described_class.default_max_wait_time = @previous_default_time } # rubocop:disable RSpec/InstanceVariable
+    after { described_class.default_max_wait_time = @previous_default_time }
 
     it 'should be changeable' do
       expect(described_class.default_max_wait_time).not_to eq(5)

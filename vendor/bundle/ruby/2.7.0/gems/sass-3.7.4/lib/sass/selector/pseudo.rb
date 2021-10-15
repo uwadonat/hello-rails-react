@@ -1,4 +1,4 @@
-# coding: utf-8
+
 module Sass
   module Selector
     # A pseudoclass (e.g. `:visited`) or pseudoelement (e.g. `::first-line`)
@@ -10,7 +10,7 @@ module Sass
       # selectors.
       #
       # @return [Set<String>]
-      ACTUALLY_ELEMENTS = %w(after before first-line first-letter).to_set
+      ACTUALLY_ELEMENTS = %w[after before first-line first-letter].to_set
 
       # Like \{#type}, but returns the type of selector this looks like, rather
       # than the type it is semantically. This only differs from type for
@@ -58,7 +58,7 @@ module Sass
       def invisible?
         # :not() is a special case—if you eliminate all the placeholders from
         # it, it should match anything.
-        name != 'not' && @selector && @selector.members.all? {|s| s.invisible?}
+        name != 'not' && @selector && @selector.members.all?(&:invisible?)
       end
 
       # Returns a copy of this with \{#selector} set to \{#new\_selector}.
@@ -67,38 +67,37 @@ module Sass
       # @return [Array<Simple>]
       def with_selector(new_selector)
         result = Pseudo.new(syntactic_type, name, arg,
-          CommaSequence.new(new_selector.members.map do |seq|
-            next seq unless seq.members.length == 1
-            sseq = seq.members.first
-            next seq unless sseq.is_a?(SimpleSequence) && sseq.members.length == 1
-            sel = sseq.members.first
-            next seq unless sel.is_a?(Pseudo) && sel.selector
-
-            case normalized_name
-            when 'not'
-              # In theory, if there's a nested :not its contents should be
-              # unified with the return value. For example, if :not(.foo)
-              # extends .bar, :not(.bar) should become .foo:not(.bar). However,
-              # this is a narrow edge case and supporting it properly would make
-              # this code and the code calling it a lot more complicated, so
-              # it's not supported for now.
-              next [] unless sel.normalized_name == 'matches'
-              sel.selector.members
-            when 'matches', 'any', 'current', 'nth-child', 'nth-last-child'
-              # As above, we could theoretically support :not within :matches, but
-              # doing so would require this method and its callers to handle much
-              # more complex cases that likely aren't worth the pain.
-              next [] unless sel.name == name && sel.arg == arg
-              sel.selector.members
-            when 'has', 'host', 'host-context', 'slotted'
-              # We can't expand nested selectors here, because each layer adds an
-              # additional layer of semantics. For example, `:has(:has(img))`
-              # doesn't match `<div><img></div>` but `:has(img)` does.
-              sel
-            else
-              []
+                            CommaSequence.new(new_selector.members.map do |seq|
+                              next seq unless seq.members.length == 1
+                              sseq = seq.members.first
+                              next seq unless sseq.is_a?(SimpleSequence) && sseq.members.length == 1
+                              sel = sseq.members.first
+                              next seq unless sel.is_a?(Pseudo) && sel.selector
+                              case normalized_name
+                              when 'not'
+                                # In theory, if there's a nested :not its contents should be
+                                # unified with the return value. For example, if :not(.foo)
+                                # extends .bar, :not(.bar) should become .foo:not(.bar). However,
+                                # this is a narrow edge case and supporting it properly would make
+                                # this code and the code calling it a lot more complicated, so
+                                # it's not supported for now.
+                                next [] unless sel.normalized_name == 'matches'
+                                sel.selector.members
+                              when 'matches', 'any', 'current', 'nth-child', 'nth-last-child'
+                                # As above, we could theoretically support :not within :matches, but
+                                # doing so would require this method and its callers to handle much
+                                # more complex cases that likely aren't worth the pain.
+                                next [] unless sel.name == name && sel.arg == arg
+                                sel.selector.members
+                              when 'has', 'host', 'host-context', 'slotted'
+                                # We can't expand nested selectors here, because each layer adds an
+                                # additional layer of semantics. For example, `:has(:has(img))`
+                                # doesn't match `<div><img></div>` but `:has(img)` does.
+                                sel
+                              else
+                                []
             end
-          end.flatten))
+                            end.flatten))
 
         # Older browsers support :not but only with a single complex selector.
         # In order to support those browsers, we break up the contents of a :not
@@ -129,15 +128,15 @@ module Sass
       def to_s(opts = {})
         # :not() is a special case, because :not(<nothing>) should match
         # everything.
-        return '' if name == 'not' && @selector && @selector.members.all? {|m| m.invisible?}
+        return '' if name == 'not' && @selector && @selector.members.all?(&:invisible?)
 
-        res = (syntactic_type == :class ? ":" : "::") + @name
+        res = (syntactic_type == :class ? ':' : '::') + @name
         if @arg || @selector
-          res << "("
+          res << '('
           res << Sass::Util.strip_except_escapes(@arg) if @arg
-          res << " " if @arg && @selector
+          res << ' ' if @arg && @selector
           res << @selector.to_s(opts) if @selector
-          res << ")"
+          res << ')'
         end
         res
       end
@@ -149,7 +148,7 @@ module Sass
       def unify(sels)
         return if type == :element && sels.any? do |sel|
           sel.is_a?(Pseudo) && sel.type == :element &&
-            (sel.name != name || sel.arg != arg || sel.selector != selector)
+          (sel.name != name || sel.arg != arg || sel.selector != selector)
         end
         super
       end

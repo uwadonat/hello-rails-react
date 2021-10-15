@@ -5,7 +5,6 @@ require 'concurrent/synchronization'
 require 'concurrent/atomic/thread_local_var'
 
 module Concurrent
-
   # Re-entrant read-write lock implementation
   #
   # Allows any number of concurrent readers, but only one concurrent writer
@@ -49,7 +48,6 @@ module Concurrent
   #
   # @see http://docs.oracle.com/javase/7/docs/api/java/util/concurrent/locks/ReentrantReadWriteLock.html java.util.concurrent.ReentrantReadWriteLock
   class ReentrantReadWriteLock < Synchronization::Object
-
     # Implementation notes:
     #
     # A goal is to make the uncontended path for both readers/writers mutex-free
@@ -79,9 +77,9 @@ module Concurrent
     #   can starve the other, even under heavy contention
 
     # @!visibility private
-    READER_BITS    = 15
+    READER_BITS = 15
     # @!visibility private
-    WRITER_BITS    = 14
+    WRITER_BITS = 14
 
     # Used with @Counter:
     # @!visibility private
@@ -89,15 +87,15 @@ module Concurrent
     # @!visibility private
     RUNNING_WRITER = 1 << (READER_BITS + WRITER_BITS)
     # @!visibility private
-    MAX_READERS    = WAITING_WRITER - 1
+    MAX_READERS = WAITING_WRITER - 1
     # @!visibility private
-    MAX_WRITERS    = RUNNING_WRITER - MAX_READERS - 1
+    MAX_WRITERS = RUNNING_WRITER - MAX_READERS - 1
 
     # Used with @HeldCount:
     # @!visibility private
     WRITE_LOCK_HELD = 1 << READER_BITS
     # @!visibility private
-    READ_LOCK_MASK  = WRITE_LOCK_HELD - 1
+    READ_LOCK_MASK = WRITE_LOCK_HELD - 1
     # @!visibility private
     WRITE_LOCK_MASK = MAX_WRITERS
 
@@ -106,10 +104,10 @@ module Concurrent
     # Create a new `ReentrantReadWriteLock` in the unlocked state.
     def initialize
       super()
-      @Counter    = AtomicFixnum.new(0)       # single integer which represents lock state
-      @ReadQueue  = Synchronization::Lock.new # used to queue waiting readers
+      @Counter = AtomicFixnum.new(0) # single integer which represents lock state
+      @ReadQueue = Synchronization::Lock.new # used to queue waiting readers
       @WriteQueue = Synchronization::Lock.new # used to queue waiting writers
-      @HeldCount  = ThreadLocalVar.new(0)     # indicates # of R & W locks held by this thread
+      @HeldCount = ThreadLocalVar.new(0) # indicates # of R & W locks held by this thread
     end
 
     # Execute a block operation within a read lock.
@@ -122,7 +120,7 @@ module Concurrent
     # @raise [Concurrent::ResourceLimitError] if the maximum number of readers
     #   is exceeded.
     def with_read_lock
-      raise ArgumentError.new('no block given') unless block_given?
+      raise ArgumentError, 'no block given' unless block_given?
       acquire_read_lock
       begin
         yield
@@ -141,7 +139,7 @@ module Concurrent
     # @raise [Concurrent::ResourceLimitError] if the maximum number of readers
     #   is exceeded.
     def with_write_lock
-      raise ArgumentError.new('no block given') unless block_given?
+      raise ArgumentError, 'no block given' unless block_given?
       acquire_write_lock
       begin
         yield
@@ -169,9 +167,9 @@ module Concurrent
         return true
       end
 
-      while true
+      loop do
         c = @Counter.value
-        raise ResourceLimitError.new('Too many reader threads') if max_readers?(c)
+        raise ResourceLimitError, 'Too many reader threads' if max_readers?(c)
 
         # If a writer is waiting OR running when we first queue up, we need to wait
         if waiting_or_running_writer?(c)
@@ -188,18 +186,18 @@ module Concurrent
 
           # After a reader has waited once, they are allowed to "barge" ahead of waiting writers
           # But if a writer is *running*, the reader still needs to wait (naturally)
-          while true
+          loop do
             c = @Counter.value
             if running_writer?(c)
               @ReadQueue.synchronize do
                 @ReadQueue.ns_wait if running_writer?
               end
-            elsif @Counter.compare_and_set(c, c+1)
+            elsif @Counter.compare_and_set(c, c + 1)
               @HeldCount.value = held + 1
               return true
             end
           end
-        elsif @Counter.compare_and_set(c, c+1)
+        elsif @Counter.compare_and_set(c, c + 1)
           @HeldCount.value = held + 1
           return true
         end
@@ -220,7 +218,7 @@ module Concurrent
         return true
       else
         c = @Counter.value
-        if !waiting_or_running_writer?(c) && @Counter.compare_and_set(c, c+1)
+        if !waiting_or_running_writer?(c) && @Counter.compare_and_set(c, c + 1)
           @HeldCount.value = held + 1
           return true
         end
@@ -237,11 +235,9 @@ module Concurrent
       if rlocks_held == 0
         c = @Counter.update { |counter| counter - 1 }
         # If one or more writers were waiting, and we were the last reader, wake a writer up
-        if waiting_or_running_writer?(c) && running_readers(c) == 0
-          @WriteQueue.signal
-        end
+        @WriteQueue.signal if waiting_or_running_writer?(c) && running_readers(c) == 0
       elsif rlocks_held == READ_LOCK_MASK
-        raise IllegalOperationError, "Cannot release a read lock which is not held"
+        raise IllegalOperationError, 'Cannot release a read lock which is not held'
       end
       true
     end
@@ -259,9 +255,9 @@ module Concurrent
         return true
       end
 
-      while true
+      loop do
         c = @Counter.value
-        raise ResourceLimitError.new('Too many writer threads') if max_writers?(c)
+        raise ResourceLimitError, 'Too many writer threads' if max_writers?(c)
 
         # To go ahead and take the lock without waiting, there must be no writer
         #   running right now, AND no writers who came before us still waiting to
@@ -269,12 +265,12 @@ module Concurrent
         # Additionally, if any read locks have been taken, we must hold all of them
         if c == held
           # If we successfully swap the RUNNING_WRITER bit on, then we can go ahead
-          if @Counter.compare_and_set(c, c+RUNNING_WRITER)
+          if @Counter.compare_and_set(c, c + RUNNING_WRITER)
             @HeldCount.value = held + WRITE_LOCK_HELD
             return true
           end
-        elsif @Counter.compare_and_set(c, c+WAITING_WRITER)
-          while true
+        elsif @Counter.compare_and_set(c, c + WAITING_WRITER)
+          loop do
             # Now we have successfully incremented, so no more readers will be able to increment
             #   (they will wait instead)
             # However, readers OR writers could decrement right here
@@ -294,7 +290,7 @@ module Concurrent
             c = @Counter.value
             if !running_writer?(c) &&
                running_readers(c) == held &&
-               @Counter.compare_and_set(c, c+RUNNING_WRITER-WAITING_WRITER)
+               @Counter.compare_and_set(c, c + RUNNING_WRITER - WAITING_WRITER)
               @HeldCount.value = held + WRITE_LOCK_HELD
               return true
             end
@@ -315,8 +311,8 @@ module Concurrent
         c = @Counter.value
         if !waiting_or_running_writer?(c) &&
            running_readers(c) == held &&
-           @Counter.compare_and_set(c, c+RUNNING_WRITER)
-           @HeldCount.value = held + WRITE_LOCK_HELD
+           @Counter.compare_and_set(c, c + RUNNING_WRITER)
+          @HeldCount.value = held + WRITE_LOCK_HELD
           return true
         end
       end
@@ -334,7 +330,7 @@ module Concurrent
         @ReadQueue.broadcast
         @WriteQueue.signal if waiting_writers(c) > 0
       elsif wlocks_held == WRITE_LOCK_MASK
-        raise IllegalOperationError, "Cannot release a write lock which is not held"
+        raise IllegalOperationError, 'Cannot release a write lock which is not held'
       end
       true
     end

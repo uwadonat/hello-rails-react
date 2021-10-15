@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 Capybara::SpecHelper.spec '#evaluate_async_script', requires: [:js] do
   it 'should evaluate the given script and return whatever it produces' do
     @session.visit('/with_js')

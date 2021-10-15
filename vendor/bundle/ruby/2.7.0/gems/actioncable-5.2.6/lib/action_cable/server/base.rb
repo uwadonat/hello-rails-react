@@ -1,6 +1,4 @@
-# frozen_string_literal: true
-
-require "monitor"
+require 'monitor'
 
 module ActionCable
   module Server
@@ -14,7 +12,9 @@ module ActionCable
 
       cattr_accessor :config, instance_accessor: true, default: ActionCable::Server::Configuration.new
 
-      def self.logger; config.logger; end
+      def self.logger
+        config.logger
+      end
       delegate :logger, to: :config
 
       attr_reader :mutex

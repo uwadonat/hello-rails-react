@@ -55,19 +55,17 @@ module Sprockets
     def resolve_with_compat(path, options = {})
       options = options.dup
       if options.delete(:compat) { true }
-        uri, _ = resolve_without_compat(path, options)
+        uri, = resolve_without_compat(path, options)
         if uri
-          path, _ = parse_asset_uri(uri)
+          path, = parse_asset_uri(uri)
           path
-        else
-          nil
         end
       else
         resolve_without_compat(path, options)
       end
     end
-    alias_method :resolve_without_compat, :resolve
-    alias_method :resolve, :resolve_with_compat
+    alias resolve_without_compat resolve
+    alias resolve resolve_with_compat
 
     # Deprecated: Iterate over all logical paths with a matcher.
     #
@@ -106,11 +104,11 @@ module Sprockets
           next unless stat.file?
 
           path = split_subpath(load_path, filename)
-          path, mime_type, _, _ = parse_path_extnames(path)
+          path, mime_type, = parse_path_extnames(path)
           path = normalize_logical_path(path)
           path += mime_types[mime_type][:extensions].first if mime_type
 
-          if !seen.include?(path)
+          unless seen.include?(path)
             yield path, filename
             seen << path
           end
@@ -135,38 +133,39 @@ module Sprockets
     end
 
     private
-      # Deprecated: Seriously.
-      def matches_filter(filters, logical_path, filename)
-        return true if filters.empty?
 
-        filters.any? do |filter|
-          if filter.is_a?(Regexp)
-            filter.match(logical_path)
-          elsif filter.respond_to?(:call)
-            if filter.arity == 1
-              filter.call(logical_path)
-            else
-              filter.call(logical_path, filename.to_s)
-            end
+    # Deprecated: Seriously.
+    def matches_filter(filters, logical_path, filename)
+      return true if filters.empty?
+
+      filters.any? do |filter|
+        if filter.is_a?(Regexp)
+          filter.match(logical_path)
+        elsif filter.respond_to?(:call)
+          if filter.arity == 1
+            filter.call(logical_path)
           else
-            File.fnmatch(filter.to_s, logical_path)
+            filter.call(logical_path, filename.to_s)
           end
+        else
+          File.fnmatch(filter.to_s, logical_path)
         end
       end
+    end
 
-      # URI.unescape is deprecated on 1.9. We need to use URI::Parser
-      # if its available.
-      if defined? URI::DEFAULT_PARSER
-        def unescape(str)
-          str = URI::DEFAULT_PARSER.unescape(str)
-          str.force_encoding(Encoding.default_internal) if Encoding.default_internal
-          str
-        end
-      else
-        def unescape(str)
-          URI.unescape(str)
-        end
+    # URI.unescape is deprecated on 1.9. We need to use URI::Parser
+    # if its available.
+    if defined? URI::DEFAULT_PARSER
+      def unescape(str)
+        str = URI::DEFAULT_PARSER.unescape(str)
+        str.force_encoding(Encoding.default_internal) if Encoding.default_internal
+        str
       end
+    else
+      def unescape(str)
+        URI.unescape(str)
+      end
+    end
   end
 
   class Asset
@@ -204,7 +203,7 @@ module Sprockets
     #
     # Returns Array of Assets.
     def dependencies
-      to_a.reject { |a| a.filename.eql?(self.filename) }
+      to_a.reject { |a| a.filename.eql?(filename) }
     end
 
     # Deprecated: Returns Time of the last time the source was modified.
@@ -247,20 +246,20 @@ module Sprockets
 
       # Support old :content_type option, prefer :accept going forward
       if type = options.delete(:content_type)
-        type = self.content_type if type == :self
+        type = content_type if type == :self
         options[:accept] ||= type
       end
 
       if options.delete(:compat) { true }
         uri = resolve_without_compat(path, options)
-        path, _ = environment.parse_asset_uri(uri)
+        path, = environment.parse_asset_uri(uri)
         path
       else
         resolve_without_compat(path, options)
       end
     end
-    alias_method :resolve_without_compat, :resolve
-    alias_method :resolve, :resolve_with_compat
+    alias resolve_without_compat resolve
+    alias resolve resolve_with_compat
   end
 
   class Manifest
@@ -287,7 +286,7 @@ module Sprockets
       elsif filter.is_a?(String)
         # If its an absolute path, detect the matching full filename
         if PathUtils.absolute_path?(filter)
-          proc { |logical_path, filename| filename == filter.to_s }
+          proc { |_logical_path, filename| filename == filter.to_s }
         else
           # Otherwise do an fnmatch against the logical path.
           proc { |logical_path| File.fnmatch(filter.to_s, logical_path) }
@@ -306,11 +305,7 @@ module Sprockets
     def self.compute_alias_logical_path(path)
       dirname, basename = File.split(path)
       extname = File.extname(basename)
-      if File.basename(basename, extname) == 'index'
-        "#{dirname}#{extname}"
-      else
-        nil
-      end
+      "#{dirname}#{extname}" if File.basename(basename, extname) == 'index'
     end
 
     # Deprecated: Filter logical paths in environment. Useful for selecting what
@@ -325,6 +320,6 @@ module Sprockets
     end
 
     # Deprecated alias.
-    alias_method :find_logical_paths, :filter_logical_paths
+    alias find_logical_paths filter_logical_paths
   end
 end

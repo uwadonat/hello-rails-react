@@ -179,6 +179,7 @@ module Sass
       super
       @content_cached = nil
     end
+
     # The read-only environment of the caller of this environment's mixin or function.
     #
     # @see BaseEnvironment#caller
@@ -205,9 +206,7 @@ module Sass
       if read_write_content
         tree, env = read_write_content
         # make the content's environment read-only
-        if env && !env.is_a?(ReadOnlyEnvironment)
-          env = ReadOnlyEnvironment.new(env, env.options)
-        end
+        env = ReadOnlyEnvironment.new(env, env.options) if env && !env.is_a?(ReadOnlyEnvironment)
         @content_cached = true
         @content = [tree, env]
       else

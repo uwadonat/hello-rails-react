@@ -1,7 +1,7 @@
 require File.dirname(__FILE__) + '/../spec_helper'
 require File.dirname(__FILE__) + '/fixtures/classes'
 
-describe "IO::Like#getc" do
+describe 'IO::Like#getc' do
   before :each do
     @file_name = File.dirname(__FILE__) + '/fixtures/readlines.txt'
     @file = File.open(@file_name, 'r')
@@ -13,7 +13,7 @@ describe "IO::Like#getc" do
     @file.close unless @file.closed?
   end
 
-  it "returns the next byte from the stream" do
+  it 'returns the next byte from the stream' do
     @iowrapper.getc.should == 86
     @iowrapper.getc.should == 111
     @iowrapper.getc.should == 105
@@ -22,23 +22,23 @@ describe "IO::Like#getc" do
     @iowrapper.getc.should == 81
   end
 
-  it "returns nil when invoked at the end of the stream" do
+  it 'returns nil when invoked at the end of the stream' do
     # read entire content
     @iowrapper.read
-    @iowrapper.getc.should == nil
+    @iowrapper.getc.should.nil?
   end
 
-  it "returns nil on empty stream" do
+  it 'returns nil on empty stream' do
     path = tmp('empty.txt')
-    File.open(path, "w+") do |empty|
+    File.open(path, 'w+') do |empty|
       IOWrapper.open(empty) do |iowrapper|
-        iowrapper.getc.should == nil
+        iowrapper.getc.should.nil?
       end
     end
     File.unlink(path)
   end
 
-  it "raises IOError on closed stream" do
-    lambda { IOSpecs.closed_file.getc }.should raise_error(IOError)
+  it 'raises IOError on closed stream' do
+    -> { IOSpecs.closed_file.getc }.should raise_error(IOError)
   end
 end

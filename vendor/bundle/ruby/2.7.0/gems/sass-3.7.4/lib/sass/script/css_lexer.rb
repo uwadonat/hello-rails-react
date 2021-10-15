@@ -10,7 +10,7 @@ module Sass
         important || super
       end
 
-      def string(re, *args)
+      def string(re, *_args)
         if re == :uri
           uri = scan(URI)
           return unless uri

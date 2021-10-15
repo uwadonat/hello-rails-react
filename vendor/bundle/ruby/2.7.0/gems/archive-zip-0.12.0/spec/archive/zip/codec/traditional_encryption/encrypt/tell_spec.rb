@@ -1,5 +1,3 @@
-# encoding: UTF-8
-
 require 'minitest/autorun'
 
 require File.expand_path('../../fixtures/classes', __FILE__)
@@ -7,8 +5,8 @@ require File.expand_path('../../fixtures/classes', __FILE__)
 require 'archive/zip/codec/traditional_encryption'
 require 'archive/support/binary_stringio'
 
-describe "Archive::Zip::Codec::TraditionalEncryption::Encrypt#tell" do
-  it "returns the current position of the stream" do
+describe 'Archive::Zip::Codec::TraditionalEncryption::Encrypt#tell' do
+  it 'returns the current position of the stream' do
     encrypted_data = BinaryStringIO.new
     Archive::Zip::Codec::TraditionalEncryption::Encrypt.open(
       encrypted_data,
@@ -25,7 +23,7 @@ describe "Archive::Zip::Codec::TraditionalEncryption::Encrypt#tell" do
     end
   end
 
-  it "raises IOError on closed stream" do
+  it 'raises IOError on closed stream' do
     delegate = MiniTest::Mock.new
     delegate.expect(:write, 12, [String])
     delegate.expect(:close, nil)

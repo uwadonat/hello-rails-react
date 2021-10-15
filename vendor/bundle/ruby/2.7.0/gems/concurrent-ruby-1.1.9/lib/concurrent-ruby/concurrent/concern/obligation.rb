@@ -6,7 +6,6 @@ require 'concurrent/concern/dereferenceable'
 
 module Concurrent
   module Concern
-
     module Obligation
       include Concern::Dereferenceable
       # NOTE: The Dereferenceable module is going away in 2.0. In the mean time
@@ -20,7 +19,7 @@ module Concurrent
       def fulfilled?
         state == :fulfilled
       end
-      alias_method :realized?, :fulfilled?
+      alias realized? fulfilled?
 
       # Has the obligation been rejected?
       #
@@ -47,14 +46,14 @@ module Concurrent
       #
       # @return [Boolean]
       def complete?
-        [:fulfilled, :rejected].include? state
+        %i[fulfilled rejected].include? state
       end
 
       # Is the obligation still awaiting completion of processing?
       #
       # @return [Boolean]
       def incomplete?
-        ! complete?
+        !complete?
       end
 
       # The current value of the obligation. Will be `nil` while the state is
@@ -86,7 +85,7 @@ module Concurrent
       def wait!(timeout = nil)
         wait(timeout).tap { raise self if rejected? }
       end
-      alias_method :no_error!, :wait!
+      alias no_error! wait!
 
       # The current value of the obligation. Will be `nil` while the state is
       # pending or the operation has been rejected. Will re-raise any exceptions
@@ -153,7 +152,7 @@ module Concurrent
           @state = :fulfilled
         else
           @reason = reason
-          @state  = :rejected
+          @state = :rejected
         end
       end
 
@@ -189,7 +188,7 @@ module Concurrent
       # @!visibility private
       def if_state(*expected_states)
         synchronize do
-          raise ArgumentError.new('no block given') unless block_given?
+          raise ArgumentError, 'no block given' unless block_given?
 
           if expected_states.include? @state
             yield

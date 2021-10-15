@@ -9,8 +9,8 @@ module Sass::Script::Value
       super(callable)
     end
 
-    def to_s(opts = {})
-      raise Sass::SyntaxError.new("#{to_sass} isn't a valid CSS value.")
+    def to_s(_opts = {})
+      raise Sass::SyntaxError, "#{to_sass} isn't a valid CSS value."
     end
 
     def inspect

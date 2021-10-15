@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 require 'capybara/selenium/nodes/ie_node'
 
 module Capybara::Selenium::Driver::InternetExplorerDriver
@@ -13,7 +11,7 @@ module Capybara::Selenium::Driver::InternetExplorerDriver
     handles.tap(&:pop).each { |fh| browser.switch_to.frame(fh.native) }
   end
 
-private
+  private
 
   def build_node(native_node, initial_cache = {})
     ::Capybara::Selenium::IENode.new(self, native_node, initial_cache)

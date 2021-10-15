@@ -27,12 +27,12 @@ module Sass::Script::Tree
     def to_sass(opts = {})
       operand = @operand.to_sass(opts)
       if @operand.is_a?(Operation) ||
-          (@operator == :minus &&
-           (operand =~ Sass::SCSS::RX::IDENT) == 0)
+         (@operator == :minus &&
+          (operand =~ Sass::SCSS::RX::IDENT) == 0)
         operand = "(#{@operand.to_sass(opts)})"
       end
       op = Sass::Script::Lexer::OPERATORS_REVERSE[@operator]
-      op + (op =~ /[a-z]/ ? " " : "") + operand
+      op + (op =~ /[a-z]/ ? ' ' : '') + operand
     end
 
     # Returns the operand of the operation.
@@ -63,7 +63,7 @@ module Sass::Script::Tree
       value.send(operator)
     rescue NoMethodError => e
       raise e unless e.name.to_s == operator.to_s
-      raise Sass::SyntaxError.new("Undefined unary operation: \"#{@operator} #{value}\".")
+      raise Sass::SyntaxError, "Undefined unary operation: \"#{@operator} #{value}\"."
     end
   end
 end

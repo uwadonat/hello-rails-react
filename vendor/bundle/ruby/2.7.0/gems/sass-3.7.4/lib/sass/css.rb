@@ -27,11 +27,9 @@ module Sass
     # @option options :indent [String] ("  ")
     #     The string to use for indenting each line. Defaults to two spaces.
     def initialize(template, options = {})
-      if template.is_a? IO
-        template = template.read
-      end
+      template = template.read if template.is_a? IO
 
-      @options = options.merge(:_convert => true)
+      @options = options.merge(_convert: true)
       # Backwards compatibility
       @options[:old] = true if @options[:alternate] == false
       @template = template
@@ -47,7 +45,7 @@ module Sass
       check_encoding!
       build_tree.send("to_#{fmt}", @options).strip + "\n"
     rescue Sass::SyntaxError => err
-      err.modify_backtrace(:filename => @options[:filename] || '(css)')
+      err.modify_backtrace(filename: @options[:filename] || '(css)')
       raise err
     end
 
@@ -159,8 +157,9 @@ module Sass
         end
 
         seq = first_seq(child)
-        seq.members.reject! {|sseq| sseq == "\n"}
-        first, rest = seq.members.first, seq.members[1..-1]
+        seq.members.reject! { |sseq| sseq == "\n" }
+        first = seq.members.first
+        rest = seq.members[1..-1]
 
         if current_rule.nil? || first_sseq(current_rule) != first
           current_rule = Tree::RuleNode.new([])
@@ -179,7 +178,7 @@ module Sass
       root.children.compact!
       root.children.uniq!
 
-      root.children.each {|v| nest_seqs(v)}
+      root.children.each { |v| nest_seqs(v) }
     end
 
     # Make rules use parent refs so that
@@ -208,12 +207,13 @@ module Sass
         sseq = first_sseq(child)
         next child unless sseq.is_a?(Sass::Selector::SimpleSequence)
 
-        firsts, rest = [sseq.members.first], sseq.members[1..-1]
+        firsts = [sseq.members.first]
+        rest = sseq.members[1..-1]
         firsts.push rest.shift if firsts.first.is_a?(Sass::Selector::Parent)
 
         last_simple_subject = rest.empty? && sseq.subject?
         if current_rule.nil? || first_sseq(current_rule).members != firsts ||
-            !!first_sseq(current_rule).subject? != !!last_simple_subject
+           !!first_sseq(current_rule).subject? != !!last_simple_subject
           current_rule = Tree::RuleNode.new([])
           current_rule.parsed_rules = make_sseq(last_simple_subject, *firsts)
         end
@@ -231,7 +231,7 @@ module Sass
       root.children.compact!
       root.children.uniq!
 
-      root.children.each {|v| parent_ref_rules(v)}
+      root.children.each { |v| parent_ref_rules(v) }
     end
 
     # Flatten rules so that
@@ -276,11 +276,11 @@ module Sass
       while rule.children.size == 1 && rule.children.first.is_a?(Tree::RuleNode)
         child = rule.children.first
 
-        if first_simple_sel(child).is_a?(Sass::Selector::Parent)
-          rule.parsed_rules = child.parsed_rules.resolve_parent_refs(rule.parsed_rules)
-        else
-          rule.parsed_rules = make_seq(*(first_seq(rule).members + first_seq(child).members))
-        end
+        rule.parsed_rules = if first_simple_sel(child).is_a?(Sass::Selector::Parent)
+                              child.parsed_rules.resolve_parent_refs(rule.parsed_rules)
+                            else
+                              make_seq(*(first_seq(rule).members + first_seq(child).members))
+                            end
 
         rule.children = child.children
       end
@@ -297,7 +297,7 @@ module Sass
           first_simple_sel(c).is_a?(Sass::Selector::Parent) && first_sseq(c).subject?
         end
         first_sseq(child).subject = true
-        child.children.each {|c| first_sseq(c).subject = false}
+        child.children.each { |c| first_sseq(c).subject = false }
       end
     end
 
@@ -324,7 +324,7 @@ module Sass
           next child
         end
 
-        if prev_rule && prev_rule.children.map {|c| c.to_sass} == child.children.map {|c| c.to_sass}
+        if prev_rule && prev_rule.children.map(&:to_sass) == child.children.map(&:to_sass)
           prev_rule.parsed_rules.members << first_seq(child)
           next nil
         end

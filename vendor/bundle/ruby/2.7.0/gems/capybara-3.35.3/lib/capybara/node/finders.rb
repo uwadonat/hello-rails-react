@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 module Capybara
   module Node
     module Finders
@@ -265,7 +263,7 @@ module Capybara
           Result.new([], nil)
         end
       end
-      alias_method :find_all, :all
+      alias find_all all
 
       ##
       #
@@ -286,7 +284,7 @@ module Capybara
         all(*args, **options, &optional_filter_block).first
       end
 
-    private
+      private
 
       def synced_resolve(query)
         synchronize(query.wait) do

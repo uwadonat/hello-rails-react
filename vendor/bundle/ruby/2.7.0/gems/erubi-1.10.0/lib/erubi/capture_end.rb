@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 require 'erubi'
 
 module Erubi
@@ -16,9 +14,9 @@ module Erubi
     #                          expression.  Normally the buffer will be returned anyway, but there
     #                          are cases where the last expression will not be the buffer,
     #                          and therefore a different object will be returned.
-    def initialize(input, properties={})
+    def initialize(input, properties = {})
       properties = Hash[properties]
-      escape = properties.fetch(:escape){properties.fetch(:escape_html, false)}
+      escape = properties.fetch(:escape) { properties.fetch(:escape_html, false) }
       @escape_capture = properties.fetch(:escape_capture, escape)
       @yield_returns_buffer = properties.fetch(:yield_returns_buffer, false)
       @bufval = properties[:bufval] ||= '::String.new'
@@ -41,7 +39,7 @@ module Erubi
       when '|'
         rspace = nil if tailch && !tailch.empty?
         add_text(lspace) if lspace
-        result = @yield_returns_buffer ? " #{@bufvar}; " : ""
+        result = @yield_returns_buffer ? " #{@bufvar}; " : ''
         src << result << code << ")).to_s; ensure; #{@bufvar} = #{@bufstack}.pop; end;"
         add_text(rspace) if rspace
       else

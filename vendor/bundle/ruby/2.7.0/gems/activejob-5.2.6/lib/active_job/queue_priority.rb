@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 module ActiveJob
   module QueuePriority
     extend ActiveSupport::Concern
@@ -20,11 +18,11 @@ module ActiveJob
       #
       # Specify either an argument or a block.
       def queue_with_priority(priority = nil, &block)
-        if block_given?
-          self.priority = block
-        else
-          self.priority = priority
-        end
+        self.priority = if block_given?
+                          block
+                        else
+                          priority
+                        end
       end
     end
 
@@ -34,9 +32,7 @@ module ActiveJob
 
     # Returns the priority that the job will be created with
     def priority
-      if @priority.is_a?(Proc)
-        @priority = instance_exec(&@priority)
-      end
+      @priority = instance_exec(&@priority) if @priority.is_a?(Proc)
       @priority
     end
   end

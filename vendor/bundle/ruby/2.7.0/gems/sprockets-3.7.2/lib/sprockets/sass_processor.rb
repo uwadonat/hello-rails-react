@@ -121,8 +121,8 @@ module Sprockets
         path = path.value
 
         path, _, query, fragment = URI.split(path)[5..8]
-        path     = sprockets_context.asset_path(path, options)
-        query    = "?#{query}" if query
+        path = sprockets_context.asset_path(path, options)
+        query = "?#{query}" if query
         fragment = "##{fragment}" if fragment
 
         Autoload::Sass::Script::String.new("#{path}#{query}#{fragment}", :string)
@@ -252,32 +252,32 @@ module Sprockets
       # Returns a Sass::Script::String.
       def asset_data_url(path)
         url = sprockets_context.asset_data_uri(path.value)
-        Autoload::Sass::Script::String.new("url(" + url + ")")
+        Autoload::Sass::Script::String.new('url(' + url + ')')
       end
 
       protected
-        # Public: The Environment.
-        #
-        # Returns Sprockets::Environment.
-        def sprockets_environment
-          options[:sprockets][:environment]
-        end
 
-        # Public: Mutatable set of dependencies.
-        #
-        # Returns a Set.
-        def sprockets_dependencies
-          options[:sprockets][:dependencies]
-        end
+      # Public: The Environment.
+      #
+      # Returns Sprockets::Environment.
+      def sprockets_environment
+        options[:sprockets][:environment]
+      end
 
-        # Deprecated: Get the Context instance. Use APIs on
-        # sprockets_environment or sprockets_dependencies directly.
-        #
-        # Returns a Context instance.
-        def sprockets_context
-          options[:sprockets][:context]
-        end
+      # Public: Mutatable set of dependencies.
+      #
+      # Returns a Set.
+      def sprockets_dependencies
+        options[:sprockets][:dependencies]
+      end
 
+      # Deprecated: Get the Context instance. Use APIs on
+      # sprockets_environment or sprockets_dependencies directly.
+      #
+      # Returns a Context instance.
+      def sprockets_context
+        options[:sprockets][:context]
+      end
     end
   end
 

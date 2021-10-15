@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 require 'capybara/rspec/matchers/base'
 
 module Capybara
@@ -18,7 +16,7 @@ module Capybara
           "have current path #{current_path.inspect}"
         end
 
-      private
+        private
 
         def current_path
           @args.first

@@ -40,7 +40,7 @@ module Sass::Script::Value
     #   outside of the parser and \{#to\_s} was called on it
     def options
       return @options if @options
-      raise Sass::SyntaxError.new(<<MSG)
+      raise Sass::SyntaxError, <<MSG
 The #options attribute is not set on this #{self.class}.
   This error is probably occurring because #to_s was called
   on this value within a custom Sass function without first
@@ -98,7 +98,7 @@ MSG
     #   without any separation
     def plus(other)
       type = other.is_a?(Sass::Script::Value::String) ? other.type : :identifier
-      Sass::Script::Value::String.new(to_s(:quote => :none) + other.to_s(:quote => :none), type)
+      Sass::Script::Value::String.new(to_s(quote: :none) + other.to_s(quote: :none), type)
     end
 
     # The SassScript `-` operation.
@@ -179,24 +179,30 @@ MSG
     # @return [Integer] The integer value of this value
     # @raise [Sass::SyntaxError] if this value isn't an integer
     def to_i
-      raise Sass::SyntaxError.new("#{inspect} is not an integer.")
+      raise Sass::SyntaxError, "#{inspect} is not an integer."
     end
 
     # @raise [Sass::SyntaxError] if this value isn't an integer
-    def assert_int!; to_i; end
+    def assert_int!
+      to_i
+    end
 
     # Returns the separator for this value. For non-list-like values or the
     # empty list, this will be `nil`. For lists or maps, it will be `:space` or
     # `:comma`.
     #
     # @return [Symbol]
-    def separator; nil; end
+    def separator
+      nil
+    end
 
     # Whether the value is surrounded by square brackets. For non-list values,
     # this will be `false`.
     #
     # @return [Boolean]
-    def bracketed; false; end
+    def bracketed
+      false
+    end
 
     # Returns the value of this value as a list.
     # Single values are considered the same as single-element lists.
@@ -212,7 +218,7 @@ MSG
     # @return [Hash<Value, Value>] This value as a hash
     # @raise [Sass::SyntaxError] if this value doesn't have a hash representation
     def to_h
-      raise Sass::SyntaxError.new("#{inspect} is not a map.")
+      raise Sass::SyntaxError, "#{inspect} is not a map."
     end
 
     # Returns the string representation of this value
@@ -222,10 +228,10 @@ MSG
     #   The preferred quote style for quoted strings. If `:none`, strings are
     #   always emitted unquoted.
     # @return [String]
-    def to_s(opts = {})
+    def to_s(_opts = {})
       Sass::Util.abstract(self)
     end
-    alias_method :to_sass, :to_s
+    alias to_sass to_s
 
     # Returns whether or not this object is null.
     #
@@ -251,7 +257,7 @@ MSG
     #
     # @param environment [Sass::Environment] The environment in which to evaluate the SassScript
     # @return [Value] This value
-    def _perform(environment)
+    def _perform(_environment)
       self
     end
   end

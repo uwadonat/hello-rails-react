@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 Capybara.add_selector(:fillable_field, locator_type: [String, Symbol]) do
   label 'field'
   xpath do |locator, allow_self: nil, **options|

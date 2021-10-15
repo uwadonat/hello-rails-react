@@ -33,7 +33,7 @@ module Sass::Tree::Visitors
     # @return [Object] The return value of the `visit_*` method for this node.
     def visit(node)
       if respond_to?(node.class.visit_method, true)
-        send(node.class.visit_method, node) {visit_children(node)}
+        send(node.class.visit_method, node) { visit_children(node) }
       else
         visit_children(node)
       end
@@ -49,7 +49,7 @@ module Sass::Tree::Visitors
     # @param parent [Tree::Node] The parent node of the children to visit.
     # @return [Array<Object>] The return values of the `visit_*` methods for the children.
     def visit_children(parent)
-      parent.children.map {|c| visit(c)}
+      parent.children.map { |c| visit(c) }
     end
 
     # Returns the name of a node as used in the `visit_*` method.
@@ -57,7 +57,7 @@ module Sass::Tree::Visitors
     # @param [Tree::Node] node The node.
     # @return [String] The name.
     def self.node_name(node)
-      Sass::Util.deprecated(self, "Call node.class.node_name instead.")
+      Sass::Util.deprecated(self, 'Call node.class.node_name instead.')
       node.class.node_name
     end
 

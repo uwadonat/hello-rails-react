@@ -11,10 +11,8 @@
 #++
 
 module Racc
-
   # An "indexed" set.  All items must respond to :ident.
   class ISet
-
     def initialize(a = [])
       @set = a
     end
@@ -48,7 +46,7 @@ module Racc
 
     def update_a(a)
       s = @set
-      a.each {|i| s[i.ident] = i }
+      a.each { |i| s[i.ident] = i }
     end
 
     def delete(key)
@@ -86,7 +84,5 @@ module Racc
     def dup
       ISet.new(@set.dup)
     end
-
-  end   # class ISet
-
-end   # module Racc
+  end # class ISet
+end # module Racc

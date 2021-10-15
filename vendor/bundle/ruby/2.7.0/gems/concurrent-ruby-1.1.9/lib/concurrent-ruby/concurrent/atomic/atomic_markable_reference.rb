@@ -5,7 +5,6 @@ module Concurrent
   # @see http://docs.oracle.com/javase/7/docs/api/java/util/concurrent/atomic/AtomicMarkableReference.html
   #   java.util.concurrent.atomic.AtomicMarkableReference
   class AtomicMarkableReference < ::Concurrent::Synchronization::Object
-
     attr_atomic(:reference)
     private :reference, :reference=, :swap_reference, :compare_and_set_reference, :update_reference
 
@@ -30,7 +29,7 @@ module Concurrent
     def compare_and_set(expected_val, new_val, expected_mark, new_mark)
       # Memoize a valid reference to the current AtomicReference for
       # later comparison.
-      current             = reference
+      current = reference
       curr_val, curr_mark = current
 
       # Ensure that that the expected marks match.
@@ -53,7 +52,7 @@ module Concurrent
       compare_and_set_reference current, prospect
     end
 
-    alias_method :compare_and_swap, :compare_and_set
+    alias compare_and_swap compare_and_set
 
     # Gets the current reference and marked values.
     #
@@ -76,7 +75,7 @@ module Concurrent
       reference[1]
     end
 
-    alias_method :marked?, :mark
+    alias marked? mark
 
     # _Unconditionally_ sets to the given value of both the reference and
     # the mark.
@@ -104,9 +103,7 @@ module Concurrent
         old_val, old_mark = reference
         new_val, new_mark = yield old_val, old_mark
 
-        if compare_and_set old_val, new_val, old_mark, new_mark
-          return immutable_array(new_val, new_mark)
-        end
+        return immutable_array(new_val, new_mark) if compare_and_set old_val, new_val, old_mark, new_mark
       end
     end
 
@@ -127,10 +124,10 @@ module Concurrent
       new_val, new_mark = yield old_val, old_mark
 
       unless compare_and_set old_val, new_val, old_mark, new_mark
-        fail ::Concurrent::ConcurrentUpdateError,
-             'AtomicMarkableReference: Update failed due to race condition.',
-             'Note: If you would like to guarantee an update, please use ' +
-                 'the `AtomicMarkableReference#update` method.'
+        raise ::Concurrent::ConcurrentUpdateError,
+              'AtomicMarkableReference: Update failed due to race condition.',
+              'Note: If you would like to guarantee an update, please use ' \
+              'the `AtomicMarkableReference#update` method.'
       end
 
       immutable_array(new_val, new_mark)

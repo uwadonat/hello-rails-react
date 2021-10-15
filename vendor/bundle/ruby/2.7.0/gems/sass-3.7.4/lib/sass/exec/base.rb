@@ -22,17 +22,17 @@ module Sass::Exec
         # at_exit is a bit of a hack, but it allows us to rethrow when --trace
         # is active and get both the built-in exception formatting and the
         # correct exit code.
-        at_exit {exit Sass::Util.windows? ? 13 : 65} if e.is_a?(Sass::SyntaxError)
+        at_exit { exit Sass::Util.windows? ? 13 : 65 } if e.is_a?(Sass::SyntaxError)
 
         raise e if @options[:trace] || e.is_a?(SystemExit)
 
         if e.is_a?(Sass::SyntaxError)
-          $stderr.puts e.sass_backtrace_str("standard input")
+          warn e.sass_backtrace_str('standard input')
         else
           $stderr.print "#{e.class}: " unless e.class == RuntimeError
-          $stderr.puts e.message.to_s
+          warn e.message.to_s
         end
-        $stderr.puts "  Use --trace for backtrace."
+        warn '  Use --trace for backtrace.'
 
         exit 1
       end
@@ -67,10 +67,8 @@ module Sass::Exec
     def get_line(exception)
       # SyntaxErrors have weird line reporting
       # when there's trailing whitespace
-      if exception.is_a?(::SyntaxError)
-        return (exception.message.scan(/:(\d+)/).first || ["??"]).first
-      end
-      (exception.backtrace[0].scan(/:(\d+)/).first || ["??"]).first
+      return (exception.message.scan(/:(\d+)/).first || ['??']).first if exception.is_a?(::SyntaxError)
+      (exception.backtrace[0].scan(/:(\d+)/).first || ['??']).first
     end
 
     # Tells optparse how to parse the arguments
@@ -80,7 +78,7 @@ module Sass::Exec
     # so they can add their own options.
     #
     # @param opts [OptionParser]
-    def set_opts(opts)
+    def set_opts(_opts)
       Sass::Util.abstract(this)
     end
 
@@ -100,7 +98,8 @@ module Sass::Exec
     # This is meant to be overridden by subclasses
     # so they can run their respective programs.
     def process_result
-      input, output = @options[:input], @options[:output]
+      input = @options[:input]
+      output = @options[:output]
       args = @args.dup
       input ||=
         begin
@@ -110,10 +109,11 @@ module Sass::Exec
         end
       @options[:output_filename] = args.shift
       output ||= @options[:output_filename] || $stdout
-      @options[:input], @options[:output] = input, output
+      @options[:input] = input
+      @options[:output] = output
     end
 
-    COLORS = {:red => 31, :green => 32, :yellow => 33}
+    COLORS = { red: 31, green: 32, yellow: 33 }.freeze
 
     # Prints a status message about performing the given action,
     # colored using the given color (via terminal escapes) if possible.
@@ -151,13 +151,13 @@ module Sass::Exec
       # Almost any real Unix terminal will support color,
       # so we just filter for Windows terms (which don't set TERM)
       # and not-real terminals, which aren't ttys.
-      return str if ENV["TERM"].nil? || ENV["TERM"].empty? || !STDOUT.tty?
+      return str if ENV['TERM'].nil? || ENV['TERM'].empty? || !STDOUT.tty?
       "\e[#{COLORS[color]}m#{str}\e[0m"
     end
 
     def write_output(text, destination)
       if destination.is_a?(String)
-        open_file(destination, 'w') {|file| file.write(text)}
+        open_file(destination, 'w') { |file| file.write(text) }
       else
         destination.write(text)
       end
@@ -177,7 +177,7 @@ module Sass::Exec
     def handle_load_error(err)
       dep = err.message[/^no such file to load -- (.*)/, 1]
       raise err if @options[:trace] || dep.nil? || dep.empty?
-      $stderr.puts <<MESSAGE
+      warn <<MESSAGE
 Required dependency #{dep} not found!
     Run "gem install #{dep}" to get it.
   Use --trace for backtrace.

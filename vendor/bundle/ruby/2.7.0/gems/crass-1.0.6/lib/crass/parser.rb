@@ -1,9 +1,8 @@
-# encoding: utf-8
+
 require_relative 'token-scanner'
 require_relative 'tokenizer'
 
 module Crass
-
   # Parses a CSS string or list of tokens.
   #
   # 5. http://dev.w3.org/csswg/css-syntax/#parsing
@@ -12,7 +11,7 @@ module Crass
       :'{' => :'}',
       :'[' => :']',
       :'(' => :')'
-    }
+    }.freeze
 
     # -- Class Methods ---------------------------------------------------------
 
@@ -35,7 +34,7 @@ module Crass
     # 5.3.3. http://dev.w3.org/csswg/css-syntax/#parse-a-list-of-rules
     def self.parse_rules(input, options = {})
       parser = Parser.new(input, options)
-      rules  = parser.consume_rules
+      rules = parser.consume_rules
 
       rules.map do |rule|
         if rule[:node] == :qualified_rule
@@ -53,7 +52,7 @@ module Crass
     # 5.3.2. http://dev.w3.org/csswg/css-syntax/#parse-a-stylesheet
     def self.parse_stylesheet(input, options = {})
       parser = Parser.new(input, options)
-      rules  = parser.consume_rules(:top_level => true)
+      rules = parser.consume_rules(top_level: true)
 
       rules.map do |rule|
         if rule[:node] == :qualified_rule
@@ -72,8 +71,8 @@ module Crass
     #   * **:exclude_comments** - When `true`, comments will be excluded.
     #
     def self.stringify(nodes, options = {})
-      nodes  = [nodes] unless nodes.is_a?(Array)
-      string = String.new
+      nodes = [nodes] unless nodes.is_a?(Array)
+      string = ''
 
       nodes.each do |node|
         next if node.nil?
@@ -82,10 +81,10 @@ module Crass
         when :at_rule
           string << '@'
           string << node[:name]
-          string << self.stringify(node[:prelude], options)
+          string << stringify(node[:prelude], options)
 
           if node[:block]
-            string << '{' << self.stringify(node[:block], options) << '}'
+            string << '{' << stringify(node[:block], options) << '}'
           else
             string << ';'
           end
@@ -95,18 +94,18 @@ module Crass
 
         when :simple_block
           string << node[:start]
-          string << self.stringify(node[:value], options)
+          string << stringify(node[:value], options)
           string << node[:end]
 
         when :style_rule
-          string << self.stringify(node[:selector][:tokens], options)
-          string << '{' << self.stringify(node[:children], options) << '}'
+          string << stringify(node[:selector][:tokens], options)
+          string << '{' << stringify(node[:children], options) << '}'
 
         else
           if node.key?(:raw)
             string << node[:raw]
           elsif node.key?(:tokens)
-            string << self.stringify(node[:tokens], options)
+            string << stringify(node[:tokens], options)
           end
         end
       end
@@ -124,9 +123,7 @@ module Crass
     #
     # See {Tokenizer#initialize} for _options_.
     def initialize(input, options = {})
-      unless input.kind_of?(Enumerable)
-        input = Tokenizer.tokenize(input, options)
-      end
+      input = Tokenizer.tokenize(input, options) unless input.is_a?(Enumerable)
 
       @tokens = TokenScanner.new(input)
     end
@@ -138,7 +135,7 @@ module Crass
       rule = {}
 
       rule[:tokens] = input.collect do
-        rule[:name]    = input.consume[:value]
+        rule[:name] = input.consume[:value]
         rule[:prelude] = []
 
         while token = input.consume
@@ -208,7 +205,7 @@ module Crass
     # 5.4.5. http://dev.w3.org/csswg/css-syntax-3/#consume-a-declaration
     def consume_declaration(input = @tokens)
       declaration = {}
-      value       = []
+      value = []
 
       declaration[:tokens] = input.collect do
         declaration[:name] = input.consume[:value]
@@ -225,27 +222,25 @@ module Crass
           #
           # Note: The spec explicitly says to return nothing here, but Simon
           # Sapin's CSS parsing tests expect an error node.
-          return create_node(:error, :value => 'invalid')
+          return create_node(:error, value: 'invalid')
         end
 
         input.consume
 
-        until input.peek.nil?
-          value << consume_component_value(input)
-        end
+        value << consume_component_value(input) until input.peek.nil?
       end
 
       # Look for !important.
-      important_tokens = value.reject {|token|
+      important_tokens = value.reject do |token|
         node = token[:node]
         node == :whitespace || node == :comment || node == :semicolon
-      }.last(2)
+      end.last(2)
 
       if important_tokens.size == 2 &&
-          important_tokens[0][:node] == :delim &&
-          important_tokens[0][:value] == '!' &&
-          important_tokens[1][:node] == :ident &&
-          important_tokens[1][:value].downcase == 'important'
+         important_tokens[0][:node] == :delim &&
+         important_tokens[0][:value] == '!' &&
+         important_tokens[1][:node] == :ident &&
+         important_tokens[1][:value].casecmp('important').zero?
 
         declaration[:important] = true
         excl_index = value.index(important_tokens[0])
@@ -307,7 +302,7 @@ module Crass
           # Note: The spec doesn't say we should append anything to the list of
           # declarations here, but Simon Sapin's CSS parsing tests expect an
           # error node.
-          declarations << create_node(:error, :value => 'invalid')
+          declarations << create_node(:error, value: 'invalid')
           input.reconsume
 
           while next_token = input.peek
@@ -325,12 +320,12 @@ module Crass
     # 5.4.8. http://dev.w3.org/csswg/css-syntax-3/#consume-a-function
     def consume_function(input = @tokens)
       function = {
-        :name   => input.current[:value],
-        :value  => [],
-        :tokens => [input.current] # Non-standard, used for serialization.
+        name: input.current[:value],
+        value: [],
+        tokens: [input.current] # Non-standard, used for serialization.
       }
 
-      function[:tokens].concat(input.collect {
+      function[:tokens].concat(input.collect do
         while token = input.consume
           case token[:node]
           when :')'
@@ -345,7 +340,7 @@ module Crass
             function[:value] << consume_component_value(input)
           end
         end
-      })
+      end)
 
       create_node(:function, function)
     end
@@ -355,16 +350,16 @@ module Crass
     #
     # 5.4.3. http://dev.w3.org/csswg/css-syntax-3/#consume-a-qualified-rule
     def consume_qualified_rule(input = @tokens)
-      rule = {:prelude => []}
+      rule = { prelude: [] }
 
       rule[:tokens] = input.collect do
-        while true
+        loop do
           unless token = input.consume
             # Parse error.
             #
             # Note: The spec explicitly says to return nothing here, but Simon
             # Sapin's CSS parsing tests expect an error node.
-            return create_node(:error, :value => 'invalid')
+            return create_node(:error, value: 'invalid')
           end
 
           if token[:node] == :'{'
@@ -433,13 +428,13 @@ module Crass
     # 5.4.7. http://dev.w3.org/csswg/css-syntax/#consume-a-simple-block
     def consume_simple_block(input = @tokens)
       start_token = input.current[:node]
-      end_token   = BLOCK_END_TOKENS[start_token]
+      end_token = BLOCK_END_TOKENS[start_token]
 
       block = {
-        :start  => start_token.to_s,
-        :end    => end_token.to_s,
-        :value  => [],
-        :tokens => [input.current] # Non-standard. Used for serialization.
+        start: start_token.to_s,
+        end: end_token.to_s,
+        value: [],
+        tokens: [input.current] # Non-standard. Used for serialization.
       }
 
       block[:tokens].concat(input.collect do
@@ -456,7 +451,7 @@ module Crass
 
     # Creates and returns a new parse node with the given _properties_.
     def create_node(type, properties = {})
-      {:node => type}.merge!(properties)
+      { node: type }.merge!(properties)
     end
 
     # Parses the given _input_ tokens into a selector node and returns it.
@@ -465,16 +460,16 @@ module Crass
     # validating them. Feel free to do that yourself! It'll be fun!
     def create_selector(input)
       create_node(:selector,
-        :value  => parse_value(input),
-        :tokens => input)
+                  value: parse_value(input),
+                  tokens: input)
     end
 
     # Creates a `:style_rule` node from the given qualified _rule_, and returns
     # it.
     def create_style_rule(rule)
       create_node(:style_rule,
-        :selector => create_selector(rule[:prelude]),
-        :children => parse_properties(rule[:block]))
+                  selector: create_selector(rule[:prelude]),
+                  children: parse_properties(rule[:block]))
     end
 
     # Parses a single component value and returns it.
@@ -483,24 +478,18 @@ module Crass
     def parse_component_value(input = @tokens)
       input = TokenScanner.new(input) unless input.is_a?(TokenScanner)
 
-      while input.peek && input.peek[:node] == :whitespace
-        input.consume
-      end
+      input.consume while input.peek && input.peek[:node] == :whitespace
 
-      if input.peek.nil?
-        return create_node(:error, :value => 'empty')
-      end
+      return create_node(:error, value: 'empty') if input.peek.nil?
 
       value = consume_component_value(input)
 
-      while input.peek && input.peek[:node] == :whitespace
-        input.consume
-      end
+      input.consume while input.peek && input.peek[:node] == :whitespace
 
       if input.peek.nil?
         value
       else
-        create_node(:error, :value => 'extra-input')
+        create_node(:error, value: 'extra-input')
       end
     end
 
@@ -508,7 +497,7 @@ module Crass
     #
     # 5.3.8. http://dev.w3.org/csswg/css-syntax/#parse-a-list-of-component-values
     def parse_component_values(input = @tokens)
-      input  = TokenScanner.new(input) unless input.is_a?(TokenScanner)
+      input = TokenScanner.new(input) unless input.is_a?(TokenScanner)
       tokens = []
 
       while token = consume_component_value(input)
@@ -524,16 +513,14 @@ module Crass
     def parse_declaration(input = @tokens)
       input = TokenScanner.new(input) unless input.is_a?(TokenScanner)
 
-      while input.peek && input.peek[:node] == :whitespace
-        input.consume
-      end
+      input.consume while input.peek && input.peek[:node] == :whitespace
 
       if input.peek.nil?
         # Syntax error.
-        return create_node(:error, :value => 'empty')
+        return create_node(:error, value: 'empty')
       elsif input.peek[:node] != :ident
         # Syntax error.
-        return create_node(:error, :value => 'invalid')
+        return create_node(:error, value: 'invalid')
       end
 
       if decl = consume_declaration(input)
@@ -541,7 +528,7 @@ module Crass
       end
 
       # Syntax error.
-      create_node(:error, :value => 'invalid')
+      create_node(:error, value: 'invalid')
     end
 
     # Parses a list of declarations and returns them.
@@ -570,11 +557,11 @@ module Crass
         children.pop if children.last && children.last[:node] == :semicolon
 
         properties << create_node(:property,
-          :name      => decl[:name],
-          :value     => parse_value(decl[:value]),
-          :children  => children,
-          :important => decl[:important],
-          :tokens    => decl[:tokens])
+                                  name: decl[:name],
+                                  value: parse_value(decl[:value]),
+                                  children: children,
+                                  important: decl[:important],
+                                  tokens: decl[:tokens])
       end
 
       properties
@@ -586,35 +573,31 @@ module Crass
     def parse_rule(input = @tokens)
       input = TokenScanner.new(input) unless input.is_a?(TokenScanner)
 
-      while input.peek && input.peek[:node] == :whitespace
-        input.consume
-      end
+      input.consume while input.peek && input.peek[:node] == :whitespace
 
       if input.peek.nil?
         # Syntax error.
-        return create_node(:error, :value => 'empty')
+        return create_node(:error, value: 'empty')
       elsif input.peek[:node] == :at_keyword
         rule = consume_at_rule(input)
       else
         rule = consume_qualified_rule(input)
       end
 
-      while input.peek && input.peek[:node] == :whitespace
-        input.consume
-      end
+      input.consume while input.peek && input.peek[:node] == :whitespace
 
       if input.peek.nil?
         rule
       else
         # Syntax error.
-        create_node(:error, :value => 'extra-input')
+        create_node(:error, value: 'extra-input')
       end
     end
 
     # Returns the unescaped value of a selector name or property declaration.
     def parse_value(nodes)
-      nodes  = [nodes] unless nodes.is_a?(Array)
-      string = String.new
+      nodes = [nodes] unless nodes.is_a?(Array)
+      string = ''
 
       nodes.each do |node|
         case node[:node]
@@ -644,5 +627,4 @@ module Crass
       string.strip
     end
   end
-
 end

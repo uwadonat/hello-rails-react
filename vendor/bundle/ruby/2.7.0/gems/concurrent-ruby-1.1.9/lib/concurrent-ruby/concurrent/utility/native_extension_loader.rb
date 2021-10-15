@@ -1,12 +1,9 @@
 require 'concurrent/utility/engine'
 
 module Concurrent
-
   module Utility
-
     # @!visibility private
     module NativeExtensionLoader
-
       def allow_c_extensions?
         Concurrent.on_cruby?
       end
@@ -26,8 +23,7 @@ module Concurrent
 
         if Concurrent.on_cruby? && !c_extensions_loaded?
           ['concurrent/concurrent_ruby_ext',
-           "concurrent/#{RUBY_VERSION[0..2]}/concurrent_ruby_ext"
-          ].each { |p| try_load_c_extension p }
+           "concurrent/#{RUBY_VERSION[0..2]}/concurrent_ruby_ext"].each { |p| try_load_c_extension p }
         end
 
         if Concurrent.on_jruby? && !java_extensions_loaded?
@@ -69,11 +65,9 @@ module Concurrent
           raise e
         end
       end
-
     end
   end
 
   # @!visibility private
   extend Utility::NativeExtensionLoader
 end
-

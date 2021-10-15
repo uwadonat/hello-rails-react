@@ -30,22 +30,22 @@ module Sprockets
     #   Manifest.new(environment, "./public/assets/manifest.json")
     #
     def initialize(*args)
-      if args.first.is_a?(Base) || args.first.nil?
-        @environment = args.shift
-      end
+      @environment = args.shift if args.first.is_a?(Base) || args.first.nil?
 
-      @directory, @filename = args[0], args[1]
+      @directory = args[0]
+      @filename = args[1]
 
       # Whether the manifest file is using the old manifest-*.json naming convention
       @legacy_manifest = false
 
       # Expand paths
       @directory = File.expand_path(@directory) if @directory
-      @filename  = File.expand_path(@filename) if @filename
+      @filename = File.expand_path(@filename) if @filename
 
       # If filename is given as the second arg
-      if @directory && File.extname(@directory) != ""
-        @directory, @filename = nil, @directory
+      if @directory && File.extname(@directory) != ''
+        @filename = @directory
+        @directory = nil
       end
 
       # Default dir to the directory of the filename
@@ -57,21 +57,17 @@ module Sprockets
         @filename = find_directory_manifest(@directory)
 
         # If legacy manifest name autodetected, mark to rename on save
-        if File.basename(@filename).start_with?("manifest")
+        if File.basename(@filename).start_with?('manifest')
           @rename_filename = File.join(@directory, generate_manifest_path)
         end
       end
 
-      unless @directory && @filename
-        raise ArgumentError, "manifest requires output filename"
-      end
+      raise ArgumentError, 'manifest requires output filename' unless @directory && @filename
 
       data = {}
 
       begin
-        if File.exist?(@filename)
-          data = json_decode(File.read(@filename))
-        end
+        data = json_decode(File.read(@filename)) if File.exist?(@filename)
       rescue JSON::ParserError => e
         logger.error "#{@filename} is invalid: #{e.class} #{e.message}"
       end
@@ -81,10 +77,10 @@ module Sprockets
 
     # Returns String path to manifest.json file.
     attr_reader :filename
-    alias_method :path, :filename
+    alias path filename
 
     attr_reader :directory
-    alias_method :dir, :directory
+    alias dir directory
 
     # Returns internal assets mapping. Keys are logical paths which
     # map to the latest fingerprinted filename.
@@ -119,9 +115,7 @@ module Sprockets
     #
     # Returns Enumerator of Assets.
     def find(*args)
-      unless environment
-        raise Error, "manifest requires environment for compilation"
-      end
+      raise Error, 'manifest requires environment for compilation' unless environment
 
       return to_enum(__method__, *args) unless block_given?
 
@@ -175,13 +169,11 @@ module Sprockets
     #   compile("application.js")
     #
     def compile(*args)
-      unless environment
-        raise Error, "manifest requires environment for compilation"
-      end
+      raise Error, 'manifest requires environment for compilation' unless environment
 
-      filenames              = []
+      filenames = []
       concurrent_compressors = []
-      concurrent_writers     = []
+      concurrent_writers = []
 
       find(*args) do |asset|
         files[asset.digest_path] = {
@@ -189,7 +181,6 @@ module Sprockets
           'mtime'        => asset.mtime.iso8601,
           'size'         => asset.bytesize,
           'digest'       => asset.hexdigest,
-
           # Deprecated: Remove beta integrity attribute in next release.
           # Callers should DigestUtils.hexdigest_integrity_uri to compute the
           # digest themselves.
@@ -225,7 +216,6 @@ module Sprockets
             gzip.compress(target)
           end
         end
-
       end
       concurrent_writers.each(&:wait!)
       concurrent_compressors.each(&:wait!)
@@ -244,9 +234,7 @@ module Sprockets
       gzip = "#{path}.gz"
       logical_path = files[filename]['logical_path']
 
-      if assets[logical_path] == filename
-        assets.delete(logical_path)
-      end
+      assets.delete(logical_path) if assets[logical_path] == filename
 
       files.delete(filename)
       FileUtils.rm(path) if File.exist?(path)
@@ -275,19 +263,19 @@ module Sprockets
       asset_versions.each do |logical_path, versions|
         current = assets[logical_path]
 
-        versions.reject { |path, _|
+        versions.reject do |path, _|
           path == current
-        }.sort_by { |_, attrs|
+        end.sort_by do |_, attrs|
           # Sort by timestamp
           Time.parse(attrs['mtime'])
-        }.reverse.each_with_index.drop_while { |(_, attrs), index|
+        end.reverse.each_with_index.drop_while do |(_, attrs), index|
           _age = [0, Time.now - Time.parse(attrs['mtime'])].max
           # Keep if under age or within the count limit
           _age < age || index < count
-        }.each { |(path, _), _|
-           # Remove old assets
+        end.each do |(path, _), _|
+          # Remove old assets
           remove(path)
-        }
+        end
       end
     end
 
@@ -315,22 +303,23 @@ module Sprockets
     end
 
     private
-      def json_decode(obj)
-        JSON.parse(obj, create_additions: false)
-      end
 
-      def json_encode(obj)
-        JSON.generate(obj)
-      end
+    def json_decode(obj)
+      JSON.parse(obj, create_additions: false)
+    end
 
-      def logger
-        if environment
-          environment.logger
-        else
-          logger = Logger.new($stderr)
-          logger.level = Logger::FATAL
-          logger
-        end
+    def json_encode(obj)
+      JSON.generate(obj)
+    end
+
+    def logger
+      if environment
+        environment.logger
+      else
+        logger = Logger.new($stderr)
+        logger.level = Logger::FATAL
+        logger
       end
+    end
   end
 end

@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 require 'spec_helper'
 require 'selenium-webdriver'
 require 'shared_selenium_session'
@@ -74,7 +72,7 @@ Capybara::SpecHelper.run_specs TestSessions::SeleniumFirefox, 'selenium', capyba
   end
 end
 
-RSpec.describe 'Capybara::Session with firefox' do # rubocop:disable RSpec/MultipleDescribes
+RSpec.describe 'Capybara::Session with firefox' do
   include Capybara::SpecHelper
   ['Capybara::Session', 'Capybara::Node', Capybara::RSpecMatchers].each do |examples|
     include_examples examples, TestSessions::SeleniumFirefox, :selenium_firefox

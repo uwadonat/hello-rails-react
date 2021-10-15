@@ -3,7 +3,6 @@ require 'concurrent/atomic/ruby_thread_local_var'
 require 'concurrent/atomic/java_thread_local_var'
 
 module Concurrent
-
   ###################################################################
 
   # @!macro thread_local_var_method_initialize
@@ -36,7 +35,6 @@ module Concurrent
   #   @yield the operation to be performed with the bound variable
   #   @return [Object] the value
 
-
   ###################################################################
 
   # @!macro thread_local_var_public_api
@@ -57,8 +55,7 @@ module Concurrent
 
   # @!visibility private
   # @!macro internal_implementation_note
-  ThreadLocalVarImplementation = case
-                                 when Concurrent.on_jruby?
+  ThreadLocalVarImplementation = if Concurrent.on_jruby?
                                    JavaThreadLocalVar
                                  else
                                    RubyThreadLocalVar

@@ -1,5 +1,5 @@
-require "spring/watcher/abstract"
-require "spring/configuration"
+require 'spring/watcher/abstract'
+require 'spring/configuration'
 
 module Spring
   class << self
@@ -13,7 +13,7 @@ module Spring
       @watch_method = method
     else
       require "spring/watcher/#{method}"
-      @watch_method = Watcher.const_get(method.to_s.gsub(/(^.|_.)/) { $1[-1].upcase })
+      @watch_method = Watcher.const_get(method.to_s.gsub(/(^.|_.)/) { Regexp.last_match(1)[-1].upcase })
     end
   end
 

@@ -22,7 +22,7 @@ module Sass::Media
     # @param other [QueryList]
     # @return [QueryList?] The merged list, or nil if there is no intersection.
     def merge(other)
-      new_queries = queries.map {|q1| other.queries.map {|q2| q1.merge(q2)}}.flatten.compact
+      new_queries = queries.map { |q1| other.queries.map { |q2| q1.merge(q2) } }.flatten.compact
       return if new_queries.empty?
       QueryList.new(new_queries)
     end
@@ -31,7 +31,7 @@ module Sass::Media
     #
     # @return [String]
     def to_css
-      queries.map {|q| q.to_css}.join(', ')
+      queries.map(&:to_css).join(', ')
     end
 
     # Returns the Sass/SCSS code for the media query list.
@@ -39,7 +39,7 @@ module Sass::Media
     # @param options [{Symbol => Object}] An options hash (see {Sass::CSS#initialize}).
     # @return [String]
     def to_src(options)
-      queries.map {|q| q.to_src(options)}.join(', ')
+      queries.map { |q| q.to_src(options) }.join(', ')
     end
 
     # Returns a representation of the query as an array of strings and
@@ -49,14 +49,14 @@ module Sass::Media
     #
     # @return [Array<String, Sass::Script::Tree::Node>]
     def to_a
-      Sass::Util.intersperse(queries.map {|q| q.to_a}, ', ').flatten
+      Sass::Util.intersperse(queries.map(&:to_a), ', ').flatten
     end
 
     # Returns a deep copy of this query list and all its children.
     #
     # @return [QueryList]
     def deep_copy
-      QueryList.new(queries.map {|q| q.deep_copy})
+      QueryList.new(queries.map(&:deep_copy))
     end
   end
 
@@ -121,8 +121,10 @@ module Sass::Media
     # @param other [Query]
     # @return [Query?] The merged query, or nil if there is no intersection.
     def merge(other)
-      m1, t1 = resolved_modifier.downcase, resolved_type.downcase
-      m2, t2 = other.resolved_modifier.downcase, other.resolved_type.downcase
+      m1 = resolved_modifier.downcase
+      t1 = resolved_type.downcase
+      m2 = other.resolved_modifier.downcase
+      t2 = other.resolved_type.downcase
       t1 = t2 if t1.empty?
       t2 = t1 if t2.empty?
       if (m1 == 'not') ^ (m2 == 'not')
@@ -156,7 +158,7 @@ module Sass::Media
         # It's possible for there to be script nodes in Expressions even when
         # we're converting to CSS in the case where we parsed the document as
         # CSS originally (as in css_test.rb).
-        e.map {|c| c.is_a?(Sass::Script::Tree::Node) ? c.to_sass : c.to_s}.join
+        e.map { |c| c.is_a?(Sass::Script::Tree::Node) ? c.to_sass : c.to_s }.join
       end.join(' and ')
       css
     end
@@ -193,9 +195,10 @@ module Sass::Media
     # @return [Query]
     def deep_copy
       Query.new(
-        modifier.map {|c| c.is_a?(Sass::Script::Tree::Node) ? c.deep_copy : c},
-        type.map {|c| c.is_a?(Sass::Script::Tree::Node) ? c.deep_copy : c},
-        expressions.map {|e| e.map {|c| c.is_a?(Sass::Script::Tree::Node) ? c.deep_copy : c}})
+        modifier.map { |c| c.is_a?(Sass::Script::Tree::Node) ? c.deep_copy : c },
+        type.map { |c| c.is_a?(Sass::Script::Tree::Node) ? c.deep_copy : c },
+        expressions.map { |e| e.map { |c| c.is_a?(Sass::Script::Tree::Node) ? c.deep_copy : c } }
+      )
     end
   end
 
@@ -205,6 +208,6 @@ module Sass::Media
   # @param options [{Symbol => Object}] An options hash (see {Sass::CSS#initialize}).
   # @return [String]
   def self._interp_to_src(interp, options)
-    interp.map {|r| r.is_a?(String) ? r : r.to_sass(options)}.join
+    interp.map { |r| r.is_a?(String) ? r : r.to_sass(options) }.join
   end
 end

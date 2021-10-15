@@ -33,8 +33,8 @@ module Sass::Script::Tree
       o2 = operand_to_sass @operand2, :right, opts
       sep =
         case @operator
-        when :comma; ", "
-        when :space; " "
+        when :comma then ', '
+        when :space then ' '
         else; " #{Sass::Script::Lexer::OPERATORS_REVERSE[@operator]} "
         end
       "#{o1}#{sep}#{o2}"
@@ -76,16 +76,15 @@ module Sass::Script::Tree
       value2 = @operand2.perform(environment)
 
       if (value1.is_a?(Sass::Script::Value::Null) || value2.is_a?(Sass::Script::Value::Null)) &&
-          @operator != :eq && @operator != :neq
-        raise Sass::SyntaxError.new(
-          "Invalid null operation: \"#{value1.inspect} #{@operator} #{value2.inspect}\".")
+         @operator != :eq && @operator != :neq
+        raise Sass::SyntaxError, "Invalid null operation: \"#{value1.inspect} #{@operator} #{value2.inspect}\"."
       end
 
       begin
         result = opts(value1.send(@operator, value2))
       rescue NoMethodError => e
         raise e unless e.name.to_s == @operator.to_s
-        raise Sass::SyntaxError.new("Undefined operation: \"#{value1} #{@operator} #{value2}\".")
+        raise Sass::SyntaxError, "Undefined operation: \"#{value1} #{@operator} #{value2}\"."
       end
 
       warn_for_color_arithmetic(value1, value2)
@@ -142,7 +141,7 @@ WARNING
       sub_pred = Sass::Script::Parser.precedence_of(op.operator)
       assoc = Sass::Script::Parser.associative?(@operator)
       return "(#{op.to_sass(opts)})" if sub_pred < pred ||
-        (side == :right && sub_pred == pred && !assoc)
+                                        (side == :right && sub_pred == pred && !assoc)
       op.to_sass(opts)
     end
   end

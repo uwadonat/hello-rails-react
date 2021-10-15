@@ -1,6 +1,5 @@
 module Concurrent
   module Synchronization
-
     # @!visibility private
     module RbxAttrVolatile
       def self.included(base)
@@ -8,7 +7,6 @@ module Concurrent
       end
 
       module ClassMethods
-
         def attr_volatile(*names)
           names.each do |name|
             ivar = :"@volatile_#{name}"
@@ -26,7 +24,6 @@ module Concurrent
           end
           names.map { |n| [n, :"#{n}="] }.flatten
         end
-
       end
 
       def full_memory_barrier

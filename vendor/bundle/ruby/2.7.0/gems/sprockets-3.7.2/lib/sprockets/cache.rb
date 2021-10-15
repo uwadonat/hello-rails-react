@@ -37,14 +37,14 @@ module Sprockets
   #
   class Cache
     # Builtin cache stores.
-    autoload :FileStore,   'sprockets/cache/file_store'
+    autoload :FileStore, 'sprockets/cache/file_store'
     autoload :MemoryStore, 'sprockets/cache/memory_store'
-    autoload :NullStore,   'sprockets/cache/null_store'
+    autoload :NullStore, 'sprockets/cache/null_store'
 
     # Internal: Cache key version for this class. Rarely should have to change
     # unless the cache format radically changes. Will be bump on major version
     # releases though.
-    VERSION = '3.0'
+    VERSION = '3.0'.freeze
 
     def self.default_logger
       logger = Logger.new($stderr)
@@ -60,8 +60,8 @@ module Sprockets
     # cache - A compatible backend cache store instance.
     def initialize(cache = nil, logger = self.class.default_logger)
       @cache_wrapper = get_cache_wrapper(cache)
-      @fetch_cache   = Cache::MemoryStore.new(1024)
-      @logger        = logger
+      @fetch_cache = Cache::MemoryStore.new(1024)
+      @logger = logger
     end
 
     # Public: Prefer API to retrieve and set values in the cache store.
@@ -144,93 +144,94 @@ module Sprockets
     end
 
     private
-      # Internal: Expand object cache key into a short String key.
-      #
-      # The String should be under 250 characters so its compatible with
-      # Memcache.
-      #
-      # key - JSON serializable key
-      #
-      # Returns a String with a length less than 250 characters.
-      def expand_key(key)
-        digest_key = DigestUtils.pack_urlsafe_base64digest(DigestUtils.digest(key))
-        namespace = digest_key[0, 2]
-        "sprockets/v#{VERSION}/#{namespace}/#{digest_key}"
+
+    # Internal: Expand object cache key into a short String key.
+    #
+    # The String should be under 250 characters so its compatible with
+    # Memcache.
+    #
+    # key - JSON serializable key
+    #
+    # Returns a String with a length less than 250 characters.
+    def expand_key(key)
+      digest_key = DigestUtils.pack_urlsafe_base64digest(DigestUtils.digest(key))
+      namespace = digest_key[0, 2]
+      "sprockets/v#{VERSION}/#{namespace}/#{digest_key}"
+    end
+
+    PEEK_SIZE = 100
+
+    # Internal: Show first 100 characters of cache key for logging purposes.
+    #
+    # Returns a String with a length less than 100 characters.
+    def peek_key(key)
+      case key
+      when Integer
+        key.to_s
+      when String
+        key[0, PEEK_SIZE].inspect
+      when Array
+        str = []
+        key.each { |k| str << peek_key(k) }
+        str.join(':')[0, PEEK_SIZE]
+      else
+        peek_key(DigestUtils.pack_urlsafe_base64digest(DigestUtils.digest(key)))
+      end
+    end
+
+    def get_cache_wrapper(cache)
+      if cache.is_a?(Cache)
+        cache
+
+      # `Cache#get(key)` for Memcache
+      elsif cache.respond_to?(:get)
+        GetWrapper.new(cache)
+
+      # `Cache#[key]` so `Hash` can be used
+      elsif cache.respond_to?(:[])
+        HashWrapper.new(cache)
+
+      # `Cache#read(key)` for `ActiveSupport::Cache` support
+      elsif cache.respond_to?(:read)
+        ReadWriteWrapper.new(cache)
+
+      else
+        cache = Sprockets::Cache::NullStore.new
+        GetWrapper.new(cache)
+      end
+    end
+
+    class Wrapper < Struct.new(:cache)
+    end
+
+    class GetWrapper < Wrapper
+      def get(key)
+        cache.get(key)
       end
 
-      PEEK_SIZE = 100
+      def set(key, value)
+        cache.set(key, value)
+      end
+    end
 
-      # Internal: Show first 100 characters of cache key for logging purposes.
-      #
-      # Returns a String with a length less than 100 characters.
-      def peek_key(key)
-        case key
-        when Integer
-          key.to_s
-        when String
-          key[0, PEEK_SIZE].inspect
-        when Array
-          str = []
-          key.each { |k| str << peek_key(k) }
-          str.join(':')[0, PEEK_SIZE]
-        else
-          peek_key(DigestUtils.pack_urlsafe_base64digest(DigestUtils.digest(key)))
-        end
+    class HashWrapper < Wrapper
+      def get(key)
+        cache[key]
       end
 
-      def get_cache_wrapper(cache)
-        if cache.is_a?(Cache)
-          cache
+      def set(key, value)
+        cache[key] = value
+      end
+    end
 
-        # `Cache#get(key)` for Memcache
-        elsif cache.respond_to?(:get)
-          GetWrapper.new(cache)
-
-        # `Cache#[key]` so `Hash` can be used
-        elsif cache.respond_to?(:[])
-          HashWrapper.new(cache)
-
-        # `Cache#read(key)` for `ActiveSupport::Cache` support
-        elsif cache.respond_to?(:read)
-          ReadWriteWrapper.new(cache)
-
-        else
-          cache = Sprockets::Cache::NullStore.new
-          GetWrapper.new(cache)
-        end
+    class ReadWriteWrapper < Wrapper
+      def get(key)
+        cache.read(key)
       end
 
-      class Wrapper < Struct.new(:cache)
+      def set(key, value)
+        cache.write(key, value)
       end
-
-      class GetWrapper < Wrapper
-        def get(key)
-          cache.get(key)
-        end
-
-        def set(key, value)
-          cache.set(key, value)
-        end
-      end
-
-      class HashWrapper < Wrapper
-        def get(key)
-          cache[key]
-        end
-
-        def set(key, value)
-          cache[key] = value
-        end
-      end
-
-      class ReadWriteWrapper < Wrapper
-        def get(key)
-          cache.read(key)
-        end
-
-        def set(key, value)
-          cache.write(key, value)
-        end
-      end
+    end
   end
 end

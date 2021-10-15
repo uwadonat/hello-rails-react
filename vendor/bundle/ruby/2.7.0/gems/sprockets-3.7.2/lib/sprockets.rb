@@ -1,4 +1,4 @@
-# encoding: utf-8
+
 require 'sprockets/version'
 require 'sprockets/cache'
 require 'sprockets/environment'
@@ -17,9 +17,9 @@ module Sprockets
   extend Configuration
 
   self.config = {
-    bundle_processors: Hash.new { |h, k| [].freeze }.freeze,
-    bundle_reducers: Hash.new { |h, k| {}.freeze }.freeze,
-    compressors: Hash.new { |h, k| {}.freeze }.freeze,
+    bundle_processors: Hash.new { |_h, _k| [].freeze }.freeze,
+    bundle_reducers: Hash.new { |_h, _k| {}.freeze }.freeze,
+    compressors: Hash.new { |_h, _k| {}.freeze }.freeze,
     dependencies: Set.new.freeze,
     dependency_resolvers: {}.freeze,
     digest_class: Digest::SHA256,
@@ -29,12 +29,12 @@ module Sprockets
     mime_types: {}.freeze,
     paths: [].freeze,
     pipelines: {}.freeze,
-    postprocessors: Hash.new { |h, k| [].freeze }.freeze,
-    preprocessors: Hash.new { |h, k| [].freeze }.freeze,
-    registered_transformers: Hash.new { |h, k| {}.freeze }.freeze,
+    postprocessors: Hash.new { |_h, _k| [].freeze }.freeze,
+    preprocessors: Hash.new { |_h, _k| [].freeze }.freeze,
+    registered_transformers: Hash.new { |_h, _k| {}.freeze }.freeze,
     root: File.expand_path('..', __FILE__).freeze,
-    transformers: Hash.new { |h, k| {}.freeze }.freeze,
-    version: "",
+    transformers: Hash.new { |_h, _k| {}.freeze }.freeze,
+    version: '',
     gzip_enabled: true
   }.freeze
   self.computed_config = {}
@@ -81,7 +81,7 @@ module Sprockets
   register_mime_type 'application/x-font-ttf', extensions: ['.ttf']
   register_mime_type 'application/font-woff', extensions: ['.woff']
 
-  register_pipeline :source do |env|
+  register_pipeline :source do |_env|
     []
   end
 
@@ -95,18 +95,18 @@ module Sprockets
 
   require 'sprockets/directive_processor'
   register_preprocessor 'text/css', DirectiveProcessor.new(
-    comments: ["//", ["/*", "*/"]]
+    comments: ['//', ['/*', '*/']]
   )
   register_preprocessor 'application/javascript', DirectiveProcessor.new(
-    comments: ["//", ["/*", "*/"]] + ["#", ["###", "###"]]
+    comments: ['//', ['/*', '*/']] + ['#', ['###', '###']]
   )
 
   require 'sprockets/bundle'
   register_bundle_processor 'application/javascript', Bundle
   register_bundle_processor 'text/css', Bundle
 
-  register_bundle_metadata_reducer '*/*', :data, proc { "" }, :concat
-  register_bundle_metadata_reducer 'application/javascript', :data, proc { "" }, Utils.method(:concat_javascript_sources)
+  register_bundle_metadata_reducer '*/*', :data, proc { '' }, :concat
+  register_bundle_metadata_reducer 'application/javascript', :data, proc { '' }, Utils.method(:concat_javascript_sources)
   register_bundle_metadata_reducer '*/*', :links, :+
 
   require 'sprockets/closure_compressor'
@@ -149,11 +149,9 @@ module Sprockets
   require 'sprockets/erb_processor'
   register_engine '.erb', ERBProcessor, mime_type: 'text/plain', silence_deprecation: true
 
-  register_dependency_resolver 'environment-version' do |env|
-    env.version
-  end
+  register_dependency_resolver 'environment-version', &:version
   register_dependency_resolver 'environment-paths' do |env|
-    env.paths.map {|path| env.compress_from_root(path) }
+    env.paths.map { |path| env.compress_from_root(path) }
   end
   register_dependency_resolver 'file-digest' do |env, str|
     env.file_digest(env.parse_file_digest_uri(str))

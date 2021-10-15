@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 require 'capybara/selector/filter'
 
 module Capybara
@@ -20,7 +18,7 @@ module Capybara
           add_filter(name, Filters::NodeFilter, *types, **options, &block)
         end
       end
-      alias_method :filter, :node_filter
+      alias filter node_filter
 
       def expression_filter(name, *types, **options, &block)
         add_filter(name, Filters::ExpressionFilter, *types, **options, &block)
@@ -68,7 +66,7 @@ module Capybara
 
       class << self
         def all
-          @filter_sets ||= {} # rubocop:disable Naming/MemoizedInstanceVariableName
+          @filter_sets ||= {}
         end
 
         def [](name)
@@ -84,7 +82,7 @@ module Capybara
         end
       end
 
-    protected
+      protected
 
       def undeclared_descriptions
         @descriptions[:undeclared]
@@ -98,7 +96,7 @@ module Capybara
         @descriptions[:expression_filters]
       end
 
-    private
+      private
 
       def options_with_defaults(options)
         options = options.dup

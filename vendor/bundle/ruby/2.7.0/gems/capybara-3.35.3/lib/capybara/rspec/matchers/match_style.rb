@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 require 'capybara/rspec/matchers/base'
 
 module Capybara
@@ -7,7 +5,10 @@ module Capybara
     module Matchers
       class MatchStyle < WrappedElementMatcher
         def initialize(styles = nil, **kw_args, &filter_block)
-          styles, kw_args = kw_args, {} if styles.nil?
+          if styles.nil?
+            styles = kw_args
+            kw_args = {}
+          end
           super(styles, **kw_args, &filter_block)
         end
 

@@ -4,11 +4,9 @@ require 'concurrent/collection/ruby_non_concurrent_priority_queue'
 
 module Concurrent
   module Collection
-
     # @!visibility private
     # @!macro internal_implementation_note
-    NonConcurrentPriorityQueueImplementation = case
-                                               when Concurrent.on_jruby?
+    NonConcurrentPriorityQueueImplementation = if Concurrent.on_jruby?
                                                  JavaNonConcurrentPriorityQueue
                                                else
                                                  RubyNonConcurrentPriorityQueue
@@ -48,16 +46,15 @@ module Concurrent
     #
     # @!visibility private
     class NonConcurrentPriorityQueue < NonConcurrentPriorityQueueImplementation
+      alias has_priority? include?
 
-      alias_method :has_priority?, :include?
+      alias size length
 
-      alias_method :size, :length
+      alias deq pop
+      alias shift pop
 
-      alias_method :deq, :pop
-      alias_method :shift, :pop
-
-      alias_method :<<, :push
-      alias_method :enq, :push
+      alias << push
+      alias enq push
 
       # @!method initialize(opts = {})
       #   @!macro priority_queue_method_initialize

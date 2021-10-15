@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 module Capybara
   # @api private
   module Queries
@@ -31,7 +29,7 @@ module Capybara
          "Actual styles were #{@actual_styles.inspect}"
       end
 
-    private
+      private
 
       def stringify_keys(hsh)
         hsh.transform_keys(&:to_s)

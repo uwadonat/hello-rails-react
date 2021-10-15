@@ -44,7 +44,6 @@ module Concurrent
           monitor.exit
         end
       end
-
     end
   end
 end

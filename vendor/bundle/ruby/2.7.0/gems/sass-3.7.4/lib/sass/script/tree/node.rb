@@ -32,7 +32,7 @@ module Sass::Script::Tree
       @options = options
       children.each do |c|
         if c.is_a? Hash
-          c.values.each {|v| v.options = options}
+          c.values.each { |v| v.options = options }
         else
           c.options = options
         end
@@ -49,7 +49,7 @@ module Sass::Script::Tree
     def perform(environment)
       _perform(environment)
     rescue Sass::SyntaxError => e
-      e.modify_backtrace(:line => line)
+      e.modify_backtrace(line: line)
       raise e
     end
 
@@ -67,7 +67,7 @@ module Sass::Script::Tree
     #   always emitted unquoted.
     #
     # @return [String]
-    def to_sass(opts = {})
+    def to_sass(_opts = {})
       Sass::Util.abstract(self)
     end
 
@@ -82,7 +82,7 @@ module Sass::Script::Tree
     # Forces any division operations with number literals in this expression to
     # do real division, rather than returning strings.
     def force_division!
-      children.each {|c| c.force_division!}
+      children.each(&:force_division!)
     end
 
     protected
@@ -103,7 +103,7 @@ module Sass::Script::Tree
     # @param environment [Sass::Environment] The environment in which to evaluate the SassScript
     # @return [Sass::Script::Value] The SassScript object that is the value of the SassScript
     # @see #perform
-    def _perform(environment)
+    def _perform(_environment)
       Sass::Util.abstract(self)
     end
 

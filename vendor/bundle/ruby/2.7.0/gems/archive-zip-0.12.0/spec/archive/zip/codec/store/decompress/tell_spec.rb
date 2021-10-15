@@ -1,13 +1,11 @@
-# encoding: UTF-8
-
 require 'minitest/autorun'
 
 require File.expand_path('../../fixtures/classes', __FILE__)
 
 require 'archive/zip/codec/store'
 
-describe "Archive::Zip::Codec::Store::Decompress#tell" do
-  it "returns the current position of the stream" do
+describe 'Archive::Zip::Codec::Store::Decompress#tell' do
+  it 'returns the current position of the stream' do
     StoreSpecs.compressed_data do |cd|
       Archive::Zip::Codec::Store::Decompress.open(cd) do |d|
         d.tell.must_equal(0)

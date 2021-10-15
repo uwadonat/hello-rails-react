@@ -1,7 +1,6 @@
 require 'concurrent/synchronization'
 
 module Concurrent
-
   # A `Maybe` encapsulates an optional value. A `Maybe` either contains a value
   # of (represented as `Just`), or it is empty (represented as `Nothing`). Using
   # `Maybe` is a good way to deal with errors or exceptional cases without
@@ -135,11 +134,11 @@ module Concurrent
     #
     # @raise [ArgumentError] when no block given.
     def self.from(*args)
-      raise ArgumentError.new('no block given') unless block_given?
+      raise ArgumentError, 'no block given' unless block_given?
       begin
         value = yield(*args)
         return new(value, NONE)
-      rescue => ex
+      rescue StandardError => ex
         return new(NONE, ex)
       end
     end
@@ -150,7 +149,7 @@ module Concurrent
     #
     # @return [Maybe] The newly created object.
     def self.just(value)
-      return new(value, NONE)
+      new(value, NONE)
     end
 
     # Create a new `Nothing` with the given (optional) reason.
@@ -162,21 +161,21 @@ module Concurrent
     #
     # @return [Maybe] The newly created object.
     def self.nothing(error = '')
-      if error.is_a?(Exception)
-        nothing = error
-      else
-        nothing = StandardError.new(error.to_s)
-      end
-      return new(NONE, nothing)
+      nothing = if error.is_a?(Exception)
+                  error
+                else
+                  StandardError.new(error.to_s)
+                end
+      new(NONE, nothing)
     end
 
     # Is this `Maybe` a `Just` (successfully fulfilled with a value)?
     #
     # @return [Boolean] True if `Just` or false if `Nothing`.
     def just?
-      ! nothing?
+      !nothing?
     end
-    alias :fulfilled? :just?
+    alias fulfilled? just?
 
     # Is this `Maybe` a `nothing` (rejected with an exception upon fulfillment)?
     #
@@ -184,11 +183,11 @@ module Concurrent
     def nothing?
       @nothing != NONE
     end
-    alias :rejected? :nothing?
+    alias rejected? nothing?
 
-    alias :value :just
+    alias value just
 
-    alias :reason :nothing
+    alias reason nothing
 
     # Comparison operator.
     #

@@ -19,9 +19,7 @@ module Sprockets
 
     # Return CSS compressor or nil if none is set
     def css_compressor
-      if defined? @css_compressor
-        @css_compressor
-      end
+      @css_compressor if defined? @css_compressor
     end
 
     # Assign a compressor to run on `text/css` assets.
@@ -35,7 +33,7 @@ module Sprockets
       if compressor.is_a?(Symbol)
         @css_compressor = klass = config[:compressors]['text/css'][compressor] || raise(Error, "unknown compressor: #{compressor}")
       elsif compressor.respond_to?(:compress)
-        klass = LegacyProcProcessor.new(:css_compressor, proc { |context, data| compressor.compress(data) })
+        klass = LegacyProcProcessor.new(:css_compressor, proc { |_context, data| compressor.compress(data) })
         @css_compressor = :css_compressor
       else
         @css_compressor = klass = compressor
@@ -46,9 +44,7 @@ module Sprockets
 
     # Return JS compressor or nil if none is set
     def js_compressor
-      if defined? @js_compressor
-        @js_compressor
-      end
+      @js_compressor if defined? @js_compressor
     end
 
     # Assign a compressor to run on `application/javascript` assets.
@@ -62,7 +58,7 @@ module Sprockets
       if compressor.is_a?(Symbol)
         @js_compressor = klass = config[:compressors]['application/javascript'][compressor] || raise(Error, "unknown compressor: #{compressor}")
       elsif compressor.respond_to?(:compress)
-        klass = LegacyProcProcessor.new(:js_compressor, proc { |context, data| compressor.compress(data) })
+        klass = LegacyProcProcessor.new(:js_compressor, proc { |_context, data| compressor.compress(data) })
         @js_compressor = :js_compressor
       else
         @js_compressor = klass = compressor

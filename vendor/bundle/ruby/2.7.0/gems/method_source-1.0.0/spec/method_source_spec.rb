@@ -1,8 +1,7 @@
 require 'spec_helper'
 
 describe MethodSource do
-
-  describe "source_location (testing 1.8 implementation)" do
+  describe 'source_location (testing 1.8 implementation)' do
     it 'should return correct source_location for a method' do
       expect(method(:hello).source_location.first).to match(/spec_helper/)
     end
@@ -44,7 +43,7 @@ describe MethodSource do
     expect(Proc.method_defined?(:source)).to be_truthy
   end
 
-  describe "Methods" do
+  describe 'Methods' do
     it 'should return source for method' do
       expect(method(:hello).source).to eq(@hello_source)
     end
@@ -68,7 +67,7 @@ describe MethodSource do
     end
 
     # These tests fail because of http://jira.codehaus.org/browse/JRUBY-4576
-    unless defined?(RUBY_ENGINE) && RUBY_ENGINE == "jruby"
+    unless defined?(RUBY_ENGINE) && RUBY_ENGINE == 'jruby'
       it 'should return source for an *_evaled method' do
         expect(M.method(:hello_name).source).to eq(@hello_instance_evaled_source)
         expect(M.method(:name_two).source).to eq(@hello_instance_evaled_source_2)
@@ -77,13 +76,13 @@ describe MethodSource do
       end
     end
 
-    it "should raise error for evaled methods that do not pass __FILE__ and __LINE__ + 1 as its arguments" do
+    it 'should raise error for evaled methods that do not pass __FILE__ and __LINE__ + 1 as its arguments' do
       expect do
         M.instance_method(:name_three).source
       end.to raise_error(MethodSource::SourceNotFoundError)
     end
 
-    if !is_rbx?
+    unless is_rbx?
       it 'should raise for C methods' do
         expect do
           method(:puts).source
@@ -93,7 +92,7 @@ describe MethodSource do
   end
 
   # if RUBY_VERSION =~ /1.9/ || is_rbx?
-  describe "Lambdas and Procs" do
+  describe 'Lambdas and Procs' do
     it 'should return source for proc' do
       expect(MyProc.source).to eq(@proc_source)
     end
@@ -111,7 +110,7 @@ describe MethodSource do
     end
   end
   # end
-  describe "Comment tests" do
+  describe 'Comment tests' do
     before do
       @comment1 = "# a\n# b\n"
       @comment2 = "# a\n# b\n"
@@ -120,23 +119,23 @@ describe MethodSource do
       @comment5 = "# a\n# b\n# c\n# d\n"
     end
 
-    it "should correctly extract multi-line comments" do
+    it 'should correctly extract multi-line comments' do
       expect(method(:comment_test1).comment).to eq(@comment1)
     end
 
-    it "should correctly strip leading whitespace before comments" do
+    it 'should correctly strip leading whitespace before comments' do
       expect(method(:comment_test2).comment).to eq(@comment2)
     end
 
-    it "should keep empty comment lines" do
+    it 'should keep empty comment lines' do
       expect(method(:comment_test3).comment).to eq(@comment3)
     end
 
-    it "should ignore blank lines between comments" do
+    it 'should ignore blank lines between comments' do
       expect(method(:comment_test4).comment).to eq(@comment4)
     end
 
-    it "should align all comments to same indent level" do
+    it 'should align all comments to same indent level' do
       expect(method(:comment_test5).comment).to eq(@comment5)
     end
   end

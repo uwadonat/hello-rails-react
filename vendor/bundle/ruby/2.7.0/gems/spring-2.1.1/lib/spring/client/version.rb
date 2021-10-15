@@ -1,4 +1,4 @@
-require "spring/version"
+require 'spring/version'
 
 module Spring
   module Client

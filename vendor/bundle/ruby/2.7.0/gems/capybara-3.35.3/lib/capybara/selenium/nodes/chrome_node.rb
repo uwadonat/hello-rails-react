@@ -14,7 +14,7 @@ class Capybara::Selenium::ChromeNode < Capybara::Selenium::Node
     end
   end
 
-  def set_file(value) # rubocop:disable Naming/AccessorMethodName
+  def set_file(value)
     # In Chrome 75+ files are appended (due to WebDriver spec - why?) so we have to clear here if its multiple and already set
     if browser_version >= 75.0
       driver.execute_script(<<~JS, self)
@@ -126,7 +126,7 @@ private
   end
 
   def chromedriver_version
-    Gem::Version.new(capabilities['chrome']['chromedriverVersion'].split(' ')[0]) # rubocop:disable Style/RedundantArgument
+    Gem::Version.new(capabilities['chrome']['chromedriverVersion'].split(' ')[0])
   end
 
   def native_displayed?

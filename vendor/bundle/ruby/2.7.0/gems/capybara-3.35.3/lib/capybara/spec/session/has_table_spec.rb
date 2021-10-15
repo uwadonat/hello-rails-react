@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 Capybara::SpecHelper.spec '#has_table?' do
   before do
     @session.visit('/tables')

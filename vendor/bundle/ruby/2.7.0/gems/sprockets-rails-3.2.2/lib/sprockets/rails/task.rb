@@ -50,33 +50,33 @@ module Sprockets
 
       def define
         namespace :assets do
-          %w( environment precompile clean clobber ).each do |task|
+          %w[environment precompile clean clobber].each do |task|
             Rake::Task[task].clear if Rake::Task.task_defined?(task)
           end
 
           # Override this task change the loaded dependencies
-          desc "Load asset compile environment"
+          desc 'Load asset compile environment'
           task :environment do
             # Load full Rails environment by default
             Rake::Task['environment'].invoke
           end
 
-          desc "Compile all the assets named in config.assets.precompile"
-          task :precompile => :environment do
+          desc 'Compile all the assets named in config.assets.precompile'
+          task precompile: :environment do
             with_logger do
               manifest.compile(assets)
             end
           end
 
-          desc "Remove old compiled assets"
-          task :clean, [:keep] => :environment do |t, args|
+          desc 'Remove old compiled assets'
+          task :clean, [:keep] => :environment do |_t, args|
             with_logger do
-              manifest.clean(Integer(args.keep || self.keep))
+              manifest.clean(Integer(args.keep || keep))
             end
           end
 
-          desc "Remove compiled assets"
-          task :clobber => :environment do
+          desc 'Remove compiled assets'
+          task clobber: :environment do
             with_logger do
               manifest.clobber
             end

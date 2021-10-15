@@ -86,7 +86,7 @@ module Sass
     # @param attrs [{Symbol => Object}] The information in the backtrace entry.
     #   See \{#sass\_backtrace}
     def add_backtrace(attrs)
-      sass_backtrace << attrs.reject {|_k, v| v.nil?}
+      sass_backtrace << attrs.reject { |_k, v| v.nil? }
     end
 
     # Modify the top Sass backtrace entries
@@ -104,12 +104,12 @@ module Sass
     # @param attrs [{Symbol => Object}] The information to add to the backtrace entry.
     #   See \{#sass\_backtrace}
     def modify_backtrace(attrs)
-      attrs = attrs.reject {|_k, v| v.nil?}
+      attrs = attrs.reject { |_k, v| v.nil? }
       # Move backwards through the backtrace
       (0...sass_backtrace.size).to_a.reverse_each do |i|
         entry = sass_backtrace[i]
         sass_backtrace[i] = attrs.merge(entry)
-        attrs.reject! {|k, _v| entry.include?(k)}
+        attrs.reject! { |k, _v| entry.include?(k) }
         break if attrs.empty?
       end
     end
@@ -125,10 +125,10 @@ module Sass
     # @return [Array<String>]
     def backtrace
       return nil if super.nil?
-      return super if sass_backtrace.all? {|h| h.empty?}
+      return super if sass_backtrace.all?(&:empty?)
       sass_backtrace.map do |h|
         "#{h[:filename] || '(sass)'}:#{h[:line]}" +
-          (h[:mixin] ? ":in `#{h[:mixin]}'" : "")
+          (h[:mixin] ? ":in `#{h[:mixin]}'" : '')
       end + super
     end
 
@@ -137,15 +137,15 @@ module Sass
     # @param default_filename [String] The filename to use for unknown files
     # @see #sass_backtrace
     # @return [String]
-    def sass_backtrace_str(default_filename = "an unknown file")
+    def sass_backtrace_str(default_filename = 'an unknown file')
       lines = message.split("\n")
-      msg = lines[0] + lines[1..-1].
-        map {|l| "\n" + (" " * "Error: ".size) + l}.join
+      msg = lines[0] + lines[1..-1]
+        .map { |l| "\n" + (' ' * 'Error: '.size) + l }.join
       "Error: #{msg}" +
         sass_backtrace.each_with_index.map do |entry, i|
-          "\n        #{i == 0 ? 'on' : 'from'} line #{entry[:line]}" +
+          "\n        #{i == 0 ? 'on' : 'from'} line #{entry[:line]}" \
             " of #{entry[:filename] || default_filename}" +
-            (entry[:mixin] ? ", in `#{entry[:mixin]}'" : "")
+            (entry[:mixin] ? ", in `#{entry[:mixin]}'" : '')
         end.join
     end
 
@@ -177,22 +177,20 @@ END
       private
 
       def header_string(e, line_offset)
-        unless e.is_a?(Sass::SyntaxError) && e.sass_line && e.sass_template
-          return "#{e.class}: #{e.message}"
-        end
+        return "#{e.class}: #{e.message}" unless e.is_a?(Sass::SyntaxError) && e.sass_line && e.sass_template
 
         line_num = e.sass_line + 1 - line_offset
         min = [line_num - 6, 0].max
         section = e.sass_template.rstrip.split("\n")[min...line_num + 5]
         return e.sass_backtrace_str if section.nil? || section.empty?
 
-        e.sass_backtrace_str + "\n\n" + section.each_with_index.
-          map {|line, i| "#{line_offset + min + i}: #{line}"}.join("\n")
+        e.sass_backtrace_str + "\n\n" + section.each_with_index
+          .map { |line, i| "#{line_offset + min + i}: #{line}" }.join("\n")
       end
     end
   end
 
   # The class for Sass errors that are raised due to invalid unit conversions
   # in SassScript.
-  class UnitConversionError < SyntaxError; end
+  class UnitConversionError < RuntimeError; end
 end

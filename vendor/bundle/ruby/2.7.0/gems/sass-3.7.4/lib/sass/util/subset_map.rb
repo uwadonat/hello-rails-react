@@ -45,7 +45,7 @@ module Sass
       # @param value [Object] The value to associate with `set`.
       # @raise [ArgumentError] If `set` is empty.
       def []=(set, value)
-        raise ArgumentError.new("SubsetMap keys may not be empty.") if set.empty?
+        raise ArgumentError, 'SubsetMap keys may not be empty.' if set.empty?
 
         index = @vals.size
         @vals << value
@@ -71,18 +71,18 @@ module Sass
       #   This array is in insertion order.
       # @see #[]
       def get(set)
-        res = set.map do |k|
+        res = set.flat_map do |k|
           subsets = @hash[k]
           next unless subsets
           subsets.map do |subenum, subset, index|
             next unless subset.subset?(set)
             [index, subenum]
           end
-        end.flatten(1)
+        end
         res.compact!
         res.uniq!
         res.sort!
-        res.map! {|i, s| [@vals[i], s]}
+        res.map! { |i, s| [@vals[i], s] }
         res
       end
 
@@ -94,7 +94,7 @@ module Sass
       #   associated with subsets of `set`, in insertion order.
       # @see #get
       def [](set)
-        get(set).map {|v, _| v}
+        get(set).map { |v, _| v }
       end
 
       # Iterates over each value in the subset map. Ignores keys completely. If
@@ -102,7 +102,7 @@ module Sass
       #
       # @yield [Object] Each value in the map.
       def each_value
-        @vals.each {|v| yield v}
+        @vals.each { |v| yield v }
       end
     end
   end

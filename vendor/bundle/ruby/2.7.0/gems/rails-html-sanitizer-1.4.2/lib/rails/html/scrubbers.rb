@@ -49,7 +49,8 @@ module Rails
 
       def initialize
         @direction = :bottom_up
-        @tags, @attributes = nil, nil
+        @tags = nil
+        @attributes = nil
       end
 
       def tags=(tags)
@@ -125,9 +126,7 @@ module Rails
       end
 
       def validate!(var, name)
-        if var && !var.is_a?(Enumerable)
-          raise ArgumentError, "You should pass :#{name} as an Enumerable"
-        end
+        raise ArgumentError, "You should pass :#{name} as an Enumerable" if var && !var.is_a?(Enumerable)
         var
       end
 
@@ -140,8 +139,8 @@ module Rails
 
         if Loofah::HTML5::SafeList::ATTR_VAL_IS_URI.include?(attr_name)
           # this block lifted nearly verbatim from HTML5 sanitization
-          val_unescaped = CGI.unescapeHTML(attr_node.value).gsub(Loofah::HTML5::Scrub::CONTROL_CHARACTERS,'').downcase
-          if val_unescaped =~ /^[a-z0-9][-+.a-z0-9]*:/ && ! Loofah::HTML5::SafeList::ALLOWED_PROTOCOLS.include?(val_unescaped.split(Loofah::HTML5::SafeList::PROTOCOL_SEPARATOR)[0])
+          val_unescaped = CGI.unescapeHTML(attr_node.value).gsub(Loofah::HTML5::Scrub::CONTROL_CHARACTERS, '').downcase
+          if val_unescaped =~ /^[a-z0-9][-+.a-z0-9]*:/ && !Loofah::HTML5::SafeList::ALLOWED_PROTOCOLS.include?(val_unescaped.split(Loofah::HTML5::SafeList::PROTOCOL_SEPARATOR)[0])
             attr_node.remove
           end
         end

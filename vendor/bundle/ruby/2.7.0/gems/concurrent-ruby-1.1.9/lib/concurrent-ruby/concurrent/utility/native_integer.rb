@@ -7,23 +7,17 @@ module Concurrent
       MAX_VALUE = (2**(0.size * 8 - 2) - 1)
 
       def ensure_upper_bound(value)
-        if value > MAX_VALUE
-          raise RangeError.new("#{value} is greater than the maximum value of #{MAX_VALUE}")
-        end
+        raise RangeError, "#{value} is greater than the maximum value of #{MAX_VALUE}" if value > MAX_VALUE
         value
       end
 
       def ensure_lower_bound(value)
-        if value < MIN_VALUE
-          raise RangeError.new("#{value} is less than the maximum value of #{MIN_VALUE}")
-        end
+        raise RangeError, "#{value} is less than the maximum value of #{MIN_VALUE}" if value < MIN_VALUE
         value
       end
 
       def ensure_integer(value)
-        unless value.is_a?(Integer)
-          raise ArgumentError.new("#{value} is not an Integer")
-        end
+        raise ArgumentError, "#{value} is not an Integer" unless value.is_a?(Integer)
         value
       end
 
@@ -34,16 +28,12 @@ module Concurrent
       end
 
       def ensure_positive(value)
-        if value < 0
-          raise ArgumentError.new("#{value} cannot be negative")
-        end
+        raise ArgumentError, "#{value} cannot be negative" if value < 0
         value
       end
 
       def ensure_positive_and_no_zero(value)
-        if value < 1
-          raise ArgumentError.new("#{value} cannot be negative or zero")
-        end
+        raise ArgumentError, "#{value} cannot be negative or zero" if value < 1
         value
       end
 

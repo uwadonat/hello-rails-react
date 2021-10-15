@@ -2,7 +2,6 @@ require 'concurrent/synchronization'
 
 module Concurrent
   module Collection
-
     # A thread safe observer set implemented using copy-on-read approach:
     # observers are added and removed from a thread safe collection; every time
     # a notification is required the internal data structure is copied to
@@ -10,7 +9,6 @@ module Concurrent
     #
     # @api private
     class CopyOnNotifyObserverSet < Synchronization::LockableObject
-
       def initialize
         super()
         synchronize { ns_initialize }
@@ -21,12 +19,12 @@ module Concurrent
         if observer.nil? && block.nil?
           raise ArgumentError, 'should pass observer as a first argument or block'
         elsif observer && block
-          raise ArgumentError.new('cannot provide both an observer and a block')
+          raise ArgumentError, 'cannot provide both an observer and a block'
         end
 
         if block
           observer = block
-          func     = :call
+          func = :call
         end
 
         synchronize do
@@ -96,7 +94,7 @@ module Concurrent
       end
 
       def notify_to(observers, *args)
-        raise ArgumentError.new('cannot give arguments and a block') if block_given? && !args.empty?
+        raise ArgumentError, 'cannot give arguments and a block' if block_given? && !args.empty?
         observers.each do |observer, function|
           args = yield if block_given?
           observer.send(function, *args)

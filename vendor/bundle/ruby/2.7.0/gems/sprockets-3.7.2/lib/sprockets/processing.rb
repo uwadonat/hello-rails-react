@@ -11,7 +11,9 @@ module Sprockets
   # `Processing` is an internal mixin whose public methods are exposed on
   # the `Environment` and `CachedEnvironment` classes.
   module Processing
-    include ProcessorUtils, URIUtils, Utils
+    include Utils
+    include URIUtils
+    include ProcessorUtils
 
     def pipelines
       config[:pipelines]
@@ -30,7 +32,7 @@ module Sprockets
     def preprocessors
       config[:preprocessors]
     end
-    alias_method :processors, :preprocessors
+    alias processors preprocessors
 
     # Postprocessors are ran after Preprocessors and Engine processors.
     def postprocessors
@@ -50,7 +52,7 @@ module Sprockets
     def register_preprocessor(*args, &block)
       register_config_processor(:preprocessors, *args, &block)
     end
-    alias_method :register_processor, :register_preprocessor
+    alias register_processor register_preprocessor
 
     # Registers a new Postprocessor `klass` for `mime_type`.
     #
@@ -73,7 +75,7 @@ module Sprockets
     def unregister_preprocessor(*args)
       unregister_config_processor(:preprocessors, *args)
     end
-    alias_method :unregister_processor, :unregister_preprocessor
+    alias unregister_processor unregister_preprocessor
 
     # Remove Postprocessor `klass` for `mime_type`.
     #
@@ -152,107 +154,107 @@ module Sprockets
     end
 
     protected
-      def resolve_processors_cache_key_uri(uri)
-        params = parse_uri_query_params(uri[11..-1])
-        params[:engine_extnames] = params[:engines] ? params[:engines].split(',') : []
-        processors = processors_for(params[:type], params[:file_type], params[:engine_extnames], params[:pipeline])
-        processors_cache_keys(processors)
+
+    def resolve_processors_cache_key_uri(uri)
+      params = parse_uri_query_params(uri[11..-1])
+      params[:engine_extnames] = params[:engines] ? params[:engines].split(',') : []
+      processors = processors_for(params[:type], params[:file_type], params[:engine_extnames], params[:pipeline])
+      processors_cache_keys(processors)
+    end
+
+    def build_processors_uri(type, file_type, engine_extnames, pipeline)
+      engines = engine_extnames.join(',') if engine_extnames.any?
+      query = encode_uri_query_params(
+        type: type,
+        file_type: file_type,
+        engines: engines,
+        pipeline: pipeline
+      )
+      "processors:#{query}"
+    end
+
+    def processors_for(type, file_type, engine_extnames, pipeline)
+      pipeline ||= :default
+      config[:pipelines][pipeline.to_sym].call(self, type, file_type, engine_extnames)
+    end
+
+    def default_processors_for(type, file_type, engine_extnames)
+      bundled_processors = config[:bundle_processors][type]
+      if bundled_processors.any?
+        bundled_processors
+      else
+        self_processors_for(type, file_type, engine_extnames)
+      end
+    end
+
+    def self_processors_for(type, file_type, engine_extnames)
+      processors = []
+
+      processors.concat config[:postprocessors][type]
+
+      if type != file_type && processor = config[:transformers][file_type][type]
+        processors << processor
       end
 
-      def build_processors_uri(type, file_type, engine_extnames, pipeline)
-        engines = engine_extnames.join(',') if engine_extnames.any?
-        query = encode_uri_query_params(
-          type: type,
-          file_type: file_type,
-          engines: engines,
-          pipeline: pipeline
-        )
-        "processors:#{query}"
-      end
+      processors.concat engine_extnames.map { |ext| engines[ext] }
+      processors.concat config[:preprocessors][file_type]
 
-      def processors_for(type, file_type, engine_extnames, pipeline)
-        pipeline ||= :default
-        config[:pipelines][pipeline.to_sym].call(self, type, file_type, engine_extnames)
-      end
+      processors << FileReader if processors.any? || mime_type_charset_detecter(type)
 
-      def default_processors_for(type, file_type, engine_extnames)
-        bundled_processors = config[:bundle_processors][type]
-        if bundled_processors.any?
-          bundled_processors
-        else
-          self_processors_for(type, file_type, engine_extnames)
-        end
-      end
+      processors
+    end
 
-      def self_processors_for(type, file_type, engine_extnames)
-        processors = []
+    private
 
-        processors.concat config[:postprocessors][type]
+    def register_config_processor(type, mime_type, klass, proc = nil, &block)
+      proc ||= block
+      processor = wrap_processor(klass, proc)
 
-        if type != file_type && processor = config[:transformers][file_type][type]
-          processors << processor
-        end
-
-        processors.concat engine_extnames.map { |ext| engines[ext] }
-        processors.concat config[:preprocessors][file_type]
-
-        if processors.any? || mime_type_charset_detecter(type)
-          processors << FileReader
-        end
-
+      self.config = hash_reassoc(config, type, mime_type) do |processors|
+        processors.unshift(processor)
         processors
       end
 
-    private
-      def register_config_processor(type, mime_type, klass, proc = nil, &block)
-        proc ||= block
-        processor = wrap_processor(klass, proc)
+      compute_transformers!
+    end
 
-        self.config = hash_reassoc(config, type, mime_type) do |processors|
-          processors.unshift(processor)
-          processors
+    def unregister_config_processor(type, mime_type, klass)
+      if klass.is_a?(String) || klass.is_a?(Symbol)
+        klass = config[type][mime_type].detect do |cls|
+          cls.respond_to?(:name) && cls.name == "Sprockets::LegacyProcProcessor (#{klass})"
         end
-
-        compute_transformers!
       end
 
-      def unregister_config_processor(type, mime_type, klass)
-        if klass.is_a?(String) || klass.is_a?(Symbol)
-          klass = config[type][mime_type].detect do |cls|
-            cls.respond_to?(:name) && cls.name == "Sprockets::LegacyProcProcessor (#{klass})"
-          end
-        end
-
-        self.config = hash_reassoc(config, type, mime_type) do |processors|
-          processors.delete(klass)
-          processors
-        end
-
-        compute_transformers!
+      self.config = hash_reassoc(config, type, mime_type) do |processors|
+        processors.delete(klass)
+        processors
       end
 
-      def deprecate_legacy_processor_interface(interface)
-        msg = "You are using a deprecated processor interface #{ interface.inspect }.\n" +
-        "Please update your processor interface:\n" +
-        "https://github.com/rails/sprockets/blob/master/guides/extending_sprockets.md#supporting-all-versions-of-sprockets-in-processors\n"
+      compute_transformers!
+    end
 
-        Deprecation.new([caller[3]]).warn msg
-      end
+    def deprecate_legacy_processor_interface(interface)
+      msg = "You are using a deprecated processor interface #{interface.inspect}.\n" \
+            "Please update your processor interface:\n" \
+            "https://github.com/rails/sprockets/blob/master/guides/extending_sprockets.md#supporting-all-versions-of-sprockets-in-processors\n"
 
-      def wrap_processor(klass, proc)
-        if !proc
-          if klass.respond_to?(:call)
-            klass
-          else
-            deprecate_legacy_processor_interface(klass)
-            LegacyTiltProcessor.new(klass)
-          end
-        elsif proc.respond_to?(:arity) && proc.arity == 2
-          deprecate_legacy_processor_interface(proc)
-          LegacyProcProcessor.new(klass.to_s, proc)
+      Deprecation.new([caller[3]]).warn msg
+    end
+
+    def wrap_processor(klass, proc)
+      if !proc
+        if klass.respond_to?(:call)
+          klass
         else
-          proc
+          deprecate_legacy_processor_interface(klass)
+          LegacyTiltProcessor.new(klass)
         end
+      elsif proc.respond_to?(:arity) && proc.arity == 2
+        deprecate_legacy_processor_interface(proc)
+        LegacyProcProcessor.new(klass.to_s, proc)
+      else
+        proc
       end
+    end
   end
 end

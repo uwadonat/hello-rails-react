@@ -2,7 +2,6 @@ require 'concurrent/utility/engine'
 require 'concurrent/thread_safe/util'
 
 module Concurrent
-
   # @!macro concurrent_hash
   #
   #   A thread-safe subclass of Hash. This version locks against the object
@@ -13,14 +12,13 @@ module Concurrent
   #   @see http://ruby-doc.org/core/Hash.html Ruby standard library `Hash`
 
   # @!macro internal_implementation_note
-  HashImplementation = case
-                       when Concurrent.on_cruby?
+  HashImplementation = if Concurrent.on_cruby?
                          # Hash is thread-safe in practice because CRuby runs
                          # threads one at a time and does not do context
                          # switching during the execution of C functions.
                          ::Hash
 
-                       when Concurrent.on_jruby?
+                       elsif Concurrent.on_jruby?
                          require 'jruby/synchronized'
 
                          class JRubyHash < ::Hash
@@ -28,7 +26,7 @@ module Concurrent
                          end
                          JRubyHash
 
-                       when Concurrent.on_rbx?
+                       elsif Concurrent.on_rbx?
                          require 'monitor'
                          require 'concurrent/thread_safe/util/data_structures'
 
@@ -37,7 +35,7 @@ module Concurrent
                          ThreadSafe::Util.make_synchronized_on_rbx RbxHash
                          RbxHash
 
-                       when Concurrent.on_truffleruby?
+                       elsif Concurrent.on_truffleruby?
                          require 'concurrent/thread_safe/util/data_structures'
 
                          class TruffleRubyHash < ::Hash
@@ -55,5 +53,4 @@ module Concurrent
   # @!macro concurrent_hash
   class Hash < HashImplementation
   end
-
 end

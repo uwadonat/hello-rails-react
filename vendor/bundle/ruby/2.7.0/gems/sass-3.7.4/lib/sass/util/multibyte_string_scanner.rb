@@ -38,23 +38,56 @@ class Sass::Util::MultibyteStringScanner
     super
   end
 
-  alias_method :byte_pos, :pos
-  alias_method :byte_matched_size, :matched_size
+  alias byte_pos pos
+  alias byte_matched_size matched_size
 
-  def check(pattern); _match super; end
-  def check_until(pattern); _matched super; end
-  def getch; _forward _match super; end
-  def match?(pattern); _size check(pattern); end
-  def matched_size; @mb_matched_size; end
-  def peek(len); string[@mb_pos, len]; end
-  alias_method :peep, :peek
-  def pos; @mb_pos; end
-  alias_method :pointer, :pos
-  def rest_size; rest.size; end
-  def scan(pattern); _forward _match super; end
-  def scan_until(pattern); _forward _matched super; end
-  def skip(pattern); _size scan(pattern); end
-  def skip_until(pattern); _matched _size scan_until(pattern); end
+  def check(pattern)
+    _match super
+  end
+
+  def check_until(pattern)
+    _matched super
+  end
+
+  def getch
+    _forward _match super
+  end
+
+  def match?(pattern)
+    _size check(pattern)
+  end
+
+  def matched_size
+    @mb_matched_size
+  end
+
+  def peek(len)
+    string[@mb_pos, len]
+  end
+  alias peep peek
+  def pos
+    @mb_pos
+  end
+  alias pointer pos
+  def rest_size
+    rest.size
+  end
+
+  def scan(pattern)
+    _forward _match super
+  end
+
+  def scan_until(pattern)
+    _forward _matched super
+  end
+
+  def skip(pattern)
+    _size scan(pattern)
+  end
+
+  def skip_until(pattern)
+    _matched _size scan_until(pattern)
+  end
 
   def get_byte
     raise "MultibyteStringScanner doesn't support #get_byte."
@@ -119,7 +152,7 @@ class Sass::Util::MultibyteStringScanner
     @mb_last_pos = nil
     super
   end
-  alias_method :clear, :terminate
+  alias clear terminate
 
   def unscan
     super

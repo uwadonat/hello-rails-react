@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 Capybara::SpecHelper.spec '#current_scope' do
   before do
     @session.visit('/with_scope')

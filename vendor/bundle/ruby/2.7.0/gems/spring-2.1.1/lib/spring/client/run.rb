@@ -1,20 +1,20 @@
-require "rbconfig"
-require "socket"
-require "bundler"
+require 'rbconfig'
+require 'socket'
+require 'bundler'
 
 module Spring
   module Client
     class Run < Command
-      FORWARDED_SIGNALS = %w(INT QUIT USR1 USR2 INFO WINCH) & Signal.list.keys
-      CONNECT_TIMEOUT   = 1
-      BOOT_TIMEOUT      = 20
+      FORWARDED_SIGNALS = %w[INT QUIT USR1 USR2 INFO WINCH] & Signal.list.keys
+      CONNECT_TIMEOUT = 1
+      BOOT_TIMEOUT = 20
 
       attr_reader :server
 
       def initialize(args)
         super
 
-        @signal_queue  = []
+        @signal_queue = []
         @server_booted = false
       end
 
@@ -41,7 +41,7 @@ module Spring
       def warm_run
         run
       rescue CommandNotFound
-        require "spring/commands"
+        require 'spring/commands'
 
         if Spring.command?(args.first)
           # Command installed since Spring started
@@ -73,7 +73,7 @@ module Spring
       def boot_server
         env.socket_path.unlink if env.socket_path.exist?
 
-        pid     = Process.spawn(gem_env, env.server_command, out: File::NULL)
+        pid = Process.spawn(gem_env, env.server_command, out: File::NULL)
         timeout = Time.now + BOOT_TIMEOUT
 
         @server_booted = true
@@ -84,7 +84,7 @@ module Spring
           if status
             exit status.exitstatus
           elsif Time.now > timeout
-            $stderr.puts "Starting Spring server with `#{env.server_command}` " \
+            warn "Starting Spring server with `#{env.server_command}` " \
                          "timed out after #{BOOT_TIMEOUT} seconds"
             exit 1
           end
@@ -99,11 +99,11 @@ module Spring
 
       def gem_env
         bundle = Bundler.bundle_path.to_s
-        paths  = Gem.path + ENV["GEM_PATH"].to_s.split(File::PATH_SEPARATOR)
+        paths = Gem.path + ENV['GEM_PATH'].to_s.split(File::PATH_SEPARATOR)
 
         {
-          "GEM_PATH" => [bundle, *paths].uniq.join(File::PATH_SEPARATOR),
-          "GEM_HOME" => bundle
+          'GEM_PATH' => [bundle, *paths].uniq.join(File::PATH_SEPARATOR),
+          'GEM_HOME' => bundle
         }
       end
 
@@ -116,14 +116,14 @@ module Spring
       def verify_server_version
         server_version = server.gets.chomp
         if server_version != env.version
-          $stderr.puts "There is a version mismatch between the Spring client " \
+          warn 'There is a version mismatch between the Spring client ' \
                          "(#{env.version}) and the server (#{server_version})."
 
           if server_booted?
-            $stderr.puts "We already tried to reboot the server, but the mismatch is still present."
+            warn 'We already tried to reboot the server, but the mismatch is still present.'
             exit 1
           else
-            $stderr.puts "Restarting to resolve."
+            warn 'Restarting to resolve.'
             stop_server
             cold_run
           end
@@ -132,23 +132,23 @@ module Spring
 
       def connect_to_application(client)
         server.send_io client
-        send_json server, "args" => args, "default_rails_env" => default_rails_env
+        send_json server, 'args' => args, 'default_rails_env' => default_rails_env
 
         if IO.select([server], [], [], CONNECT_TIMEOUT)
           server.gets or raise CommandNotFound
         else
-          raise "Error connecting to Spring server"
+          raise 'Error connecting to Spring server'
         end
       end
 
       def run_command(client, application)
-        log "sending command"
+        log 'sending command'
 
         application.send_io STDOUT
         application.send_io STDERR
         application.send_io STDIN
 
-        send_json application, "args" => args, "env" => ENV.to_hash
+        send_json application, 'args' => args, 'env' => ENV.to_hash
 
         pid = server.gets
         pid = pid.chomp if pid
@@ -170,7 +170,7 @@ module Spring
 
           exit status
         else
-          log "got no pid"
+          log 'got no pid'
           exit 1
         end
       ensure
@@ -184,15 +184,15 @@ module Spring
       end
 
       def suspend_resume_on_tstp_cont(pid)
-        trap("TSTP") {
-          log "suspended"
-          Process.kill("STOP", pid.to_i)
-          Process.kill("STOP", Process.pid)
-        }
-        trap("CONT") {
-          log "resumed"
-          Process.kill("CONT", pid.to_i)
-        }
+        trap('TSTP') do
+          log 'suspended'
+          Process.kill('STOP', pid.to_i)
+          Process.kill('STOP', Process.pid)
+        end
+        trap('CONT') do
+          log 'resumed'
+          Process.kill('CONT', pid.to_i)
+        end
       end
 
       def forward_signals(application)
@@ -220,7 +220,7 @@ module Spring
       def send_json(socket, data)
         data = JSON.dump(data)
 
-        socket.puts  data.bytesize
+        socket.puts data.bytesize
         socket.write data
       end
 

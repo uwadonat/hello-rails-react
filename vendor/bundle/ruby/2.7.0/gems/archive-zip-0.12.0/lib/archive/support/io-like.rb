@@ -1,5 +1,3 @@
-# encoding: UTF-8
-
 # Try to first load io-like from rubygems and then fall back to assuming a
 # standard installation.
 begin

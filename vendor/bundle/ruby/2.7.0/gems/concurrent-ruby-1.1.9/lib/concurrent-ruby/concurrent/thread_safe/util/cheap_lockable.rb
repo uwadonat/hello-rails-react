@@ -2,13 +2,10 @@ require 'concurrent/thread_safe/util'
 require 'concurrent/thread_safe/util/volatile'
 
 module Concurrent
-
   # @!visibility private
   module ThreadSafe
-
     # @!visibility private
     module Util
-
       # Provides a cheapest possible (mainly in terms of memory usage) +Mutex+
       # with the +ConditionVariable+ bundled in.
       #
@@ -28,10 +25,11 @@ module Concurrent
       #       end
       #     end
       #   end
-      # 
+      #
       # @!visibility private
       module CheapLockable
         private
+
         engine = defined?(RUBY_ENGINE) && RUBY_ENGINE
         if engine == 'rbx'
           # Making use of the Rubinius' ability to lock via object headers to avoid the overhead of the extra Mutex objects.

@@ -1,12 +1,8 @@
-# encoding: UTF-8
-
 class DeflateSpecs
-  def self.compressed_data_nocomp(&b)
+  def self.compressed_data_nocomp()
     File.open(
-      File.join(File.dirname(__FILE__), 'compressed_file_nocomp.bin'), 'rb'
-    ) do |f|
-      f.read
-    end
+      File.join(File.dirname(__FILE__), 'compressed_file_nocomp.bin'), 'rb', &:read
+    )
   end
 
   def self.compressed_data

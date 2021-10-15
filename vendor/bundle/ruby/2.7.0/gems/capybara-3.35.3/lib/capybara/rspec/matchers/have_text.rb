@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 require 'capybara/rspec/matchers/base'
 
 module Capybara
@@ -22,7 +20,7 @@ module Capybara
           content.inspect
         end
 
-      private
+        private
 
         def text
           @args[0].is_a?(Symbol) ? @args[1] : @args[0]

@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 Capybara.add_selector(:fieldset, locator_type: [String, Symbol]) do
   xpath do |locator, legend: nil, **|
     locator_matchers = (XPath.attr(:id) == locator.to_s) | XPath.child(:legend)[XPath.string.n.is(locator.to_s)]

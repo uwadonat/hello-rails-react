@@ -195,7 +195,7 @@ RSpec.describe Capybara::Server do
     end
 
     after do
-      Capybara.reuse_server = @old_reuse_server # rubocop:disable RSpec/InstanceVariable
+      Capybara.reuse_server = @old_reuse_server
     end
 
     it 'should not reuse an already running server' do

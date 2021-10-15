@@ -9,7 +9,7 @@ module Sass::Exec
       super
       require 'sass'
       @options[:for_tree] = {}
-      @options[:for_engine] = {:cache => false, :read_cache => true}
+      @options[:for_engine] = { cache: false, read_cache: true }
     end
 
     # Tells optparse how to parse the arguments.
@@ -43,9 +43,7 @@ END
 
       super
       input = @options[:input]
-      if File.directory?(input)
-        raise "Error: '#{input.path}' is a directory (did you mean to use --recursive?)"
-      end
+      raise "Error: '#{input.path}' is a directory (did you mean to use --recursive?)" if File.directory?(input)
       output = @options[:output]
       output = input if @options[:in_place]
       process_file(input, output)
@@ -58,43 +56,39 @@ END
       opts.separator 'Common Options:'
 
       opts.on('-F', '--from FORMAT',
-        'The format to convert from. Can be css, scss, sass.',
-        'By default, this is inferred from the input filename.',
-        'If there is none, defaults to css.') do |name|
+              'The format to convert from. Can be css, scss, sass.',
+              'By default, this is inferred from the input filename.',
+              'If there is none, defaults to css.') do |name|
         @options[:from] = name.downcase.to_sym
-        raise "sass-convert no longer supports LessCSS." if @options[:from] == :less
-        unless [:css, :scss, :sass].include?(@options[:from])
-          raise "Unknown format for sass-convert --from: #{name}"
-        end
+        raise 'sass-convert no longer supports LessCSS.' if @options[:from] == :less
+        raise "Unknown format for sass-convert --from: #{name}" unless %i[css scss sass].include?(@options[:from])
       end
 
       opts.on('-T', '--to FORMAT',
-        'The format to convert to. Can be scss or sass.',
-        'By default, this is inferred from the output filename.',
-        'If there is none, defaults to sass.') do |name|
+              'The format to convert to. Can be scss or sass.',
+              'By default, this is inferred from the output filename.',
+              'If there is none, defaults to sass.') do |name|
         @options[:to] = name.downcase.to_sym
-        unless [:scss, :sass].include?(@options[:to])
-          raise "Unknown format for sass-convert --to: #{name}"
-        end
+        raise "Unknown format for sass-convert --to: #{name}" unless %i[scss sass].include?(@options[:to])
       end
 
       opts.on('-i', '--in-place',
-        'Convert a file to its own syntax.',
-        'This can be used to update some deprecated syntax.') do
+              'Convert a file to its own syntax.',
+              'This can be used to update some deprecated syntax.') do
         @options[:in_place] = true
       end
 
       opts.on('-R', '--recursive',
-          'Convert all the files in a directory. Requires --from and --to.') do
+              'Convert all the files in a directory. Requires --from and --to.') do
         @options[:recursive] = true
       end
 
-      opts.on("-?", "-h", "--help", "Show this help message.") do
+      opts.on('-?', '-h', '--help', 'Show this help message.') do
         puts opts
         exit
       end
 
-      opts.on("-v", "--version", "Print the Sass version.") do
+      opts.on('-v', '--version', 'Print the Sass version.') do
         puts("Sass #{Sass.version[:string]}")
         exit
       end
@@ -113,15 +107,15 @@ END
         'How many spaces to use for each level of indentation. Defaults to 2.',
         '"t" means use hard tabs.'
       ) do |indent|
-        if indent == 't'
-          @options[:for_tree][:indent] = "\t"
-        else
-          @options[:for_tree][:indent] = " " * indent.to_i
-        end
+        @options[:for_tree][:indent] = if indent == 't'
+                                         "\t"
+                                       else
+                                         ' ' * indent.to_i
+                                       end
       end
 
       opts.on('--old', 'Output the old-style ":prop val" property syntax.',
-                       'Only meaningful when generating Sass.') do
+              'Only meaningful when generating Sass.') do
         @options[:for_tree][:old] = true
       end
     end
@@ -139,7 +133,7 @@ END
       encoding_option(opts)
 
       opts.on('--unix-newlines', 'Use Unix-style newlines in written files.',
-                                 ('Always true on Unix.' unless Sass::Util.windows?)) do
+              ('Always true on Unix.' unless Sass::Util.windows?)) do
         @options[:unix_newlines] = true if Sass::Util.windows?
       end
     end
@@ -148,10 +142,10 @@ END
       opts.separator ''
       opts.separator 'Miscellaneous:'
 
-        opts.on('--cache-location PATH',
-                'The path to save parsed Sass files. Defaults to .sass-cache.') do |loc|
-          @options[:for_engine][:cache_location] = loc
-        end
+      opts.on('--cache-location PATH',
+              'The path to save parsed Sass files. Defaults to .sass-cache.') do |loc|
+        @options[:for_engine][:cache_location] = loc
+      end
 
       opts.on('-C', '--no-cache', "Don't cache to sassc files.") do
         @options[:for_engine][:read_cache] = false
@@ -168,18 +162,14 @@ END
 
     def process_directory
       @options[:input] = @args.shift
-      unless @options[:input]
-        raise "Error: directory required when using --recursive."
-      end
+      raise 'Error: directory required when using --recursive.' unless @options[:input]
 
       output = @options[:output] = @args.shift
-      raise "Error: --from required when using --recursive." unless @options[:from]
-      raise "Error: --to required when using --recursive." unless @options[:to]
-      unless File.directory?(@options[:input])
-        raise "Error: '#{@options[:input]}' is not a directory"
-      end
+      raise 'Error: --from required when using --recursive.' unless @options[:from]
+      raise 'Error: --to required when using --recursive.' unless @options[:to]
+      raise "Error: '#{@options[:input]}' is not a directory" unless File.directory?(@options[:input])
       if @options[:output] && File.exist?(@options[:output]) &&
-        !File.directory?(@options[:output])
+         !File.directory?(@options[:output])
         raise "Error: '#{@options[:output]}' is not a directory"
       end
       @options[:output] ||= @options[:input]
@@ -218,24 +208,25 @@ END
     end
 
     def process_file(input, output)
-      input_path, output_path = path_for(input), path_for(output)
+      input_path = path_for(input)
+      output_path = path_for(output)
       if input_path
         @options[:from] ||=
           case input_path
-          when /\.scss$/; :scss
-          when /\.sass$/; :sass
-          when /\.less$/; raise "sass-convert no longer supports LessCSS."
-          when /\.css$/; :css
+          when /\.scss$/ then :scss
+          when /\.sass$/ then :sass
+          when /\.less$/ then raise 'sass-convert no longer supports LessCSS.'
+          when /\.css$/ then :css
           end
       elsif @options[:in_place]
-        raise "Error: the --in-place option requires a filename."
+        raise 'Error: the --in-place option requires a filename.'
       end
 
       if output_path
         @options[:to] ||=
           case output_path
-          when /\.scss$/; :scss
-          when /\.sass$/; :sass
+          when /\.scss$/ then :scss
+          when /\.sass$/ then :sass
           end
       end
 
@@ -276,7 +267,7 @@ END
       if file.respond_to?(:read)
         file.read
       else
-        open(file, 'rb') {|f| f.read}
+        open(file, 'rb', &:read)
       end
     end
   end

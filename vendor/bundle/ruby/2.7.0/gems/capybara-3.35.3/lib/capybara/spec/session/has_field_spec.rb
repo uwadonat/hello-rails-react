@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 Capybara::SpecHelper.spec '#has_field' do
   before { @session.visit('/form') }
 

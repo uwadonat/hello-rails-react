@@ -1,8 +1,8 @@
 module Sass::Logger; end
 
-require "sass/logger/log_level"
-require "sass/logger/base"
-require "sass/logger/delayed"
+require 'sass/logger/log_level'
+require 'sass/logger/base'
+require 'sass/logger/delayed'
 
 module Sass
   class << self

@@ -32,7 +32,7 @@ module Sass::Script::Value
     #
     # @return [Sass::Script::Value::Color] the color object
     def hsl_color(hue, saturation, lightness, alpha = nil)
-      attrs = {:hue => hue, :saturation => saturation, :lightness => lightness}
+      attrs = { hue: hue, saturation: saturation, lightness: lightness }
       attrs[:alpha] = alpha if alpha
       Color.new(attrs)
     end
@@ -46,7 +46,7 @@ module Sass::Script::Value
     #
     # @return [Sass::Script::Value::Color] the color object
     def rgb_color(red, green, blue, alpha = nil)
-      attrs = {:red => red, :green => green, :blue => blue}
+      attrs = { red: red, green: green, blue: blue }
       attrs[:alpha] = alpha if alpha
       Color.new(attrs)
     end
@@ -87,13 +87,11 @@ module Sass::Script::Value
         if elements.last.is_a?(Symbol)
           separator = elements.pop
         else
-          raise ArgumentError.new("A separator of :space or :comma must be specified.")
+          raise ArgumentError, 'A separator of :space or :comma must be specified.'
         end
       end
 
-      if elements.size == 1 && elements.first.is_a?(Array)
-        elements = elements.first
-      end
+      elements = elements.first if elements.size == 1 && elements.first.is_a?(Array)
       Sass::Script::Value::List.new(elements, separator: separator, bracketed: bracketed)
     end
 
@@ -128,7 +126,7 @@ module Sass::Script::Value
     def unquoted_string(str)
       Sass::Script::String.new(str, :identifier)
     end
-    alias_method :identifier, :unquoted_string
+    alias identifier unquoted_string
 
     # Parses a user-provided selector.
     #
@@ -149,7 +147,7 @@ module Sass::Script::Value
       rescue Sass::SyntaxError => e
         err = "#{value.inspect} is not a valid selector: #{e}"
         err = "$#{name.to_s.tr('_', '-')}: #{err}" if name
-        raise ArgumentError.new(err)
+        raise ArgumentError, err
       end
     end
 
@@ -173,7 +171,7 @@ module Sass::Script::Value
 
       err = "#{value.inspect} is not a complex selector"
       err = "$#{name.to_s.tr('_', '-')}: #{err}" if name
-      raise ArgumentError.new(err)
+      raise ArgumentError, err
     end
 
     # Parses a user-provided compound selector.
@@ -194,13 +192,13 @@ module Sass::Script::Value
       seq = selector.members.first
       sseq = seq.members.first
       if selector.members.length == 1 && seq.members.length == 1 &&
-          sseq.is_a?(Sass::Selector::SimpleSequence)
+         sseq.is_a?(Sass::Selector::SimpleSequence)
         return sseq
       end
 
       err = "#{value.inspect} is not a compound selector"
       err = "$#{name.to_s.tr('_', '-')}: #{err}" if name
-      raise ArgumentError.new(err)
+      raise ArgumentError, err
     end
 
     # Returns true when the literal is a string containing a calc().
@@ -239,10 +237,10 @@ module Sass::Script::Value
         return str
       end
 
-      err = "#{value.inspect} is not a valid selector: it must be a string,\n" +
-        "a list of strings, or a list of lists of strings"
+      err = "#{value.inspect} is not a valid selector: it must be a string,\n" \
+            'a list of strings, or a list of lists of strings'
       err = "$#{name.to_s.tr('_', '-')}: #{err}" if name
-      raise ArgumentError.new(err)
+      raise ArgumentError, err
     end
 
     # Converts a user-provided selector into string form or returns
@@ -277,19 +275,15 @@ module Sass::Script::Value
     # @return [Array<Array<String>>] A list of numerator units and a list of denominator units.
     def parse_unit_string(unit_string)
       denominator_units = numerator_units = Sass::Script::Value::Number::NO_UNITS
-      return numerator_units, denominator_units unless unit_string && unit_string.length > 0
+      return numerator_units, denominator_units unless unit_string && !unit_string.empty?
       num_over_denominator = unit_string.split(%r{ */ *})
-      unless (1..2).include?(num_over_denominator.size)
-        raise ArgumentError.new("Malformed unit string: #{unit_string}")
-      end
+      raise ArgumentError, "Malformed unit string: #{unit_string}" unless (1..2).cover?(num_over_denominator.size)
       numerator_units = num_over_denominator[0].split(/ *\* */)
-      denominator_units = (num_over_denominator[1] || "").split(/ *\* */)
-      [[numerator_units, "numerator"], [denominator_units, "denominator"]].each do |units, name|
-        if unit_string =~ %r{/} && units.size == 0
-          raise ArgumentError.new("Malformed unit string: #{unit_string}")
-        end
-        if units.any? {|unit| unit !~ VALID_UNIT}
-          raise ArgumentError.new("Malformed #{name} in unit string: #{unit_string}")
+      denominator_units = (num_over_denominator[1] || '').split(/ *\* */)
+      [[numerator_units, 'numerator'], [denominator_units, 'denominator']].each do |units, name|
+        raise ArgumentError, "Malformed unit string: #{unit_string}" if unit_string =~ %r{/} && units.empty?
+        if units.any? { |unit| unit !~ VALID_UNIT }
+          raise ArgumentError, "Malformed #{name} in unit string: #{unit_string}"
         end
       end
       [numerator_units, denominator_units]

@@ -13,7 +13,7 @@ module Sprockets
   # Also see DirectiveProcessor.
   class Bundle
     def self.call(input)
-      env  = input[:environment]
+      env = input[:environment]
       type = input[:content_type]
       dependencies = Set.new(input[:metadata][:dependencies])
 
@@ -22,7 +22,7 @@ module Sprockets
 
       find_required = proc { |uri| env.load(uri).metadata[:required] }
       required = Utils.dfs(processed_uri, &find_required)
-      stubbed  = Utils.dfs(env.load(processed_uri).metadata[:stubbed], &find_required)
+      stubbed = Utils.dfs(env.load(processed_uri).metadata[:stubbed], &find_required)
       required.subtract(stubbed)
       assets = required.map { |uri| env.load(uri) }
 
@@ -51,18 +51,15 @@ module Sprockets
         end
       end
 
-      assets.reduce(initial) do |h, asset|
+      assets.each_with_object(initial) do |asset, h|
         reducers.each do |k, (_, block)|
           value = k == :data ? asset.source : asset.metadata[k]
           if h.key?(k)
-            if !value.nil?
-              h[k] = block.call(h[k], value)
-            end
+            h[k] = block.call(h[k], value) unless value.nil?
           else
             h[k] = value
           end
         end
-        h
       end
     end
   end

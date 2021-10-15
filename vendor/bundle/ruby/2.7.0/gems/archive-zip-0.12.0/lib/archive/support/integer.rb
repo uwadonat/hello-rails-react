@@ -1,7 +1,5 @@
-# encoding: UTF-8
-
 class Integer
-  unless public_method_defined?('ord') then
+  unless public_method_defined?('ord')
     # Returns the int itself.
     #
     # This method is defined here only if not already defined elsewhere, such as

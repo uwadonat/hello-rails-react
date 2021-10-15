@@ -1,17 +1,13 @@
 require 'concurrent/constants'
 
 module Concurrent
-
   # @!macro thread_local_var
   # @!macro internal_implementation_note
   # @!visibility private
   class AbstractThreadLocalVar
-
     # @!macro thread_local_var_method_initialize
     def initialize(default = nil, &default_block)
-      if default && block_given?
-        raise ArgumentError, "Cannot use both value and block as default value"
-      end
+      raise ArgumentError, 'Cannot use both value and block as default value' if default && block_given?
 
       if block_given?
         @default_block = default_block
@@ -30,12 +26,12 @@ module Concurrent
     end
 
     # @!macro thread_local_var_method_set
-    def value=(value)
+    def value=(_value)
       raise NotImplementedError
     end
 
     # @!macro thread_local_var_method_bind
-    def bind(value, &block)
+    def bind(value)
       if block_given?
         old_value = self.value
         begin

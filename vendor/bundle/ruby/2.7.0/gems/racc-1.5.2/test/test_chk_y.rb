@@ -17,7 +17,7 @@ module Racc
 
       # it generates valid ruby
       assert Module.new {
-        self.instance_eval(generator.generate_parser, __FILE__, __LINE__)
+        instance_eval(generator.generate_parser, __FILE__, __LINE__)
       }
 
       grammar = @states.grammar
@@ -37,7 +37,7 @@ module Racc
 
       # it generates valid ruby
       assert Module.new {
-        self.instance_eval(generator.generate_parser, __FILE__, __LINE__)
+        instance_eval(generator.generate_parser, __FILE__, __LINE__)
       }
 
       grammar = @states.grammar

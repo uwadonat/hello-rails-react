@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 Capybara::SpecHelper.spec '#matches_style?', requires: [:css] do
   before do
     @session.visit('/with_html')

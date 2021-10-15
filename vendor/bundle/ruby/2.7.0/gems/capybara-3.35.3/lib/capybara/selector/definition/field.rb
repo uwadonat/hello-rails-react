@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 Capybara.add_selector(:field, locator_type: [String, Symbol]) do
   visible { |options| :hidden if options[:type].to_s == 'hidden' }
 

@@ -3,7 +3,7 @@ module Spring
     class Rails
       def call
         ARGV.unshift command_name
-        load Dir.glob(::Rails.root.join("{bin,script}/rails")).first
+        load Dir.glob(::Rails.root.join('{bin,script}/rails')).first
       end
 
       def description
@@ -13,14 +13,14 @@ module Spring
 
     class RailsConsole < Rails
       def env(args)
-        return args.first if args.first && !args.first.index("-")
+        return args.first if args.first && !args.first.index('-')
 
         environment = nil
 
         args.each.with_index do |arg, i|
           if arg =~ /--environment=(\w+)/
-            environment = $1
-          elsif i > 0 && args[i - 1] == "-e"
+            environment = Regexp.last_match(1)
+          elsif i > 0 && args[i - 1] == '-e'
             environment = arg
           end
         end
@@ -29,19 +29,19 @@ module Spring
       end
 
       def command_name
-        "console"
+        'console'
       end
     end
 
     class RailsGenerate < Rails
       def command_name
-        "generate"
+        'generate'
       end
     end
 
     class RailsDestroy < Rails
       def command_name
-        "destroy"
+        'destroy'
       end
     end
 
@@ -56,28 +56,28 @@ module Spring
       end
 
       def command_name
-        "runner"
+        'runner'
       end
 
       def extract_environment(args)
         environment = nil
 
-        args = args.select.with_index { |arg, i|
+        args = args.select.with_index do |arg, i|
           case arg
-          when "-e"
+          when '-e'
             false
           when /--environment=(\w+)/
-            environment = $1
+            environment = Regexp.last_match(1)
             false
           else
-            if i > 0 && args[i - 1] == "-e"
+            if i > 0 && args[i - 1] == '-e'
               environment = arg
               false
             else
               true
             end
           end
-        }
+        end
 
         [args, environment]
       end
@@ -85,12 +85,12 @@ module Spring
 
     class RailsTest < Rails
       def env(args)
-        environment = "test"
+        environment = 'test'
 
         args.each.with_index do |arg, i|
           if arg =~ /--environment=(\w+)/
-            environment = $1
-          elsif i > 0 && args[i - 1] == "-e"
+            environment = Regexp.last_match(1)
+          elsif i > 0 && args[i - 1] == '-e'
             environment = arg
           end
         end
@@ -99,14 +99,14 @@ module Spring
       end
 
       def command_name
-        "test"
+        'test'
       end
     end
 
-    Spring.register_command "rails_console",  RailsConsole.new
-    Spring.register_command "rails_generate", RailsGenerate.new
-    Spring.register_command "rails_destroy",  RailsDestroy.new
-    Spring.register_command "rails_runner",   RailsRunner.new
-    Spring.register_command "rails_test",     RailsTest.new
+    Spring.register_command 'rails_console', RailsConsole.new
+    Spring.register_command 'rails_generate', RailsGenerate.new
+    Spring.register_command 'rails_destroy', RailsDestroy.new
+    Spring.register_command 'rails_runner', RailsRunner.new
+    Spring.register_command 'rails_test', RailsTest.new
   end
 end

@@ -14,18 +14,18 @@ module Sprockets
     #
     # Returns Asset.
     def initialize(environment, attributes = {})
-      @environment  = environment
-      @attributes   = attributes
+      @environment = environment
+      @attributes = attributes
       @content_type = attributes[:content_type]
-      @filename     = attributes[:filename]
-      @id           = attributes[:id]
-      @load_path    = attributes[:load_path]
+      @filename = attributes[:filename]
+      @id = attributes[:id]
+      @load_path = attributes[:load_path]
       @logical_path = attributes[:logical_path]
-      @metadata     = attributes[:metadata]
-      @mtime        = attributes[:mtime]
-      @name         = attributes[:name]
-      @source       = attributes[:source]
-      @uri          = attributes[:uri]
+      @metadata = attributes[:metadata]
+      @mtime = attributes[:mtime]
+      @name = attributes[:name]
+      @source = attributes[:source]
+      @uri = attributes[:uri]
     end
 
     # Internal: Return all internal instance variables as a hash.
@@ -118,7 +118,7 @@ module Sprockets
     def length
       metadata[:length]
     end
-    alias_method :bytesize, :length
+    alias bytesize length
 
     # Public: Returns String hexdigest of source.
     def hexdigest
@@ -128,10 +128,10 @@ module Sprockets
     # Deprecated: Returns String hexdigest of source.
     #
     # In 4.x this will be changed to return a raw Digest byte String.
-    alias_method :digest, :hexdigest
+    alias digest hexdigest
 
     # Pubic: ETag String of Asset.
-    alias_method :etag, :hexdigest
+    alias etag hexdigest
 
     # Public: Returns String base64 digest of source.
     def base64digest
@@ -193,8 +193,8 @@ module Sprockets
     #
     # Returns true or false.
     def eql?(other)
-      self.class == other.class && self.id == other.id
+      self.class == other.class && id == other.id
     end
-    alias_method :==, :eql?
+    alias == eql?
   end
 end

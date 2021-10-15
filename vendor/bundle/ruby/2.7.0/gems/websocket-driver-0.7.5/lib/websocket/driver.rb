@@ -17,7 +17,6 @@ module WebSocket
   autoload :HTTP, File.expand_path('../http', __FILE__)
 
   class Driver
-
     root = File.expand_path('../driver', __FILE__)
 
     begin
@@ -27,7 +26,6 @@ module WebSocket
       # Fall back to pure-Ruby implementation
       require 'websocket/mask'
     end
-
 
     if RUBY_PLATFORM =~ /java/
       require 'jruby'
@@ -42,27 +40,27 @@ module WebSocket
     end
 
     MAX_LENGTH = 0x3ffffff
-    STATES     = [:connecting, :open, :closing, :closed]
+    STATES = %i[connecting open closing closed].freeze
 
     ConnectEvent = Struct.new(nil)
-    OpenEvent    = Struct.new(nil)
+    OpenEvent = Struct.new(nil)
     MessageEvent = Struct.new(:data)
-    PingEvent    = Struct.new(:data)
-    PongEvent    = Struct.new(:data)
-    CloseEvent   = Struct.new(:code, :reason)
+    PingEvent = Struct.new(:data)
+    PongEvent = Struct.new(:data)
+    CloseEvent = Struct.new(:code, :reason)
 
-    ProtocolError      = Class.new(StandardError)
-    URIError           = Class.new(ArgumentError)
+    ProtocolError = Class.new(StandardError)
+    URIError = Class.new(ArgumentError)
     ConfigurationError = Class.new(ArgumentError)
 
-    autoload :Client,       root + '/client'
-    autoload :Draft75,      root + '/draft75'
-    autoload :Draft76,      root + '/draft76'
+    autoload :Client, root + '/client'
+    autoload :Draft75, root + '/draft75'
+    autoload :Draft76, root + '/draft76'
     autoload :EventEmitter, root + '/event_emitter'
-    autoload :Headers,      root + '/headers'
-    autoload :Hybi,         root + '/hybi'
-    autoload :Proxy,        root + '/proxy'
-    autoload :Server,       root + '/server'
+    autoload :Headers, root + '/headers'
+    autoload :Hybi, root + '/hybi'
+    autoload :Proxy, root + '/proxy'
+    autoload :Server, root + '/server'
     autoload :StreamReader, root + '/stream_reader'
 
     include EventEmitter
@@ -70,14 +68,14 @@ module WebSocket
 
     def initialize(socket, options = {})
       super()
-      Driver.validate_options(options, [:max_length, :masking, :require_masking, :protocols])
+      Driver.validate_options(options, %i[max_length masking require_masking protocols])
 
-      @socket      = socket
-      @reader      = StreamReader.new
-      @options     = options
-      @max_length  = options[:max_length] || MAX_LENGTH
-      @headers     = Headers.new
-      @queue       = []
+      @socket = socket
+      @reader = StreamReader.new
+      @options = options
+      @max_length = options[:max_length] || MAX_LENGTH
+      @headers = Headers.new
+      @queue = []
       @ready_state = 0
     end
 
@@ -86,7 +84,7 @@ module WebSocket
       STATES[@ready_state]
     end
 
-    def add_extension(extension)
+    def add_extension(_extension)
       false
     end
 
@@ -99,13 +97,11 @@ module WebSocket
     def start
       return false unless @ready_state == 0
 
-      unless Driver.websocket?(@socket.env)
-        return fail_handshake(ProtocolError.new('Not a WebSocket request'))
-      end
+      return fail_handshake(ProtocolError.new('Not a WebSocket request')) unless Driver.websocket?(@socket.env)
 
       begin
         response = handshake_response
-      rescue => error
+      rescue StandardError => error
         return fail_handshake(error)
       end
 
@@ -119,26 +115,26 @@ module WebSocket
       frame(message, :text)
     end
 
-    def binary(message)
+    def binary(_message)
       false
     end
 
-    def ping(*args)
+    def ping(*_args)
       false
     end
 
-    def pong(*args)
+    def pong(*_args)
       false
     end
 
-    def close(reason = nil, code = nil)
+    def close(_reason = nil, _code = nil)
       return false unless @ready_state == 1
       @ready_state = 3
       emit(:close, CloseEvent.new(nil, nil))
       true
     end
 
-  private
+    private
 
     def fail_handshake(error)
       headers = Headers.new
@@ -152,7 +148,7 @@ module WebSocket
       false
     end
 
-    def fail(type, message)
+    def fail(_type, message)
       @ready_state = 2
       emit(:error, ProtocolError.new(message))
       close
@@ -171,22 +167,22 @@ module WebSocket
     end
 
     def self.client(socket, options = {})
-      Client.new(socket, options.merge(:masking => true))
+      Client.new(socket, options.merge(masking: true))
     end
 
     def self.server(socket, options = {})
-      Server.new(socket, options.merge(:require_masking => true))
+      Server.new(socket, options.merge(require_masking: true))
     end
 
     def self.rack(socket, options = {})
-      env     = socket.env
+      env = socket.env
       version = env['HTTP_SEC_WEBSOCKET_VERSION']
-      key     = env['HTTP_SEC_WEBSOCKET_KEY']
-      key1    = env['HTTP_SEC_WEBSOCKET_KEY1']
-      key2    = env['HTTP_SEC_WEBSOCKET_KEY2']
+      key = env['HTTP_SEC_WEBSOCKET_KEY']
+      key1 = env['HTTP_SEC_WEBSOCKET_KEY1']
+      key2 = env['HTTP_SEC_WEBSOCKET_KEY2']
 
       if version or key
-        Hybi.new(socket, options.merge(:require_masking => true))
+        Hybi.new(socket, options.merge(require_masking: true))
       elsif key1 or key2
         Draft76.new(socket, options)
       else
@@ -211,20 +207,17 @@ module WebSocket
 
     def self.validate_options(options, valid_keys)
       options.keys.each do |key|
-        unless valid_keys.include?(key)
-          raise ConfigurationError, "Unrecognized option: #{ key.inspect }"
-        end
+        raise ConfigurationError, "Unrecognized option: #{key.inspect}" unless valid_keys.include?(key)
       end
     end
 
     def self.websocket?(env)
       connection = env['HTTP_CONNECTION'] || ''
-      upgrade    = env['HTTP_UPGRADE']    || ''
+      upgrade = env['HTTP_UPGRADE'] || ''
 
       env['REQUEST_METHOD'] == 'GET' and
-      connection.downcase.split(/ *, */).include?('upgrade') and
-      upgrade.downcase == 'websocket'
+        connection.downcase.split(/ *, */).include?('upgrade') and
+        upgrade.casecmp('websocket').zero?
     end
-
   end
 end

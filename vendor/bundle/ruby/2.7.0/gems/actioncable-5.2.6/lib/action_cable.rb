@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 #--
 # Copyright (c) 2015-2018 Basecamp, LLC
 #
@@ -23,23 +21,23 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #++
 
-require "active_support"
-require "active_support/rails"
-require "action_cable/version"
+require 'active_support'
+require 'active_support/rails'
+require 'action_cable/version'
 
 module ActionCable
   extend ActiveSupport::Autoload
 
   INTERNAL = {
     message_types: {
-      welcome: "welcome".freeze,
-      ping: "ping".freeze,
-      confirmation: "confirm_subscription".freeze,
-      rejection: "reject_subscription".freeze
+      welcome: 'welcome'.freeze,
+      ping: 'ping'.freeze,
+      confirmation: 'confirm_subscription'.freeze,
+      rejection: 'reject_subscription'.freeze
     },
-    default_mount_path: "/cable".freeze,
-    protocols: ["actioncable-v1-json".freeze, "actioncable-unsupported".freeze].freeze
-  }
+    default_mount_path: '/cable'.freeze,
+    protocols: ['actioncable-v1-json'.freeze, 'actioncable-unsupported'.freeze].freeze
+  }.freeze
 
   # Singleton instance of the server
   module_function def server

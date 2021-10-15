@@ -3,20 +3,20 @@ module Sprockets
     class Gzip
       # Private: Generates a gzipped file based off of reference file.
       def initialize(asset)
-        @content_type  = asset.content_type
-        @source        = asset.source
-        @charset       = asset.charset
+        @content_type = asset.content_type
+        @source = asset.source
+        @charset = asset.charset
       end
 
       # What non-text mime types should we compress? This list comes from:
       # https://www.fastly.com/blog/new-gzip-settings-and-deciding-what-compress
       COMPRESSABLE_MIME_TYPES = {
-        "application/vnd.ms-fontobject" => true,
-        "application/x-font-opentype" => true,
-        "application/x-font-ttf" => true,
-        "image/x-icon" => true,
-        "image/svg+xml" => true
-      }
+        'application/vnd.ms-fontobject' => true,
+        'application/x-font-opentype' => true,
+        'application/x-font-ttf' => true,
+        'image/x-icon' => true,
+        'image/svg+xml' => true
+      }.freeze
 
       # Private: Returns whether or not an asset can be compressed.
       #
@@ -26,7 +26,7 @@ module Sprockets
       # through a compression algorithm would make them larger.
       #
       # Return Boolean.
-      def can_compress?(mime_types)
+      def can_compress?(_mime_types)
         # The "charset" of a mime type is present if the value is
         # encoded text. We can check this value to see if the asset
         # can be compressed.

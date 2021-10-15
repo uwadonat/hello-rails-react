@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 module ActiveJob
   # == Active Job adapters
   #
@@ -123,7 +121,7 @@ module ActiveJob
     autoload :SuckerPunchAdapter
     autoload :TestAdapter
 
-    ADAPTER = "Adapter".freeze
+    ADAPTER = 'Adapter'.freeze
     private_constant :ADAPTER
 
     class << self

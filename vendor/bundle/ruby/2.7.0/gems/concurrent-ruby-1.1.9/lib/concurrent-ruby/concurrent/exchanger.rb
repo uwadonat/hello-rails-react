@@ -7,7 +7,6 @@ require 'concurrent/utility/engine'
 require 'concurrent/utility/monotonic_time'
 
 module Concurrent
-
   # @!macro exchanger
   #
   #   A synchronization point at which threads can pair and swap elements within
@@ -36,7 +35,6 @@ module Concurrent
 
   # @!visibility private
   class AbstractExchanger < Synchronization::Object
-
     # @!visibility private
     CANCEL = ::Object.new
     private_constant :CANCEL
@@ -119,7 +117,7 @@ module Concurrent
     # @!macro exchanger_method_do_exchange
     #
     # @return [Object, CANCEL] the value exchanged by the other thread; {CANCEL} on timeout
-    def do_exchange(value, timeout)
+    def do_exchange(_value, _timeout)
       raise NotImplementedError
     end
   end
@@ -141,8 +139,8 @@ module Concurrent
 
       def initialize(item)
         super()
-        @Item      = item
-        @Latch     = Concurrent::CountDownLatch.new
+        @Item = item
+        @Latch = Concurrent::CountDownLatch.new
         self.value = nil
       end
 
@@ -168,7 +166,6 @@ module Concurrent
     #
     # @return [Object, CANCEL] the value exchanged by the other thread; {CANCEL} on timeout
     def do_exchange(value, timeout)
-
       # ALGORITHM
       #
       # From the original Java version:
@@ -252,8 +249,8 @@ module Concurrent
       #     - Wake the sleeping occupier
       #     - Return the occupier's item
 
-      value  = NULL if value.nil? # The sentinel allows nil to be a valid value
-      me     = Node.new(value) # create my node in case I need to occupy
+      value = NULL if value.nil? # The sentinel allows nil to be a valid value
+      me = Node.new(value) # create my node in case I need to occupy
       end_at = Concurrent.monotonic_time + timeout.to_f # The time to give up
 
       result = loop do
@@ -293,7 +290,6 @@ module Concurrent
     # @!macro internal_implementation_note
     # @!visibility private
     class JavaExchanger < AbstractExchanger
-
       def initialize
         @exchanger = java.util.concurrent.Exchanger.new
       end
@@ -323,8 +319,7 @@ module Concurrent
 
   # @!visibility private
   # @!macro internal_implementation_note
-  ExchangerImplementation = case
-                            when Concurrent.on_jruby?
+  ExchangerImplementation = if Concurrent.on_jruby?
                               JavaExchanger
                             else
                               RubyExchanger
@@ -333,7 +328,6 @@ module Concurrent
 
   # @!macro exchanger
   class Exchanger < ExchangerImplementation
-
     # @!method initialize
     #   Creates exchanger instance
 

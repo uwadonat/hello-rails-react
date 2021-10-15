@@ -9,11 +9,11 @@ module Sass
         @keys = {}
       end
 
-      def _retrieve(key, version, sha)
+      def _retrieve(_key, _version, _sha)
         nil
       end
 
-      def _store(key, version, sha, contents)
+      def _store(key, _version, _sha, _contents)
         @keys[key] = true
       end
 

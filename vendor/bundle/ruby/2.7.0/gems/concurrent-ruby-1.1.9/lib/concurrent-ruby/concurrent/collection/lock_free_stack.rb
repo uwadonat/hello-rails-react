@@ -1,12 +1,10 @@
 module Concurrent
-
   # @!macro warn.edge
   class LockFreeStack < Synchronization::Object
-
     safe_initialization!
 
     class Node
-      # TODO (pitr-ch 20-Dec-2016): Could be unified with Stack class?
+      # TODO: (pitr-ch 20-Dec-2016): Could be unified with Stack class?
 
       # @return [Node]
       attr_reader :next_node
@@ -19,7 +17,7 @@ module Concurrent
       attr_writer :value
 
       def initialize(value, next_node)
-        @value     = value
+        @value = value
         @next_node = next_node
       end
 
@@ -53,7 +51,7 @@ module Concurrent
 
     # @param [Node] head
     # @return [true, false]
-    def empty?(head = head())
+    def empty?(head = head)
       head.equal? EMPTY
     end
 
@@ -67,7 +65,7 @@ module Concurrent
     # @param [Object] value
     # @return [self]
     def push(value)
-      while true
+      loop do
         current_head = head
         return self if compare_and_set_head current_head, Node[value, current_head]
       end
@@ -86,7 +84,7 @@ module Concurrent
 
     # @return [Object]
     def pop
-      while true
+      loop do
         current_head = head
         return current_head.value if compare_and_set_head current_head, current_head.next_node
       end
@@ -114,7 +112,7 @@ module Concurrent
 
     # @return [true, false]
     def clear
-      while true
+      loop do
         current_head = head
         return false if current_head == EMPTY
         return true if compare_and_set_head current_head, EMPTY
@@ -138,7 +136,7 @@ module Concurrent
     # @yield over the cleared stack
     # @yieldparam [Object] value
     def clear_each(&block)
-      while true
+      loop do
         current_head = head
         return self if current_head == EMPTY
         if compare_and_set_head current_head, EMPTY
@@ -153,6 +151,6 @@ module Concurrent
       format '%s %s>', super[0..-2], to_a.to_s
     end
 
-    alias_method :inspect, :to_s
+    alias inspect to_s
   end
 end

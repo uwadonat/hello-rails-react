@@ -12,16 +12,16 @@ class Sass::Tree::Visitors::CheckNesting < Sass::Tree::Visitors::Base
     if (error = @parent && (
         try_send(@parent.class.invalid_child_method_name, @parent, node) ||
         try_send(node.class.invalid_parent_method_name, @parent, node)))
-      raise Sass::SyntaxError.new(error)
+      raise Sass::SyntaxError, error
     end
     super
   rescue Sass::SyntaxError => e
-    e.modify_backtrace(:filename => node.filename, :line => node.line)
+    e.modify_backtrace(filename: node.filename, line: node.line)
     raise e
   end
 
   CONTROL_NODES = [Sass::Tree::EachNode, Sass::Tree::ForNode, Sass::Tree::IfNode,
-                   Sass::Tree::WhileNode, Sass::Tree::TraceNode]
+                   Sass::Tree::WhileNode, Sass::Tree::TraceNode].freeze
   SCRIPT_NODES = [Sass::Tree::ImportNode] + CONTROL_NODES
   def visit_children(parent)
     old_parent = @parent
@@ -30,9 +30,9 @@ class Sass::Tree::Visitors::CheckNesting < Sass::Tree::Visitors::Base
     # nodes where they don't belong.
     if parent.is_a?(Sass::Tree::AtRootNode) && parent.resolved_value
       old_parents = @parents
-      @parents = @parents.reject {|p| parent.exclude_node?(p)}
-      @parent = @parents.reverse.each_with_index.
-        find {|p, i| !transparent_parent?(p, @parents[-i - 2])}.first
+      @parents = @parents.reject { |p| parent.exclude_node?(p) }
+      @parent = @parents.reverse.each_with_index
+        .find { |p, i| !transparent_parent?(p, @parents[-i - 2]) }.first
 
       begin
         return super
@@ -42,9 +42,7 @@ class Sass::Tree::Visitors::CheckNesting < Sass::Tree::Visitors::Base
       end
     end
 
-    unless transparent_parent?(parent, old_parent)
-      @parent = parent
-    end
+    @parent = parent unless transparent_parent?(parent, old_parent)
 
     @parents.push parent
     begin
@@ -65,88 +63,89 @@ class Sass::Tree::Visitors::CheckNesting < Sass::Tree::Visitors::Base
   def visit_import(node)
     yield
   rescue Sass::SyntaxError => e
-    e.modify_backtrace(:filename => node.children.first.filename)
-    e.add_backtrace(:filename => node.filename, :line => node.line)
+    e.modify_backtrace(filename: node.children.first.filename)
+    e.add_backtrace(filename: node.filename, line: node.line)
     raise e
   end
 
   def visit_mixindef(node)
-    @current_mixin_def, old_mixin_def = node, @current_mixin_def
+    old_mixin_def = @current_mixin_def
+    @current_mixin_def = node
     yield
   ensure
     @current_mixin_def = old_mixin_def
   end
 
-  def invalid_content_parent?(parent, child)
+  def invalid_content_parent?(_parent, _child)
     if @current_mixin_def
       @current_mixin_def.has_content = true
       nil
     else
-      "@content may only be used within a mixin."
+      '@content may only be used within a mixin.'
     end
   end
 
-  def invalid_charset_parent?(parent, child)
-    "@charset may only be used at the root of a document." unless parent.is_a?(Sass::Tree::RootNode)
+  def invalid_charset_parent?(parent, _child)
+    '@charset may only be used at the root of a document.' unless parent.is_a?(Sass::Tree::RootNode)
   end
 
-  VALID_EXTEND_PARENTS = [Sass::Tree::RuleNode, Sass::Tree::MixinDefNode, Sass::Tree::MixinNode]
-  def invalid_extend_parent?(parent, child)
+  VALID_EXTEND_PARENTS = [Sass::Tree::RuleNode, Sass::Tree::MixinDefNode, Sass::Tree::MixinNode].freeze
+  def invalid_extend_parent?(parent, _child)
     return if is_any_of?(parent, VALID_EXTEND_PARENTS)
-    "Extend directives may only be used within rules."
+    'Extend directives may only be used within rules.'
   end
 
   INVALID_IMPORT_PARENTS = CONTROL_NODES +
-    [Sass::Tree::MixinDefNode, Sass::Tree::MixinNode]
+                           [Sass::Tree::MixinDefNode, Sass::Tree::MixinNode]
   def invalid_import_parent?(parent, child)
-    unless (@parents.map {|p| p.class} & INVALID_IMPORT_PARENTS).empty?
-      return "Import directives may not be used within control directives or mixins."
+    unless (@parents.map(&:class) & INVALID_IMPORT_PARENTS).empty?
+      return 'Import directives may not be used within control directives or mixins.'
     end
     return if parent.is_a?(Sass::Tree::RootNode)
-    return "CSS import directives may only be used at the root of a document." if child.css_import?
+    return 'CSS import directives may only be used at the root of a document.' if child.css_import?
   rescue Sass::SyntaxError => e
-    e.modify_backtrace(:filename => child.imported_file.options[:filename])
-    e.add_backtrace(:filename => child.filename, :line => child.line)
+    e.modify_backtrace(filename: child.imported_file.options[:filename])
+    e.add_backtrace(filename: child.filename, line: child.line)
     raise e
   end
 
-  def invalid_mixindef_parent?(parent, child)
-    return if (@parents.map {|p| p.class} & INVALID_IMPORT_PARENTS).empty?
-    "Mixins may not be defined within control directives or other mixins."
+  def invalid_mixindef_parent?(_parent, _child)
+    return if (@parents.map(&:class) & INVALID_IMPORT_PARENTS).empty?
+    'Mixins may not be defined within control directives or other mixins.'
   end
 
-  def invalid_function_parent?(parent, child)
-    return if (@parents.map {|p| p.class} & INVALID_IMPORT_PARENTS).empty?
-    "Functions may not be defined within control directives or other mixins."
+  def invalid_function_parent?(_parent, _child)
+    return if (@parents.map(&:class) & INVALID_IMPORT_PARENTS).empty?
+    'Functions may not be defined within control directives or other mixins.'
   end
 
   VALID_FUNCTION_CHILDREN = [
-    Sass::Tree::CommentNode,  Sass::Tree::DebugNode, Sass::Tree::ReturnNode,
+    Sass::Tree::CommentNode, Sass::Tree::DebugNode, Sass::Tree::ReturnNode,
     Sass::Tree::VariableNode, Sass::Tree::WarnNode, Sass::Tree::ErrorNode
   ] + CONTROL_NODES
-  def invalid_function_child?(parent, child)
+  def invalid_function_child?(_parent, child)
     return if is_any_of?(child, VALID_FUNCTION_CHILDREN)
-    "Functions can only contain variable declarations and control directives."
+    'Functions can only contain variable declarations and control directives.'
   end
 
   VALID_PROP_CHILDREN = CONTROL_NODES + [Sass::Tree::CommentNode,
                                          Sass::Tree::PropNode,
                                          Sass::Tree::MixinNode]
-  def invalid_prop_child?(parent, child)
+  def invalid_prop_child?(_parent, child)
     return if is_any_of?(child, VALID_PROP_CHILDREN)
-    "Illegal nesting: Only properties may be nested beneath properties."
+    'Illegal nesting: Only properties may be nested beneath properties.'
   end
 
   VALID_PROP_PARENTS = [Sass::Tree::RuleNode, Sass::Tree::KeyframeRuleNode, Sass::Tree::PropNode,
-                        Sass::Tree::MixinDefNode, Sass::Tree::DirectiveNode, Sass::Tree::MixinNode]
+                        Sass::Tree::MixinDefNode, Sass::Tree::DirectiveNode, Sass::Tree::MixinNode].freeze
   def invalid_prop_parent?(parent, child)
     return if is_any_of?(parent, VALID_PROP_PARENTS)
-    "Properties are only allowed within rules, directives, mixin includes, or other properties." +
+    'Properties are only allowed within rules, directives, mixin includes, or other properties.' +
       child.pseudo_class_selector_message
   end
 
-  def invalid_return_parent?(parent, child)
-    "@return may only be used within a function." unless parent.is_a?(Sass::Tree::FunctionNode)
+  def invalid_return_parent?(parent, _child)
+    '@return may only be used within a function.' unless parent.is_a?(Sass::Tree::FunctionNode)
   end
 
   private

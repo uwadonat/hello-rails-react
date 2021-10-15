@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 require 'xpath'
 
 module Capybara
@@ -25,7 +23,7 @@ module Capybara
         end
       end
 
-    private
+      private
 
       def attribute_conditions(attributes)
         attributes.map do |attribute, value|

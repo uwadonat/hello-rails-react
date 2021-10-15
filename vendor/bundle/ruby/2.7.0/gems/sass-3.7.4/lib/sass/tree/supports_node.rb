@@ -21,7 +21,9 @@ module Sass::Tree
     end
 
     # @see DirectiveNode#value
-    def value; raise NotImplementedError; end
+    def value
+      raise NotImplementedError
+    end
 
     # @see DirectiveNode#resolved_value
     def resolved_value
@@ -32,7 +34,7 @@ module Sass::Tree
     #
     # @return [Boolean]
     def invisible?
-      children.all? {|c| c.invisible?}
+      children.all?(&:invisible?)
     end
   end
 end

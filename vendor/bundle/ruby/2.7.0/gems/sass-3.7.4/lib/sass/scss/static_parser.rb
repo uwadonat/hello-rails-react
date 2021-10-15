@@ -18,7 +18,7 @@ module Sass
       def parse_selector
         init_scanner!
         seq = expr!(:selector_comma_sequence)
-        expected("selector") unless @scanner.eos?
+        expected('selector') unless @scanner.eos?
         seq.line = @line
         seq.filename = @filename
         seq
@@ -37,14 +37,14 @@ module Sass
         tok!(/:/); ss
         directives = expr!(:at_root_directive_list); ss
         tok!(/\)/)
-        expected("@at-root query list") unless @scanner.eos?
-        return type, directives
+        expected('@at-root query list') unless @scanner.eos?
+        [type, directives]
       end
 
       def parse_keyframes_selector
         init_scanner!
         sel = expr!(:keyframes_selector)
-        expected("keyframes selector") unless @scanner.eos?
+        expected('keyframes selector') unless @scanner.eos?
         sel
       end
 
@@ -65,17 +65,40 @@ module Sass
         [val]
       end
 
-      def variable; nil; end
-      def script_value; nil; end
-      def interpolation(warn_for_color = false); nil; end
-      def var_expr; nil; end
-      def interp_string; (s = tok(STRING)) && [s]; end
-      def interp_uri; (s = tok(URI)) && [s]; end
-      def interp_ident; (s = ident) && [s]; end
-      def use_css_import?; true; end
+      def variable
+        nil
+      end
+
+      def script_value
+        nil
+      end
+
+      def interpolation(_warn_for_color = false)
+        nil
+      end
+
+      def var_expr
+        nil
+      end
+
+      def interp_string
+        (s = tok(STRING)) && [s]
+      end
+
+      def interp_uri
+        (s = tok(URI)) && [s]
+      end
+
+      def interp_ident
+        (s = ident) && [s]
+      end
+
+      def use_css_import?
+        true
+      end
 
       def special_directive(name, start_pos)
-        return unless %w(media import charset -moz-document).include?(name)
+        return unless %w[media import charset -moz-document].include?(name)
         super
       end
 
@@ -85,12 +108,10 @@ module Sass
         selectors = [sel]
         ws = ''
         while tok(/,/)
-          ws << str {ss}
+          ws << str { ss }
           next unless (sel = selector)
           selectors << sel
-          if ws.include?("\n")
-            selectors[-1] = Selector::Sequence.new(["\n"] + selectors.last.members)
-          end
+          selectors[-1] = Selector::Sequence.new(["\n"] + selectors.last.members) if ws.include?("\n")
           ws = ''
         end
         Selector::CommaSequence.new(selectors)
@@ -107,18 +128,18 @@ module Sass
         # The combinator here allows the "> E" hack
         val = combinator || simple_selector_sequence
         return unless val
-        nl = str {ss}.include?("\n")
+        nl = str { ss }.include?("\n")
         res = []
         res << val
         res << "\n" if nl
 
         while (val = combinator || simple_selector_sequence)
           res << val
-          res << "\n" if str {ss}.include?("\n")
+          res << "\n" if str { ss }.include?("\n")
         end
         seq = Selector::Sequence.new(res.compact)
 
-        if seq.members.any? {|sseq| sseq.is_a?(Selector::SimpleSequence) && sseq.subject?}
+        if seq.members.any? { |sseq| sseq.is_a?(Selector::SimpleSequence) && sseq.subject? }
           location = " of #{@filename}" if @filename
           Sass::Util.sass_warn <<MESSAGE
 DEPRECATION WARNING on line #{start_pos.line}, column #{start_pos.offset}#{location}:
@@ -166,14 +187,14 @@ MESSAGE
 
         pos = @scanner.pos
         line = @line
-        if (sel = str? {simple_selector_sequence})
+        if (sel = str? { simple_selector_sequence })
           @scanner.pos = pos
           @line = line
           begin
             # If we see "*E", don't force a throw because this could be the
             # "*prop: val" hack.
             expected('"{"') if res.length == 1 && res[0].is_a?(Selector::Universal)
-            throw_error {expected('"{"')}
+            throw_error { expected('"{"') }
           rescue Sass::SyntaxError => e
             e.message << "\n\n\"#{sel}\" may only be used at the beginning of a compound selector."
             raise e
@@ -190,19 +211,19 @@ MESSAGE
 
       def class_selector
         return unless tok(/\./)
-        @expected = "class name"
+        @expected = 'class name'
         Selector::Class.new(ident!)
       end
 
       def id_selector
         return unless tok(/#(?!\{)/)
-        @expected = "id name"
+        @expected = 'id name'
         Selector::Id.new(name!)
       end
 
       def placeholder_selector
         return unless tok(/%/)
-        @expected = "placeholder name"
+        @expected = 'placeholder name'
         Selector::Placeholder.new(ident!)
       end
 
@@ -218,13 +239,13 @@ MESSAGE
       end
 
       def qualified_name(allow_star_name = false)
-        name = ident || tok(/\*/) || (tok?(/\|/) && "")
+        name = ident || tok(/\*/) || (tok?(/\|/) && '')
         return unless name
         return nil, name unless tok(/\|/)
 
         return name, ident! unless allow_star_name
-        @expected = "identifier or *"
-        return name, ident || tok!(/\*/)
+        @expected = 'identifier or *'
+        [name, ident || tok!(/\*/)]
       end
 
       def attrib
@@ -240,7 +261,7 @@ MESSAGE
              tok(SUFFIXMATCH) ||
              tok(SUBSTRINGMATCH)
         if op
-          @expected = "identifier or string"
+          @expected = 'identifier or string'
           ss
           val = ident || tok!(STRING)
           ss
@@ -262,23 +283,23 @@ MESSAGE
           end
         else
           # *|E or |E
-          ns = tok(/\*/) || ""
+          ns = tok(/\*/) || ''
           tok!(/\|/)
           name = ident!
         end
-        return ns, name
+        [ns, name]
       end
 
-      SELECTOR_PSEUDO_CLASSES = %w(not matches current any has host host-context).to_set
+      SELECTOR_PSEUDO_CLASSES = %w[not matches current any has host host-context].to_set
 
-      PREFIXED_SELECTOR_PSEUDO_CLASSES = %w(nth-child nth-last-child).to_set
+      PREFIXED_SELECTOR_PSEUDO_CLASSES = %w[nth-child nth-last-child].to_set
 
-      SELECTOR_PSEUDO_ELEMENTS = %w(slotted).to_set
+      SELECTOR_PSEUDO_ELEMENTS = %w[slotted].to_set
 
       def pseudo
         s = tok(/::?/)
         return unless s
-        @expected = "pseudoclass or pseudoelement"
+        @expected = 'pseudoclass or pseudoelement'
         name = ident!
         if tok(/\(/)
           ss
@@ -300,12 +321,12 @@ MESSAGE
 
       def prefixed_selector_pseudo
         prefix = str do
-          expr = str {expr!(:a_n_plus_b)}
+          expr = str { expr!(:a_n_plus_b) }
           ss
           return expr, nil unless tok(/of/)
           ss
         end
-        return prefix, expr!(:selector_comma_sequence)
+        [prefix, expr!(:selector_comma_sequence)]
       end
 
       def a_n_plus_b
@@ -323,7 +344,7 @@ MESSAGE
 
         return true unless tok(/[+-]/)
         ss
-        @expected = "number"
+        @expected = 'number'
         tok!(/[0-9]+/)
         true
       end

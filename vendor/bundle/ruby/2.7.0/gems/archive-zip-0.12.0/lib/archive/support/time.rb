@@ -1,5 +1,3 @@
-# encoding: UTF-8
-
 class Time
   # Returns a DOSTime representing this time object as a DOS date-time
   # structure.  Times are bracketed by the limits of the ability of the DOS
@@ -9,17 +7,17 @@ class Time
   #
   # See DOSTime#new for a description of this structure.
   def to_dos_time
-    dos_sec  = sec/2
+    dos_sec = sec / 2
     dos_year = year - 1980
-    dos_year = 0   if dos_year < 0
+    dos_year = 0 if dos_year < 0
     dos_year = 119 if dos_year > 119
 
     Archive::DOSTime.new(
-      (dos_sec       ) |
-      (min      <<  5) |
-      (hour     << 11) |
-      (day      << 16) |
-      (month    << 21) |
+      dos_sec |
+      (min << 5) |
+      (hour << 11) |
+      (day << 16) |
+      (month << 21) |
       (dos_year << 25)
     )
   end
@@ -49,9 +47,7 @@ module Archive
       when Integer
         @dos_time = dos_time
       else
-        unless dos_time.length == 4 then
-          raise ArgumentError, 'length of DOS time structure is not 4'
-        end
+        raise ArgumentError, 'length of DOS time structure is not 4' unless dos_time.length == 4
         @dos_time = dos_time.unpack('V')[0]
       end
 
@@ -63,7 +59,7 @@ module Archive
     def cmp(other)
       to_i <=> other.to_i
     end
-    alias :<=> :cmp
+    alias <=> cmp
 
     # Returns the time value of this object as an integer representing the DOS
     # time structure.
@@ -80,24 +76,24 @@ module Archive
     # Returns a Time instance which is equivalent to the time represented by
     # this object.
     def to_time
-      second = ((0b11111         & @dos_time)      ) * 2
-      minute = ((0b111111  << 5  & @dos_time) >>  5)
-      hour   = ((0b11111   << 11 & @dos_time) >> 11)
-      day    = ((0b11111   << 16 & @dos_time) >> 16)
-      month  = ((0b1111    << 21 & @dos_time) >> 21)
-      year   = ((0b1111111 << 25 & @dos_time) >> 25) + 1980
-      return Time.local(year, month, day, hour, minute, second)
+      second = ((0b11111 & @dos_time)) * 2
+      minute = ((0b111111 << 5 & @dos_time) >> 5)
+      hour = ((0b11111 << 11 & @dos_time) >> 11)
+      day = ((0b11111 << 16 & @dos_time) >> 16)
+      month = ((0b1111 << 21 & @dos_time) >> 21)
+      year = ((0b1111111 << 25 & @dos_time) >> 25) + 1980
+      Time.local(year, month, day, hour, minute, second)
     end
 
     private
 
     def validate
-      second = (0b11111         & @dos_time)
-      minute = (0b111111  << 5  & @dos_time) >>  5
-      hour   = (0b11111   << 11 & @dos_time) >> 11
-      day    = (0b11111   << 16 & @dos_time) >> 16
-      month  = (0b1111    << 21 & @dos_time) >> 21
-      year   = (0b1111111 << 25 & @dos_time) >> 25
+      second = (0b11111 & @dos_time)
+      minute = (0b111111 << 5 & @dos_time) >> 5
+      hour = (0b11111 << 11 & @dos_time) >> 11
+      day = (0b11111 << 16 & @dos_time) >> 16
+      month = (0b1111 << 21 & @dos_time) >> 21
+      year = (0b1111111 << 25 & @dos_time) >> 25
 
       if second > 29
         raise ArgumentError, 'second must not be greater than 29'

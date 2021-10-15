@@ -12,11 +12,7 @@ module Sprockets
     #
     # Returns nil if the file does not exist.
     def stat(path)
-      if File.exist?(path)
-        File.stat(path.to_s)
-      else
-        nil
-      end
+      File.stat(path.to_s) if File.exist?(path)
     end
 
     # Public: Like `File.file?`.
@@ -53,12 +49,12 @@ module Sprockets
     # Returns an empty `Array` if the directory does not exist.
     def entries(path)
       if File.directory?(path)
-        entries = Dir.entries(path, :encoding => Encoding.default_internal)
-        entries.reject! { |entry|
-          entry.start_with?(".".freeze) ||
-            (entry.start_with?("#".freeze) && entry.end_with?("#".freeze)) ||
-            entry.end_with?("~".freeze)
-        }
+        entries = Dir.entries(path, encoding: Encoding.default_internal)
+        entries.reject! do |entry|
+          entry.start_with?('.'.freeze) ||
+            (entry.start_with?('#'.freeze) && entry.end_with?('#'.freeze)) ||
+            entry.end_with?('~'.freeze)
+        end
         entries.sort!
       else
         []
@@ -84,11 +80,11 @@ module Sprockets
       end
     end
 
-    if File::ALT_SEPARATOR
-      SEPARATOR_PATTERN = "#{Regexp.quote(File::SEPARATOR)}|#{Regexp.quote(File::ALT_SEPARATOR)}"
-    else
-      SEPARATOR_PATTERN = "#{Regexp.quote(File::SEPARATOR)}"
-    end
+    SEPARATOR_PATTERN = if File::ALT_SEPARATOR
+                          "#{Regexp.quote(File::SEPARATOR)}|#{Regexp.quote(File::ALT_SEPARATOR)}".freeze
+                        else
+                          Regexp.quote(File::SEPARATOR).to_s.freeze
+                        end
 
     # Public: Check if path is explicitly relative.
     # Starts with "./" or "../".
@@ -108,13 +104,9 @@ module Sprockets
     # Returns relative String path if subpath is a subpath of path, or nil if
     # subpath is outside of path.
     def split_subpath(path, subpath)
-      return "" if path == subpath
+      return '' if path == subpath
       path = File.join(path, '')
-      if subpath.start_with?(path)
-        subpath[path.length..-1]
-      else
-        nil
-      end
+      subpath[path.length..-1] if subpath.start_with?(path)
     end
 
     # Internal: Detect root path and base for file in a set of paths.
@@ -157,7 +149,7 @@ module Sprockets
           return extname, value
         end
 
-        i = basename.index('.'.freeze, i+1)
+        i = basename.index('.'.freeze, i + 1)
       end
 
       nil
@@ -206,7 +198,7 @@ module Sprockets
     def stat_directory(dir)
       return to_enum(__method__, dir) unless block_given?
 
-      self.entries(dir).each do |entry|
+      entries(dir).each do |entry|
         path = File.join(dir, entry)
         if stat = self.stat(path)
           yield path, stat
@@ -224,12 +216,10 @@ module Sprockets
     def stat_tree(dir, &block)
       return to_enum(__method__, dir) unless block_given?
 
-      self.stat_directory(dir) do |path, stat|
+      stat_directory(dir) do |path, stat|
         yield path, stat
 
-        if stat.directory?
-          stat_tree(path, &block)
-        end
+        stat_tree(path, &block) if stat.directory?
       end
 
       nil
@@ -244,14 +234,12 @@ module Sprockets
     def stat_sorted_tree(dir, &block)
       return to_enum(__method__, dir) unless block_given?
 
-      self.stat_directory(dir).sort_by { |path, stat|
+      stat_directory(dir).sort_by do |path, stat|
         stat.directory? ? "#{path}/" : path
-      }.each do |path, stat|
+      end.each do |path, stat|
         yield path, stat
 
-        if stat.directory?
-          stat_sorted_tree(path, &block)
-        end
+        stat_sorted_tree(path, &block) if stat.directory?
       end
 
       nil
@@ -271,7 +259,7 @@ module Sprockets
         basename,
         Thread.current.object_id,
         Process.pid,
-        rand(1000000)
+        rand(1_000_000)
       ].join('.')
       tmpname = File.join(dirname, basename)
 

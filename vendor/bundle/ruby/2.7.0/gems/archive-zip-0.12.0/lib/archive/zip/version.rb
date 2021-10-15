@@ -1,6 +1,4 @@
-# encoding: UTF-8
-
 module Archive; class Zip
-  # The current version of this gem.
-  VERSION = '0.12.0'
+                  # The current version of this gem.
+                  VERSION = '0.12.0'.freeze
 end; end

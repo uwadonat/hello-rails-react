@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 module Capybara
   module Queries
     class MatchQuery < Capybara::Queries::SelectorQuery
@@ -7,7 +5,7 @@ module Capybara
         options.key?(:visible) ? super : :all
       end
 
-    private
+      private
 
       def assert_valid_keys
         invalid_options = @options.keys & COUNT_KEYS

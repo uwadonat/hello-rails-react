@@ -8,14 +8,14 @@ module Sass
       # unless you don't dump the cache.
       #
       # @private
-      def _dump(depth)
-        ""
+      def _dump(_depth)
+        ''
       end
 
       # If we deserialize this class, just make a new empty one.
       #
       # @private
-      def self._load(repr)
+      def self._load(_repr)
         Memory.new
       end
 
@@ -26,7 +26,7 @@ module Sass
 
       # @see Base#retrieve
       def retrieve(key, sha)
-        return unless @contents.has_key?(key)
+        return unless @contents.key?(key)
         return unless @contents[key][:sha] == sha
         obj = @contents[key][:obj]
         obj.respond_to?(:deep_copy) ? obj.deep_copy : obj.dup
@@ -34,7 +34,7 @@ module Sass
 
       # @see Base#store
       def store(key, sha, obj)
-        @contents[key] = {:sha => sha, :obj => obj}
+        @contents[key] = { sha: sha, obj: obj }
       end
 
       # Destructively clear the cache.

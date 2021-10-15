@@ -22,7 +22,7 @@ module Sass
       # @param line [Integer]
       # @return [Integer]
       def line=(line)
-        members.each {|m| m.line = line}
+        members.each { |m| m.line = line }
         @line = line
       end
 
@@ -33,7 +33,7 @@ module Sass
       # @param filename [String, nil]
       # @return [String, nil]
       def filename=(filename)
-        members.each {|m| m.filename = filename}
+        members.each { |m| m.filename = filename }
         @filename = filename
       end
 
@@ -57,7 +57,7 @@ module Sass
       def eql?(other)
         other.class == self.class && other.hash == hash && _eql?(other)
       end
-      alias_method :==, :eql?
+      alias == eql?
 
       # Whether or not this selector should be hidden due to containing a
       # placeholder.
@@ -75,7 +75,7 @@ module Sass
       # @option placeholders [Boolean] :placeholders
       #   Whether to include placeholder selectors. Defaults to `true`.
       # @return [String]
-      def to_s(opts = {})
+      def to_s(_opts = {})
         Sass::Util.abstract(self)
       end
 

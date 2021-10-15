@@ -1,5 +1,3 @@
-# encoding: UTF-8
-
 require 'minitest/autorun'
 
 require File.expand_path('../../fixtures/classes', __FILE__)
@@ -7,8 +5,8 @@ require File.expand_path('../../fixtures/classes', __FILE__)
 require 'archive/zip/codec/traditional_encryption'
 require 'archive/support/binary_stringio'
 
-describe "Archive::Zip::Codec::TraditionalEncryption::Encrypt#rewind" do
-  it "can rewind the stream when the delegate responds to rewind" do
+describe 'Archive::Zip::Codec::TraditionalEncryption::Encrypt#rewind' do
+  it 'can rewind the stream when the delegate responds to rewind' do
     encrypted_data = BinaryStringIO.new
     Archive::Zip::Codec::TraditionalEncryption::Encrypt.open(
       encrypted_data,
@@ -24,7 +22,7 @@ describe "Archive::Zip::Codec::TraditionalEncryption::Encrypt#rewind" do
     encrypted_data.string.must_equal(TraditionalEncryptionSpecs.encrypted_data)
   end
 
-  it "raises Errno::EINVAL when attempting to rewind the stream when the delegate does not respond to rewind" do
+  it 'raises Errno::EINVAL when attempting to rewind the stream when the delegate does not respond to rewind' do
     delegate = MiniTest::Mock.new
     delegate.expect(:write, 12, [String])
     delegate.expect(:close, nil)
@@ -33,7 +31,7 @@ describe "Archive::Zip::Codec::TraditionalEncryption::Encrypt#rewind" do
       TraditionalEncryptionSpecs.password,
       TraditionalEncryptionSpecs.mtime
     ) do |e|
-      lambda { e.rewind }.must_raise(Errno::EINVAL)
+      -> { e.rewind }.must_raise(Errno::EINVAL)
     end
   end
 end

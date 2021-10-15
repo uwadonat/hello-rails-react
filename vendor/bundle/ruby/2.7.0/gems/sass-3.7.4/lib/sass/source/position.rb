@@ -29,11 +29,11 @@ module Sass::Source
     def after(str)
       newlines = str.count("\n")
       Position.new(line + newlines,
-        if newlines == 0
-          offset + str.length
-        else
-          str.length - str.rindex("\n") - 1
-        end)
+                   if newlines == 0
+                     offset + str.length
+                   else
+                     str.length - str.rindex("\n") - 1
+                   end)
     end
   end
 end

@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 #--
 # Copyright (c) 2014-2018 David Heinemeier Hansson
 #
@@ -23,10 +21,10 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #++
 
-require "active_support"
-require "active_support/rails"
-require "active_job/version"
-require "global_id"
+require 'active_support'
+require 'active_support/rails'
+require 'active_job/version'
+require 'global_id'
 
 module ActiveJob
   extend ActiveSupport::Autoload

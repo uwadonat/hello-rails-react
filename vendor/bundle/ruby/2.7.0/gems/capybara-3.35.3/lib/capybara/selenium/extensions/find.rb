@@ -97,8 +97,8 @@ module Capybara
         respond_to?(:execute_script) ? self : driver
       end
 
-      def is_displayed_atom # rubocop:disable Naming/PredicateName
-        @@is_displayed_atom ||= begin # rubocop:disable Style/ClassVars
+      def is_displayed_atom
+        @@is_displayed_atom ||= begin
           browser.send(:bridge).send(:read_atom, 'isDisplayed')
         rescue StandardError
           # If the atom doesn't exist or other error

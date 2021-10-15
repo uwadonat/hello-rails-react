@@ -11,7 +11,7 @@ module Spring
       # client is not invoked for whatever reason, then the Kernel.exit won't
       # happen, and so we'll fall back to the lines after this block, which
       # should cause the "unsprung" version of the command to run.
-      LOADER = <<CODE
+      LOADER = <<CODE.freeze
 begin
   load File.expand_path('../spring', __FILE__)
 rescue LoadError => e
@@ -23,7 +23,7 @@ CODE
       # binstub from the application process. Which means that in the application
       # process we'll execute the lines which come after the LOADER block, which
       # is what we want.
-      SPRING = <<'CODE'
+      SPRING = <<'CODE'.freeze
 #!/usr/bin/env ruby
 
 # This file loads Spring without using Bundler, in order to be fast.
@@ -43,7 +43,7 @@ unless defined?(Spring)
 end
 CODE
 
-      OLD_BINSTUB = %{if !Process.respond_to?(:fork) || Gem::Specification.find_all_by_name("spring").empty?}
+      OLD_BINSTUB = %{if !Process.respond_to?(:fork) || Gem::Specification.find_all_by_name("spring").empty?}.freeze
 
       BINSTUB_VARIATIONS = Regexp.union [
         %{begin\n  load File.expand_path('../spring', __FILE__)\nrescue LoadError\nend\n},
@@ -59,8 +59,8 @@ CODE
 
           if command.binstub.exist?
             @existing = command.binstub.read
-          elsif command.name == "rails"
-            scriptfile = Spring.application_root_path.join("script/rails")
+          elsif command.name == 'rails'
+            scriptfile = Spring.application_root_path.join('script/rails')
             @existing = scriptfile.read if scriptfile.exist?
           end
         end
@@ -73,27 +73,27 @@ CODE
           if existing
             if existing.include?(OLD_BINSTUB)
               fallback = existing.match(/#{Regexp.escape OLD_BINSTUB}\n(.*)else/m)[1]
-              fallback.gsub!(/^  /, "")
-              fallback = nil if fallback.include?("exec")
+              fallback.gsub!(/^  /, '')
+              fallback = nil if fallback.include?('exec')
               generate(fallback)
-              status "upgraded"
+              status 'upgraded'
             elsif existing.include?(LOADER)
-              status "Spring already present"
+              status 'Spring already present'
             elsif existing =~ BINSTUB_VARIATIONS
               upgraded = existing.sub(BINSTUB_VARIATIONS, LOADER)
               File.write(command.binstub, upgraded)
-              status "upgraded"
+              status 'upgraded'
             else
               head, shebang, tail = existing.partition(SHEBANG)
 
-              if shebang.include?("ruby")
+              if shebang.include?('ruby')
                 unless command.binstub.exist?
                   FileUtils.touch command.binstub
-                  command.binstub.chmod 0755
+                  command.binstub.chmod 0o755
                 end
 
                 File.write(command.binstub, "#{head}#{shebang}#{LOADER}#{tail}")
-                status "Spring inserted"
+                status 'Spring inserted'
               else
                 status "doesn't appear to be ruby, so cannot use Spring", $stderr
                 exit 1
@@ -101,24 +101,22 @@ CODE
             end
           else
             generate
-            status "generated with Spring"
+            status 'generated with Spring'
           end
         end
 
         def generate(fallback = nil)
-          unless fallback
-            fallback = "require 'bundler/setup'\n" \
+          fallback ||= "require 'bundler/setup'\n" \
                        "load Gem.bin_path('#{command.gem_name}', '#{command.exec_name}')\n"
-          end
 
           File.write(command.binstub, "#!/usr/bin/env ruby\n#{LOADER}#{fallback}")
-          command.binstub.chmod 0755
+          command.binstub.chmod 0o755
         end
 
         def remove
           if existing
-            File.write(command.binstub, existing.sub(BINSTUB_VARIATIONS, ""))
-            status "Spring removed"
+            File.write(command.binstub, existing.sub(BINSTUB_VARIATIONS, ''))
+            status 'Spring removed'
           end
         end
       end
@@ -126,47 +124,47 @@ CODE
       attr_reader :bindir, :items
 
       def self.description
-        "Generate Spring based binstubs. Use --all to generate a binstub for all known commands. Use --remove to revert."
+        'Generate Spring based binstubs. Use --all to generate a binstub for all known commands. Use --remove to revert.'
       end
 
       def self.rails_command
-        @rails_command ||= CommandWrapper.new("rails")
+        @rails_command ||= CommandWrapper.new('rails')
       end
 
       def self.call(args)
-        require "spring/commands"
+        require 'spring/commands'
         super
       end
 
       def initialize(args)
         super
 
-        @bindir = env.root.join("bin")
-        @all    = false
-        @mode   = :add
-        @items  = args.drop(1)
-                      .map { |name| find_commands name }
-                      .inject(Set.new, :|)
-                      .map { |command| Item.new(command) }
+        @bindir = env.root.join('bin')
+        @all = false
+        @mode = :add
+        @items = args.drop(1)
+          .map { |name| find_commands name }
+          .inject(Set.new, :|)
+          .map { |command| Item.new(command) }
       end
 
       def find_commands(name)
         case name
-        when "--all"
+        when '--all'
           @all = true
           commands = Spring.commands.dup
-          commands.delete_if { |command_name, _| command_name.start_with?("rails_") }
+          commands.delete_if { |command_name, _| command_name.start_with?('rails_') }
           commands.values + [self.class.rails_command]
-        when "--remove"
+        when '--remove'
           @mode = :remove
           []
-        when "rails"
+        when 'rails'
           [self.class.rails_command]
         else
           if command = Spring.commands[name]
             [command]
           else
-            $stderr.puts "The '#{name}' command is not known to spring."
+            warn "The '#{name}' command is not known to spring."
             exit 1
           end
         end
@@ -178,7 +176,7 @@ CODE
           bindir.mkdir unless bindir.exist?
 
           File.write(spring_binstub, SPRING)
-          spring_binstub.chmod 0755
+          spring_binstub.chmod 0o755
 
           items.each(&:add)
         when :remove
@@ -190,7 +188,7 @@ CODE
       end
 
       def spring_binstub
-        bindir.join("spring")
+        bindir.join('spring')
       end
     end
   end

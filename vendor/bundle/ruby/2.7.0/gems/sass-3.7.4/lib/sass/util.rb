@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 require 'erb'
 require 'set'
 require 'enumerator'
@@ -18,12 +17,12 @@ module Sass
 
     # An array of ints representing the Ruby version number.
     # @api public
-    RUBY_VERSION_COMPONENTS = RUBY_VERSION.split(".").map {|s| s.to_i}
+    RUBY_VERSION_COMPONENTS = RUBY_VERSION.split('.').map(&:to_i)
 
     # The Ruby engine we're running under. Defaults to `"ruby"`
     # if the top-level constant is undefined.
     # @api public
-    RUBY_ENGINE = defined?(::RUBY_ENGINE) ? ::RUBY_ENGINE : "ruby"
+    RUBY_ENGINE = defined?(::RUBY_ENGINE) ? ::RUBY_ENGINE : 'ruby'
 
     # Returns the path of a file relative to the Sass root directory.
     #
@@ -46,7 +45,7 @@ module Sass
     # @see #map_vals
     # @see #map_hash
     def map_keys(hash)
-      map_hash(hash) {|k, v| [yield(k), v]}
+      map_hash(hash) { |k, v| [yield(k), v] }
     end
 
     # Maps the values in a hash according to a block.
@@ -155,7 +154,7 @@ module Sass
     def merge_adjacent_strings(arr)
       # Optimize for the common case of one element
       return arr if arr.size < 2
-      arr.inject([]) do |a, e|
+      arr.each_with_object([]) do |e, a|
         if e.is_a?(String)
           if a.last.is_a?(String)
             a.last << e
@@ -165,7 +164,6 @@ module Sass
         else
           a << e
         end
-        a
       end
     end
 
@@ -213,7 +211,7 @@ module Sass
     # @param val
     # @return [Array]
     def intersperse(enum, val)
-      enum.inject([]) {|a, e| a << e << val}[0...-1]
+      enum.inject([]) { |a, e| a << e << val }[0...-1]
     end
 
     def slice_by(enum)
@@ -238,9 +236,7 @@ module Sass
       res = ary.dup
       i = 0
       while i < res.size
-        if res[i...i + from.size] == from
-          res[i...i + from.size] = to
-        end
+        res[i...i + from.size] = to if res[i...i + from.size] == from
         i += 1
       end
       res
@@ -266,7 +262,7 @@ module Sass
     # @return [String]
     def normalize_ident_escapes(ident, start: true)
       ident.gsub(/(^)?(#{Sass::SCSS::RX::ESCAPE})/) do |s|
-        at_start = start && $1
+        at_start = start && Regexp.last_match(1)
         char = escaped_char(s)
         next char if char =~ (at_start ? Sass::SCSS::RX::NMSTART : Sass::SCSS::RX::NMCHAR)
         if char =~ (at_start ? /[\x0-\x1F\x7F0-9]/ : /[\x0-\x1F\x7F]/)
@@ -283,7 +279,7 @@ module Sass
     # @return [String]
     def escaped_char(escape)
       if escape =~ /^\\([0-9a-fA-F]{1,6})[ \t\r\n\f]?/
-        $1.to_i(16).chr(Encoding::UTF_8)
+        Regexp.last_match(1).to_i(16).chr(Encoding::UTF_8)
       else
         escape[1]
       end
@@ -320,7 +316,7 @@ module Sass
     #     #  [2, 4, 5]]
     def paths(arrs)
       arrs.inject([[]]) do |paths, arr|
-        arr.map {|e| paths.map {|path| path + [e]}}.flatten(1)
+        arr.flat_map { |e| paths.map { |path| path + [e] } }
       end
     end
 
@@ -338,7 +334,7 @@ module Sass
     def lcs(x, y, &block)
       x = [nil, *x]
       y = [nil, *y]
-      block ||= proc {|a, b| a == b && a}
+      block ||= proc { |a, b| a == b && a }
       lcs_backtrace(lcs_table(x, y, &block), x, y, x.size - 1, y.size - 1, &block)
     end
 
@@ -364,7 +360,7 @@ module Sass
     def array_minus(minuend, subtrahend)
       return minuend - subtrahend unless rbx?
       set = Set.new(minuend) - subtrahend
-      minuend.select {|e| set.include?(e)}
+      minuend.select { |e| set.include?(e) }
     end
 
     # Returns the maximum of `val1` and `val2`. We use this over \{Array.max} to
@@ -409,8 +405,7 @@ module Sass
       return value if range.include?(value)
       return range.first if grace.include?(value - range.first)
       return range.last if grace.include?(value - range.last)
-      raise ArgumentError.new(
-        "#{name} #{str} must be between #{range.first}#{unit} and #{range.last}#{unit}")
+      raise ArgumentError, "#{name} #{str} must be between #{range.first}#{unit} and #{range.last}#{unit}"
     end
 
     # Returns whether or not `seq1` is a subsequence of `seq2`. That is, whether
@@ -453,14 +448,15 @@ module Sass
     # @return [Boolean]
     def version_gt(v1, v2)
       # Construct an array to make sure the shorter version is padded with nil
-      Array.new([v1.length, v2.length].max).zip(v1.split("."), v2.split(".")) do |_, p1, p2|
-        p1 ||= "0"
-        p2 ||= "0"
+      Array.new([v1.length, v2.length].max).zip(v1.split('.'), v2.split('.')) do |_, p1, p2|
+        p1 ||= '0'
+        p2 ||= '0'
         release1 = p1 =~ /^[0-9]+$/
         release2 = p2 =~ /^[0-9]+$/
         if release1 && release2
           # Integer comparison if both are full releases
-          p1, p2 = p1.to_i, p2.to_i
+          p1 = p1.to_i
+          p2 = p2.to_i
           next if p1 == p2
           return p1 > p2
         elsif !release1 && !release2
@@ -489,7 +485,7 @@ module Sass
     # @param obj [Object] `self`
     # @raise [NotImplementedError]
     def abstract(obj)
-      raise NotImplementedError.new("#{obj.class} must implement ##{caller_info[2]}")
+      raise NotImplementedError, "#{obj.class} must implement ##{caller_info[2]}"
     end
 
     # Prints a deprecation warning for the caller method.
@@ -498,8 +494,8 @@ module Sass
     # @param message [String] A message describing what to do instead.
     def deprecated(obj, message = nil)
       obj_class = obj.is_a?(Class) ? "#{obj}." : "#{obj.class}#"
-      full_message = "DEPRECATION WARNING: #{obj_class}#{caller_info[2]} " +
-        "will be removed in a future version of Sass.#{("\n" + message) if message}"
+      full_message = "DEPRECATION WARNING: #{obj_class}#{caller_info[2]} " \
+                     "will be removed in a future version of Sass.#{("\n" + message) if message}"
       Sass::Util.sass_warn full_message
     end
 
@@ -507,7 +503,8 @@ module Sass
     #
     # @yield A block in which no Sass warnings will be printed
     def silence_sass_warnings
-      old_level, Sass.logger.log_level = Sass.logger.log_level, :error
+      old_level = Sass.logger.log_level
+      Sass.logger.log_level = :error
       yield
     ensure
       Sass.logger.log_level = old_level
@@ -530,7 +527,7 @@ module Sass
     def rails_root
       if defined?(::Rails.root)
         return ::Rails.root.to_s if ::Rails.root
-        raise "ERROR: Rails.root is nil!"
+        raise 'ERROR: Rails.root is nil!'
       end
       return RAILS_ROOT.to_s if defined?(RAILS_ROOT)
       nil
@@ -552,7 +549,7 @@ module Sass
     #
     # @return [Boolean]
     def ap_geq_3?
-      ap_geq?("3.0.0.beta1")
+      ap_geq?('3.0.0.beta1')
     end
 
     # Returns whether this environment is using ActionPack
@@ -565,7 +562,7 @@ module Sass
     def ap_geq?(version)
       # The ActionPack module is always loaded automatically in Rails >= 3
       return false unless defined?(ActionPack) && defined?(ActionPack::VERSION) &&
-        defined?(ActionPack::VERSION::STRING)
+                          defined?(ActionPack::VERSION::STRING)
 
       version_geq(ActionPack::VERSION::STRING, version)
     end
@@ -601,7 +598,7 @@ module Sass
     # @return [Boolean]
     def ironruby?
       return @ironruby if defined?(@ironruby)
-      @ironruby = RUBY_ENGINE == "ironruby"
+      @ironruby = RUBY_ENGINE == 'ironruby'
     end
 
     # Whether or not this is running on Rubinius.
@@ -609,7 +606,7 @@ module Sass
     # @return [Boolean]
     def rbx?
       return @rbx if defined?(@rbx)
-      @rbx = RUBY_ENGINE == "rbx"
+      @rbx = RUBY_ENGINE == 'rbx'
     end
 
     # Whether or not this is running on JRuby.
@@ -624,7 +621,7 @@ module Sass
     #
     # @return [Array<Integer>]
     def jruby_version
-      @jruby_version ||= ::JRUBY_VERSION.split(".").map {|s| s.to_i}
+      @jruby_version ||= ::JRUBY_VERSION.split('.').map(&:to_i)
     end
 
     # Like `Dir.glob`, but works with backslash-separated paths on Windows.
@@ -633,7 +630,7 @@ module Sass
     def glob(path)
       path = path.tr('\\', '/') if windows?
       if block_given?
-        Dir.glob(path) {|f| yield(f)}
+        Dir.glob(path) { |f| yield(f) }
       else
         Dir.glob(path)
       end
@@ -648,7 +645,7 @@ module Sass
     # @param path [String]
     # @return [Pathname]
     def pathname(path)
-      path = path.tr("/", "\\") if windows?
+      path = path.tr('/', '\\') if windows?
       Pathname.new(path)
     end
 
@@ -702,7 +699,7 @@ module Sass
       # Work around https://github.com/ruby/ruby/pull/713.
       path = path.to_s
       from = from.to_s
-      raise ArgumentError("Incompatible path encodings: #{path.inspect} is #{path.encoding}, " +
+      raise ArgumentError("Incompatible path encodings: #{path.inspect} is #{path.encoding}, " \
         "#{from.inspect} is #{from.encoding}")
     end
 
@@ -714,10 +711,10 @@ module Sass
       path = path.to_s if path.is_a?(Pathname)
       path = path.tr('\\', '/') if windows?
       path = URI::DEFAULT_PARSER.escape(path)
-      return path.start_with?('/') ? "file://" + path : path unless windows?
-      return "file:///" + path.tr("\\", "/") if path =~ %r{^[a-zA-Z]:[/\\]}
-      return "file:" + path.tr("\\", "/") if path =~ %r{\\\\[^\\]+\\[^\\/]+}
-      path.tr("\\", "/")
+      return path.start_with?('/') ? 'file://' + path : path unless windows?
+      return 'file:///' + path.tr('\\', '/') if path =~ %r{^[a-zA-Z]:[/\\]}
+      return 'file:' + path.tr('\\', '/') if path =~ %r{\\\\[^\\]+\\[^\\/]+}
+      path.tr('\\', '/')
     end
 
     # Retries a filesystem operation if it fails on Windows. Windows
@@ -750,9 +747,9 @@ module Sass
 
     CHARSET_REGEXP = /\A@charset "([^"]+)"/
     bom = "\uFEFF"
-    UTF_8_BOM = bom.encode("UTF-8").force_encoding('BINARY')
-    UTF_16BE_BOM = bom.encode("UTF-16BE").force_encoding('BINARY')
-    UTF_16LE_BOM = bom.encode("UTF-16LE").force_encoding('BINARY')
+    UTF_8_BOM = bom.encode('UTF-8').force_encoding('BINARY')
+    UTF_16BE_BOM = bom.encode('UTF-16BE').force_encoding('BINARY')
+    UTF_16LE_BOM = bom.encode('UTF-16LE').force_encoding('BINARY')
 
     ## Cross-Ruby-Version Compatibility
 
@@ -787,7 +784,7 @@ module Sass
       # Determine the fallback encoding following section 3.2 of CSS Syntax Level 3 and Encodings:
       # http://www.w3.org/TR/2013/WD-css-syntax-3-20130919/#determine-the-fallback-encoding
       # http://encoding.spec.whatwg.org/#decode
-      binary = str.dup.force_encoding("BINARY")
+      binary = str.dup.force_encoding('BINARY')
       if binary.start_with?(UTF_8_BOM)
         binary.slice! 0, UTF_8_BOM.length
         str = binary.force_encoding('UTF-8')
@@ -798,13 +795,11 @@ module Sass
         binary.slice! 0, UTF_16LE_BOM.length
         str = binary.force_encoding('UTF-16LE')
       elsif binary =~ CHARSET_REGEXP
-        charset = $1.force_encoding('US-ASCII')
+        charset = Regexp.last_match(1).force_encoding('US-ASCII')
         encoding = Encoding.find(charset)
-        if encoding.name == 'UTF-16' || encoding.name == 'UTF-16BE'
-          encoding = Encoding.find('UTF-8')
-        end
+        encoding = Encoding.find('UTF-8') if encoding.name == 'UTF-16' || encoding.name == 'UTF-16BE'
         str = binary.force_encoding(encoding)
-      elsif str.encoding.name == "ASCII-8BIT"
+      elsif str.encoding.name == 'ASCII-8BIT'
         # Normally we want to fall back on believing the Ruby string
         # encoding, but if that's just binary we want to make sure
         # it's valid UTF-8.
@@ -815,7 +810,7 @@ module Sass
 
       begin
         # If the string is valid, preprocess it according to section 3.3 of CSS Syntax Level 3.
-        return str.encode("UTF-8").gsub(/\r\n?|\f/, "\n").tr("\u0000", "�"), str.encoding
+        return str.encode('UTF-8').gsub(/\r\n?|\f/, "\n").tr("\u0000", '�'), str.encoding
       rescue EncodingError
         find_encoding_error(str)
       end
@@ -847,7 +842,7 @@ module Sass
     # @return [Array] The flattened array.
     def flatten_vertically(arrs)
       result = []
-      arrs = arrs.map {|sub| sub.is_a?(Array) ? sub.dup : Array(sub)}
+      arrs = arrs.map { |sub| sub.is_a?(Array) ? sub.dup : Array(sub) }
       until arrs.empty?
         arrs.reject! do |arr|
           result << arr.shift
@@ -865,10 +860,10 @@ module Sass
     # @param obj {Object}
     # @return {String}
     def inspect_obj(obj)
-      return obj.inspect unless version_geq(RUBY_VERSION, "1.9.2")
+      return obj.inspect unless version_geq(RUBY_VERSION, '1.9.2')
       return ':' + inspect_obj(obj.to_s) if obj.is_a?(Symbol)
       return obj.inspect unless obj.is_a?(String)
-      '"' + obj.gsub(/[\x00-\x7F]+/) {|s| s.inspect[1...-1]} + '"'
+      '"' + obj.gsub(/[\x00-\x7F]+/) { |s| s.inspect[1...-1] } + '"'
     end
 
     # Extracts the non-string vlaues from an array containing both strings and non-strings.
@@ -890,7 +885,7 @@ module Sass
         values << e
         next "{#{values.count - 1}}"
       end
-      return mapped.join, values
+      [mapped.join, values]
     end
 
     # Undoes \{#extract\_values} by transforming a string with escape sequences
@@ -902,11 +897,11 @@ module Sass
     def inject_values(str, values)
       return [str.gsub('{{', '{')] if values.empty?
       # Add an extra { so that we process the tail end of the string
-      result = (str + '{{').scan(/(.*?)(?:(\{\{)|\{(\d+)\})/m).map do |(pre, esc, n)|
+      result = (str + '{{').scan(/(.*?)(?:(\{\{)|\{(\d+)\})/m).flat_map do |(pre, esc, n)|
         [pre, esc ? '{' : '', n ? values[n.to_i] : '']
-      end.flatten(1)
+      end
       result[-2] = '' # Get rid of the extra {
-      merge_adjacent_strings(result).reject {|s| s == ''}
+      merge_adjacent_strings(result).reject { |s| s == '' }
     end
 
     # Allows modifications to be performed on the string form
@@ -928,7 +923,7 @@ module Sass
     # @param css [String] The generated CSS file name.
     # @return [String] The source map file name.
     def sourcemap_name(css)
-      css + ".map"
+      css + '.map'
     end
 
     # Escapes certain characters so that the result can be used
@@ -940,16 +935,16 @@ module Sass
     def json_escape_string(s)
       return s if s !~ /["\\\b\f\n\r\t]/
 
-      result = ""
-      s.split("").each do |c|
+      result = ''
+      s.split('').each do |c|
         case c
-        when '"', "\\"
-          result << "\\" << c
-        when "\n" then result << "\\n"
-        when "\t" then result << "\\t"
-        when "\r" then result << "\\r"
-        when "\f" then result << "\\f"
-        when "\b" then result << "\\b"
+        when '"', '\\'
+          result << '\\' << c
+        when "\n" then result << '\\n'
+        when "\t" then result << '\\t'
+        when "\r" then result << '\\r'
+        when "\f" then result << '\\f'
+        when "\b" then result << '\\b'
         else
           result << c
         end
@@ -966,17 +961,17 @@ module Sass
       when Integer
         v.to_s
       when String
-        "\"" + json_escape_string(v) + "\""
+        '"' + json_escape_string(v) + '"'
       when Array
-        "[" + v.map {|x| json_value_of(x)}.join(",") + "]"
+        '[' + v.map { |x| json_value_of(x) }.join(',') + ']'
       when NilClass
-        "null"
+        'null'
       when TrueClass
-        "true"
+        'true'
       when FalseClass
-        "false"
+        'false'
       else
-        raise ArgumentError.new("Unknown type: #{v.class.name}")
+        raise ArgumentError, "Unknown type: #{v.class.name}"
       end
     end
 
@@ -1009,9 +1004,7 @@ module Sass
       begin
         digit = value & VLQ_BASE_MASK
         value >>= VLQ_BASE_SHIFT
-        if value > 0
-          digit |= VLQ_CONTINUATION_BIT
-        end
+        digit |= VLQ_CONTINUATION_BIT if value > 0
         result << BASE64_DIGITS[digit]
       end while value > 0
       result
@@ -1051,7 +1044,7 @@ module Sass
     #   by the process's user.
     # @yieldparam tmpfile [Tempfile] The temp file that can be written to.
     # @return The value returned by the block.
-    def atomic_create_and_write_file(filename, perms = 0666)
+    def atomic_create_and_write_file(filename, perms = 0o666)
       require 'tempfile'
       tmpfile = Tempfile.new(File.basename(filename), File.dirname(filename))
       tmpfile.binmode if tmpfile.respond_to?(:binmode)
@@ -1083,27 +1076,28 @@ module Sass
       ff = Regexp.quote("\f".encode(encoding).force_encoding('BINARY'))
       line_break = /#{cr}#{lf}?|#{ff}|#{lf}/
 
-      str.force_encoding("binary").split(line_break).each_with_index do |line, i|
+      str.force_encoding('binary').split(line_break).each_with_index do |line, i|
         begin
           line.encode(encoding)
         rescue Encoding::UndefinedConversionError => e
           raise Sass::SyntaxError.new(
             "Invalid #{encoding.name} character #{undefined_conversion_error_char(e)}",
-            :line => i + 1)
+            line: i + 1
+          )
         end
       end
 
       # We shouldn't get here, but it's possible some weird encoding stuff causes it.
-      return str, str.encoding
+      [str, str.encoding]
     end
 
     # Calculates the memoization table for the Least Common Subsequence algorithm.
     # Algorithm from [Wikipedia](http://en.wikipedia.org/wiki/Longest_common_subsequence_problem#Computing_the_length_of_the_LCS)
     def lcs_table(x, y)
       # This method does not take a block as an explicit parameter for performance reasons.
-      c = Array.new(x.size) {[]}
-      x.size.times {|i| c[i][0] = 0}
-      y.size.times {|j| c[0][j] = 0}
+      c = Array.new(x.size) { [] }
+      x.size.times { |i| c[i][0] = 0 }
+      y.size.times { |j| c[0][j] = 0 }
       (1...x.size).each do |i|
         (1...y.size).each do |j|
           c[i][j] =
@@ -1129,7 +1123,7 @@ module Sass
       lcs_backtrace(c, x, y, i - 1, j, &block)
     end
 
-    singleton_methods.each {|method| module_function method}
+    singleton_methods.each { |method| module_function method }
   end
 end
 

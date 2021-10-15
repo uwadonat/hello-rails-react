@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 require 'xpath'
 
 module Capybara
@@ -15,11 +13,11 @@ module Capybara
       def add_attribute_conditions(**attributes)
         @expression = attributes.inject(expression) do |css, (name, value)|
           conditions = if name == :class
-            class_conditions(value)
-          elsif value.is_a? Regexp
-            regexp_conditions(name, value)
-          else
-            [attribute_conditions(name => value)]
+                         class_conditions(value)
+                       elsif value.is_a? Regexp
+                         regexp_conditions(name, value)
+                       else
+                         [attribute_conditions(name => value)]
           end
 
           ::Capybara::Selector::CSS.split(css).map do |sel|
@@ -30,7 +28,7 @@ module Capybara
         end
       end
 
-    private
+      private
 
       def regexp_conditions(name, value)
         Selector::RegexpDisassembler.new(value).alternated_substrings.map do |strs|

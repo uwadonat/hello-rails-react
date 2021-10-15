@@ -1,7 +1,5 @@
-# frozen_string_literal: true
-
 module Erubi
-  VERSION = '1.10.0'
+  VERSION = '1.10.0'.freeze
   RANGE_ALL = 0..-1
 
   # :nocov:
@@ -31,14 +29,14 @@ module Erubi
     end
   rescue LoadError
     # :nocov:
-    ESCAPE_TABLE = {'&' => '&amp;'.freeze, '<' => '&lt;'.freeze, '>' => '&gt;'.freeze, '"' => '&quot;'.freeze, "'" => '&#39;'.freeze}.freeze
+    ESCAPE_TABLE = { '&' => '&amp;'.freeze, '<' => '&lt;'.freeze, '>' => '&gt;'.freeze, '"' => '&quot;'.freeze, "'" => '&#39;'.freeze }.freeze
     if RUBY_VERSION >= '1.9'
       def self.h(value)
         value.to_s.gsub(/[&<>"']/, ESCAPE_TABLE)
       end
     else
       def self.h(value)
-        value.to_s.gsub(/[&<>"']/){|s| ESCAPE_TABLE[s]}
+        value.to_s.gsub(/[&<>"']/) { |s| ESCAPE_TABLE[s] }
       end
     end
     # :nocov:
@@ -71,26 +69,26 @@ module Erubi
     # +:regexp+ :: The regexp to use for scanning.
     # +:src+ :: The initial value to use for the source code, an empty string by default.
     # +:trim+ :: Whether to trim leading and trailing whitespace, true by default.
-    def initialize(input, properties={})
-      @escape = escape = properties.fetch(:escape){properties.fetch(:escape_html, false)}
-      trim       = properties[:trim] != false
-      @filename  = properties[:filename]
-      @bufvar = bufvar = properties[:bufvar] || properties[:outvar] || "_buf"
+    def initialize(input, properties = {})
+      @escape = escape = properties.fetch(:escape) { properties.fetch(:escape_html, false) }
+      trim = properties[:trim] != false
+      @filename = properties[:filename]
+      @bufvar = bufvar = properties[:bufvar] || properties[:outvar] || '_buf'
       bufval = properties[:bufval] || '::String.new'
       regexp = properties[:regexp] || /<%(={1,2}|-|\#|%)?(.*?)([-=])?%>([ \t]*\r?\n)?/m
       literal_prefix = properties[:literal_prefix] || '<%'
       literal_postfix = properties[:literal_postfix] || '%>'
-      preamble   = properties[:preamble] || "#{bufvar} = #{bufval};"
-      postamble  = properties[:postamble] || "#{bufvar}.to_s\n"
+      preamble = properties[:preamble] || "#{bufvar} = #{bufval};"
+      postamble = properties[:postamble] || "#{bufvar}.to_s\n"
 
-      @src = src = properties[:src] || String.new
+      @src = src = properties[:src] || ''
       src << "# frozen_string_literal: true\n" if properties[:freeze]
       src << "begin; __original_outvar = #{bufvar} if defined?(#{bufvar}); " if properties[:ensure]
 
       unless @escapefunc = properties[:escapefunc]
         if escape
           @escapefunc = '__erubi.h'
-          src << "__erubi = ::Erubi;"
+          src << '__erubi = ::Erubi;'
         else
           @escapefunc = '::Erubi.h'
         end
@@ -102,22 +100,22 @@ module Erubi
       is_bol = true
       input.scan(regexp) do |indicator, code, tailch, rspace|
         match = Regexp.last_match
-        len  = match.begin(0) - pos
+        len = match.begin(0) - pos
         text = input[pos, len]
-        pos  = match.end(0)
-        ch   = indicator ? indicator[RANGE_FIRST] : nil
+        pos = match.end(0)
+        ch = indicator ? indicator[RANGE_FIRST] : nil
 
         lspace = nil
 
         unless ch == '='
           if text.empty?
-            lspace = "" if is_bol
+            lspace = '' if is_bol
           elsif text[RANGE_LAST] == "\n"
-            lspace = ""
+            lspace = ''
           else
             rindex = text.rindex("\n")
             if rindex
-              range = rindex+1..-1
+              range = rindex + 1..-1
               s = text[range]
               if /\A[ \t]*\z/.send(MATCH_METHOD, s)
                 lspace = s
@@ -184,7 +182,7 @@ module Erubi
       else
         text.gsub!(/['\\]/, '\\\\\&')
       end
-      @src << " " << @bufvar << " << '" << text << TEXT_END
+      @src << ' ' << @bufvar << " << '" << text << TEXT_END
     end
 
     # Add ruby code to the template
@@ -196,7 +194,7 @@ module Erubi
     # Add the given ruby expression result to the template,
     # escaping it based on the indicator given and escape flag.
     def add_expression(indicator, code)
-      if ((indicator == '=') ^ @escape)
+      if (indicator == '=') ^ @escape
         add_expression_result(code)
       else
         add_expression_result_escaped(code)
@@ -220,7 +218,7 @@ module Erubi
     end
 
     # Raise an exception, as the base engine class does not support handling other indicators.
-    def handle(indicator, code, tailch, rspace, lspace)
+    def handle(indicator, _code, _tailch, _rspace, _lspace)
       raise ArgumentError, "Invalid indicator: #{indicator}"
     end
   end

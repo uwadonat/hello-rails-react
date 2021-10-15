@@ -18,11 +18,11 @@ module Sass::Script::Value
     # @param separator [String] See \{List#separator}.
     def initialize(value, keywords, separator)
       super(value, separator: separator)
-      if keywords.is_a?(Sass::Util::NormalizedMap)
-        @keywords = keywords
-      else
-        @keywords = Sass::Util::NormalizedMap.new(keywords)
-      end
+      @keywords = if keywords.is_a?(Sass::Util::NormalizedMap)
+                    keywords
+                  else
+                    Sass::Util::NormalizedMap.new(keywords)
+                  end
     end
 
     # The keyword arguments attached to this list.

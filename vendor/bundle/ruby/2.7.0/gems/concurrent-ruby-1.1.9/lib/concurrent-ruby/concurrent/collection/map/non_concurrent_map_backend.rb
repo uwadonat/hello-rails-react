@@ -1,18 +1,15 @@
 require 'concurrent/constants'
 
 module Concurrent
-
   # @!visibility private
   module Collection
-
     # @!visibility private
     class NonConcurrentMapBackend
-
       # WARNING: all public methods of the class must operate on the @backend
       # directly without calling each other. This is important because of the
       # SynchronizedMapBackend which uses a non-reentrant mutex for performance
       # reasons.
-      def initialize(options = nil)
+      def initialize(_options = nil)
         @backend = {}
       end
 
@@ -109,10 +106,12 @@ module Concurrent
         @backend.fetch(key, default_value)
       end
 
-      alias_method :_get, :[]
-      alias_method :_set, :[]=
+      alias _get []
+      alias _set []=
       private :_get, :_set
+
       private
+
       def initialize_copy(other)
         super
         @backend = {}

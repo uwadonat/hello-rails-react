@@ -6,7 +6,7 @@ module Sass::Script::Value
     #
     # @return [Array<Value>]
     attr_reader :value
-    alias_method :to_a, :value
+    alias to_a value
 
     # The operator separating the values of the list.
     # Either `:comma` or `:space`.
@@ -33,14 +33,15 @@ module Sass::Script::Value
     # @see Value#options=
     def options=(options)
       super
-      value.each {|v| v.options = options}
+      value.each { |v| v.options = options }
     end
 
     # @see Value#eq
     def eq(other)
       Sass::Script::Value::Bool.new(
         other.is_a?(List) && value == other.value &&
-        separator == other.separator && bracketed == other.bracketed)
+        separator == other.separator && bracketed == other.bracketed
+      )
     end
 
     def hash
@@ -49,13 +50,11 @@ module Sass::Script::Value
 
     # @see Value#to_s
     def to_s(opts = {})
-      if !bracketed && value.empty?
-        raise Sass::SyntaxError.new("#{inspect} isn't a valid CSS value.")
-      end
+      raise Sass::SyntaxError, "#{inspect} isn't a valid CSS value." if !bracketed && value.empty?
 
-      members = value.
-        reject {|e| e.is_a?(Null) || e.is_a?(List) && e.value.empty?}.
-        map {|e| e.to_s(opts)}
+      members = value
+        .reject { |e| e.is_a?(Null) || e.is_a?(List) && e.value.empty? }
+        .map { |e| e.to_s(opts) }
 
       contents = members.join(sep_str)
       bracketed ? "[#{contents}]" : contents
@@ -63,7 +62,7 @@ module Sass::Script::Value
 
     # @see Value#to_sass
     def to_sass(opts = {})
-      return bracketed ? "[]" : "()" if value.empty?
+      return bracketed ? '[]' : '()' if value.empty?
       members = value.map do |v|
         if element_needs_parens?(v)
           "(#{v.to_sass(opts)})"
@@ -89,7 +88,7 @@ module Sass::Script::Value
     # @see Value#inspect
     def inspect
       (bracketed ? '[' : '(') +
-        value.map {|e| e.inspect}.join(sep_str(nil)) +
+        value.map(&:inspect).join(sep_str(nil)) +
         (bracketed ? ']' : ')')
     end
 
@@ -101,12 +100,11 @@ module Sass::Script::Value
     # @param n [Sass::Script::Value::Number] The index being checked.
     def self.assert_valid_index(list, n)
       if !n.int? || n.to_i == 0
-        raise ArgumentError.new("List index #{n} must be a non-zero integer")
-      elsif list.to_a.size == 0
-        raise ArgumentError.new("List index is #{n} but list has no items")
+        raise ArgumentError, "List index #{n} must be a non-zero integer"
+      elsif list.to_a.empty?
+        raise ArgumentError, "List index is #{n} but list has no items"
       elsif n.to_i.abs > (size = list.to_a.size)
-        raise ArgumentError.new(
-          "List index is #{n} but list is only #{size} item#{'s' if size != 1} long")
+        raise ArgumentError, "List index is #{n} but list is only #{size} item#{'s' if size != 1} long"
       end
     end
 

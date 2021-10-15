@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 RSpec.shared_context 'Capybara Features', capybara_feature: true do
   instance_eval do
     alias background before

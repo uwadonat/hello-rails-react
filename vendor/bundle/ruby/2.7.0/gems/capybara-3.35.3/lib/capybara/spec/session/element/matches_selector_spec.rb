@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 Capybara::SpecHelper.spec '#match_selector?' do
   let(:element) { @session.find(:xpath, '//span', text: '42') }
 

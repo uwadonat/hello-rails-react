@@ -42,7 +42,7 @@ module Sprockets
     #
     # Returns [scheme, host, path, query].
     def split_file_uri(uri)
-      scheme, _, host, _, _, path, _, query, _ = URI.split(uri)
+      scheme, _, host, _, _, path, _, query, = URI.split(uri)
 
       path = URI::Generic::DEFAULT_PARSER.unescape(path)
       path.force_encoding(Encoding::UTF_8)
@@ -59,7 +59,7 @@ module Sprockets
     def join_file_uri(scheme, host, path, query)
       str = "#{scheme}://"
       str << host if host
-      path = "/#{path}" unless path.start_with?("/")
+      path = "/#{path}" unless path.start_with?('/')
       str << URI::Generic::DEFAULT_PARSER.escape(path)
       str << "?#{query}" if query
       str
@@ -72,7 +72,7 @@ module Sprockets
     # Returns true or false.
     def valid_asset_uri?(str)
       # Quick prefix check before attempting a full parse
-      str.start_with?("file://") && parse_asset_uri(str) ? true : false
+      str.start_with?('file://') && parse_asset_uri(str) ? true : false
     rescue URI::InvalidURIError
       false
     end
@@ -90,11 +90,9 @@ module Sprockets
     def parse_asset_uri(uri)
       scheme, _, path, query = split_file_uri(uri)
 
-      unless scheme == 'file'
-        raise URI::InvalidURIError, "expected file:// scheme: #{uri}"
-      end
+      raise URI::InvalidURIError, "expected file:// scheme: #{uri}" unless scheme == 'file'
 
-      return path, parse_uri_query_params(query)
+      [path, parse_uri_query_params(query)]
     end
 
     # Internal: Build Asset URI.
@@ -109,7 +107,7 @@ module Sprockets
     #
     # Returns String URI.
     def build_asset_uri(path, params = {})
-      join_file_uri("file", nil, path, encode_uri_query_params(params))
+      join_file_uri('file', nil, path, encode_uri_query_params(params))
     end
 
     # Internal: Parse file-digest dependency URI.
@@ -123,11 +121,9 @@ module Sprockets
     #
     # Returns String path.
     def parse_file_digest_uri(uri)
-      scheme, _, path, _ = split_file_uri(uri)
+      scheme, _, path, = split_file_uri(uri)
 
-      unless scheme == 'file-digest'.freeze
-        raise URI::InvalidURIError, "expected file-digest scheme: #{uri}"
-      end
+      raise URI::InvalidURIError, "expected file-digest scheme: #{uri}" unless scheme == 'file-digest'.freeze
 
       path
     end
@@ -161,14 +157,14 @@ module Sprockets
         when String, Symbol
           query << "#{key}=#{URI::Generic::DEFAULT_PARSER.escape(value.to_s)}"
         when TrueClass
-          query << "#{key}"
+          query << key.to_s
         when FalseClass, NilClass
         else
           raise TypeError, "unexpected type: #{value.class}"
         end
       end
 
-      "#{query.join('&')}" if query.any?
+      query.join('&').to_s if query.any?
     end
 
     # Internal: Parse query string into hash of params
@@ -177,11 +173,10 @@ module Sprockets
     #
     # Return Hash of params.
     def parse_uri_query_params(query)
-      query.to_s.split('&').reduce({}) do |h, p|
+      query.to_s.split('&').each_with_object({}) do |p, h|
         k, v = p.split('=', 2)
         v = URI::Generic::DEFAULT_PARSER.unescape(v) if v
         h[k.to_sym] = v || true
-        h
       end
     end
   end

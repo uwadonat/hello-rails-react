@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 module Sass::Script::Value
   # A SassScript object representing a CSS string *or* a CSS identifier.
   class String < Base
@@ -17,15 +16,15 @@ module Sass::Script::Value
     attr_reader :type
 
     def self.value(contents)
-      contents.gsub("\\\n", "").gsub(/\\(?:([0-9a-fA-F]{1,6})\s?|(.))/) do
-        next $2 if $2
+      contents.gsub("\\\n", '').gsub(/\\(?:([0-9a-fA-F]{1,6})\s?|(.))/) do
+        next Regexp.last_match(2) if Regexp.last_match(2)
         # Handle unicode escapes as per CSS Syntax Level 3 section 4.3.8.
-        code_point = $1.to_i(16)
+        code_point = Regexp.last_match(1).to_i(16)
         if code_point == 0 || code_point > 0x10FFFF ||
-            (code_point >= 0xD800 && code_point <= 0xDFFF)
+           (code_point >= 0xD800 && code_point <= 0xDFFF)
           '�'
         else
-          [code_point].pack("U")
+          [code_point].pack('U')
         end
       end
     end
@@ -47,30 +46,30 @@ module Sass::Script::Value
       end
 
       if quote.nil?
-        if contents.include?('"')
-          if contents.include?("'")
-            quote = '"'
-          else
-            quote = "'"
-          end
-        else
-          quote = '"'
-        end
+        quote = if contents.include?('"')
+                  if contents.include?("'")
+                    '"'
+                  else
+                    "'"
+                          end
+                else
+                  '"'
+                end
       end
 
       # Replace single backslashes with multiples.
-      contents = contents.gsub("\\", "\\\\\\\\")
+      contents = contents.gsub('\\', '\\\\\\\\')
 
       # Escape interpolation.
       contents = contents.gsub('#{', "\\\#{") if opts[:sass]
 
-      if quote == '"'
-        contents = contents.gsub('"', "\\\"")
-      else
-        contents = contents.gsub("'", "\\'")
-      end
+      contents = if quote == '"'
+                   contents.gsub('"', '\\"')
+                 else
+                   contents.gsub("'", "\\'")
+                 end
 
-      contents = contents.gsub(/\n(?![a-fA-F0-9\s])/, "\\a").gsub("\n", "\\a ")
+      contents = contents.gsub(/\n(?![a-fA-F0-9\s])/, '\\a').gsub("\n", '\\a ')
       "#{quote}#{contents}#{quote}"
     end
 
@@ -92,7 +91,7 @@ module Sass::Script::Value
       other_value = if other.is_a?(Sass::Script::Value::String)
                       other.value
                     else
-                      other.to_s(:quote => :none)
+                      other.to_s(quote: :none)
                     end
       Sass::Script::Value::String.new(value + other_value, type)
     end
@@ -105,7 +104,7 @@ module Sass::Script::Value
 
     # @see Value#to_sass
     def to_sass(opts = {})
-      to_s(opts.merge(:sass => true))
+      to_s(opts.merge(sass: true))
     end
 
     def separator

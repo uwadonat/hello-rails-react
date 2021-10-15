@@ -4,7 +4,9 @@ require 'sprockets/utils'
 
 module Sprockets
   module Transformers
-    include HTTPUtils, ProcessorUtils, Utils
+    include Utils
+    include ProcessorUtils
+    include HTTPUtils
 
     # Public: Two level mapping of a source mime type to a target mime type.
     #
@@ -90,16 +92,14 @@ module Sprockets
     #
     # Returns Processor.
     def compose_transformers(transformers, types)
-      if types.length < 2
-        raise ArgumentError, "too few transform types: #{types.inspect}"
-      end
+      raise ArgumentError, "too few transform types: #{types.inspect}" if types.length < 2
 
       i = 0
       processors = []
 
       loop do
         src = types[i]
-        dst = types[i+1]
+        dst = types[i + 1]
         break unless src && dst
 
         unless processor = transformers[src][dst]
@@ -120,26 +120,28 @@ module Sprockets
     end
 
     private
-      def compute_transformers!
-        registered_transformers = self.config[:registered_transformers]
-        transformers = Hash.new { {} }
-        inverted_transformers = Hash.new { Set.new }
 
-        registered_transformers.keys.flat_map do |key|
-          dfs_paths([key]) { |k| registered_transformers[k].keys }
-        end.each do |types|
-          src, dst = types.first, types.last
-          processor = compose_transformers(registered_transformers, types)
+    def compute_transformers!
+      registered_transformers = config[:registered_transformers]
+      transformers = Hash.new { {} }
+      inverted_transformers = Hash.new { Set.new }
 
-          transformers[src] = {} unless transformers.key?(src)
-          transformers[src][dst] = processor
+      registered_transformers.keys.flat_map do |key|
+        dfs_paths([key]) { |k| registered_transformers[k].keys }
+      end.each do |types|
+        src = types.first
+        dst = types.last
+        processor = compose_transformers(registered_transformers, types)
 
-          inverted_transformers[dst] = Set.new unless inverted_transformers.key?(dst)
-          inverted_transformers[dst] << src
-        end
+        transformers[src] = {} unless transformers.key?(src)
+        transformers[src][dst] = processor
 
-        self.config = hash_reassoc(config, :transformers) { transformers }
-        self.config = hash_reassoc(config, :inverted_transformers) { inverted_transformers }
+        inverted_transformers[dst] = Set.new unless inverted_transformers.key?(dst)
+        inverted_transformers[dst] << src
       end
+
+      self.config = hash_reassoc(config, :transformers) { transformers }
+      self.config = hash_reassoc(config, :inverted_transformers) { inverted_transformers }
+    end
   end
 end

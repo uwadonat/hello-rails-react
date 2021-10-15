@@ -1,7 +1,6 @@
 require 'concurrent/concern/logging'
 
 module Concurrent
-
   ###################################################################
 
   # @!macro executor_service_method_post
@@ -158,7 +157,7 @@ module Concurrent
     include Concern::Logging
 
     # @!macro executor_service_method_post
-    def post(*args, &task)
+    def post(*_args)
       raise NotImplementedError
     end
 

@@ -2,7 +2,6 @@ require 'concurrent/executor/abstract_executor_service'
 require 'concurrent/atomic/event'
 
 module Concurrent
-
   # @!macro abstract_executor_service_public_api
   # @!visibility private
   class RubyExecutorService < AbstractExecutorService
@@ -10,12 +9,12 @@ module Concurrent
 
     def initialize(*args, &block)
       super
-      @StopEvent    = Event.new
+      @StopEvent = Event.new
       @StoppedEvent = Event.new
     end
 
     def post(*args, &task)
-      raise ArgumentError.new('no block given') unless block_given?
+      raise ArgumentError, 'no block given' unless block_given?
       synchronize do
         # If the executor is shut down, reject this task
         return handle_fallback(*args, &task) unless running?

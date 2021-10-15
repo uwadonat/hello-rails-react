@@ -2,7 +2,6 @@ require 'concurrent/concern/dereferenceable'
 require 'concurrent/synchronization'
 
 module Concurrent
-
   # An `MVar` is a synchronized single element container. They are empty or
   # contain one item. Taking a value from an empty `MVar` blocks, as does
   # putting a value into a full one. You can either think of them as blocking
@@ -121,7 +120,7 @@ module Concurrent
     # if the time is exceeded.
     # @return [Object] the transformed value, or `TIMEOUT`
     def modify(timeout = nil)
-      raise ArgumentError.new('no block given') unless block_given?
+      raise ArgumentError, 'no block given' unless block_given?
 
       @mutex.synchronize do
         wait_for_full(timeout)
@@ -177,7 +176,7 @@ module Concurrent
 
     # Non-blocking version of `modify` that will yield with `EMPTY` if there is no value yet.
     def modify!
-      raise ArgumentError.new('no block given') unless block_given?
+      raise ArgumentError, 'no block given' unless block_given?
 
       @mutex.synchronize do
         value = @value
@@ -214,7 +213,7 @@ module Concurrent
     end
 
     def unlocked_full?
-      ! unlocked_empty?
+      !unlocked_empty?
     end
 
     def wait_for_full(timeout)
@@ -227,9 +226,7 @@ module Concurrent
 
     def wait_while(condition, timeout)
       if timeout.nil?
-        while yield
-          condition.wait(@mutex)
-        end
+        condition.wait(@mutex) while yield
       else
         stop = Concurrent.monotonic_time + timeout
         while yield && timeout > 0.0

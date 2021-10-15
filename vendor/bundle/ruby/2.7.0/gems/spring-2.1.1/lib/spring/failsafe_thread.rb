@@ -3,12 +3,12 @@ require 'thread'
 module Spring
   class << self
     def failsafe_thread
-      Thread.new {
+      Thread.new do
         begin
           yield
-        rescue
+        rescue StandardError
         end
-      }
+      end
     end
   end
 end

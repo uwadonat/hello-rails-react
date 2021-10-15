@@ -27,4 +27,3 @@ module Concurrent
   module Synchronization
   end
 end
-

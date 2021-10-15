@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 module ActionCable
   module SubscriptionAdapter
     class SubscriberMap
@@ -35,7 +33,7 @@ module ActionCable
 
       def broadcast(channel, message)
         list = @sync.synchronize do
-          return if !@subscribers.key?(channel)
+          return unless @subscribers.key?(channel)
           @subscribers[channel].dup
         end
 
@@ -44,12 +42,11 @@ module ActionCable
         end
       end
 
-      def add_channel(channel, on_success)
+      def add_channel(_channel, on_success)
         on_success.call if on_success
       end
 
-      def remove_channel(channel)
-      end
+      def remove_channel(channel); end
 
       def invoke_callback(callback, message)
         callback.call message

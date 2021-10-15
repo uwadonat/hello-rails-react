@@ -5,28 +5,38 @@ module Sass::Supports
     # Runs the SassScript in the supports condition.
     #
     # @param environment [Sass::Environment] The environment in which to run the script.
-    def perform(environment); Sass::Util.abstract(self); end
+    def perform(_environment)
+      Sass::Util.abstract(self)
+    end
 
     # Returns the CSS for this condition.
     #
     # @return [String]
-    def to_css; Sass::Util.abstract(self); end
+    def to_css
+      Sass::Util.abstract(self)
+    end
 
     # Returns the Sass/CSS code for this condition.
     #
     # @param options [{Symbol => Object}] An options hash (see {Sass::CSS#initialize}).
     # @return [String]
-    def to_src(options); Sass::Util.abstract(self); end
+    def to_src(_options)
+      Sass::Util.abstract(self)
+    end
 
     # Returns a deep copy of this condition and all its children.
     #
     # @return [Condition]
-    def deep_copy; Sass::Util.abstract(self); end
+    def deep_copy
+      Sass::Util.abstract(self)
+    end
 
     # Sets the options hash for the script nodes in the supports condition.
     #
     # @param options [{Symbol => Object}] The options has to set.
-    def options=(options); Sass::Util.abstract(self); end
+    def options=(_options)
+      Sass::Util.abstract(self)
+    end
   end
 
   # An operator condition (e.g. `CONDITION1 and CONDITION2`).
@@ -81,9 +91,9 @@ module Sass::Supports
 
     def parens(condition, str)
       if condition.is_a?(Negation) || (condition.is_a?(Operator) && condition.op != op)
-        return "(#{str})"
+        "(#{str})"
       else
-        return str
+        str
       end
     end
   end
@@ -201,7 +211,7 @@ module Sass::Supports
     end
 
     def perform(env)
-      @resolved_value = value.perform(env).to_s(:quote => :none)
+      @resolved_value = value.perform(env).to_s(quote: :none)
     end
 
     def to_css

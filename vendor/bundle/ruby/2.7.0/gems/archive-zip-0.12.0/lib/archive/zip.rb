@@ -1,5 +1,3 @@
-# encoding: UTF-8
-
 require 'fileutils'
 require 'set'
 require 'tempfile'
@@ -28,20 +26,19 @@ module Archive # :nodoc:
     include Enumerable
 
     # The lead-in marker for the end of central directory record.
-    EOCD_SIGNATURE     = "PK\x5\x6" # 0x06054b50
+    EOCD_SIGNATURE = "PK\x5\x6".freeze # 0x06054b50
     # The lead-in marker for the digital signature record.
-    DS_SIGNATURE       = "PK\x5\x5" # 0x05054b50
+    DS_SIGNATURE = "PK\x5\x5".freeze # 0x05054b50
     # The lead-in marker for the ZIP64 end of central directory record.
-    Z64EOCD_SIGNATURE  = "PK\x6\x6" # 0x06064b50
+    Z64EOCD_SIGNATURE = "PK\x6\x6".freeze # 0x06064b50
     # The lead-in marker for the ZIP64 end of central directory locator record.
-    Z64EOCDL_SIGNATURE = "PK\x6\x7" # 0x07064b50
+    Z64EOCDL_SIGNATURE = "PK\x6\x7".freeze # 0x07064b50
     # The lead-in marker for a central file record.
-    CFH_SIGNATURE      = "PK\x1\x2" # 0x02014b50
+    CFH_SIGNATURE = "PK\x1\x2".freeze # 0x02014b50
     # The lead-in marker for a local file record.
-    LFH_SIGNATURE      = "PK\x3\x4" # 0x04034b50
+    LFH_SIGNATURE = "PK\x3\x4".freeze # 0x04034b50
     # The lead-in marker for data descriptor record.
-    DD_SIGNATURE       = "PK\x7\x8" # 0x08074b50
-
+    DD_SIGNATURE = "PK\x7\x8".freeze # 0x08074b50
 
     # Creates or possibly updates an archive using _paths_ for new contents.
     #
@@ -60,7 +57,7 @@ module Archive # :nodoc:
     # See the instance method #archive for more information about _paths_ and
     # _options_.
     def self.archive(archive, paths, options = {})
-      if archive.kind_of?(String) && File.exist?(archive) then
+      if archive.is_a?(String) && File.exist?(archive)
         # Update the archive "in place".
         tmp_archive_path = nil
         File.open(archive) do |archive_in|
@@ -73,14 +70,14 @@ module Archive # :nodoc:
             # Update the archive.
             open(archive_in, :r) do |z_in|
               open(archive_out, :w) do |z_out|
-                z_in.each  { |entry| z_out << entry }
+                z_in.each { |entry| z_out << entry }
                 z_out.archive(paths, options)
               end
             end
           end
         end
         # Set more reasonable permissions than those set by Tempfile.
-        File.chmod(0666 & ~File.umask, tmp_archive_path)
+        File.chmod(0o666 & ~File.umask, tmp_archive_path)
         # Replace the input archive with the output archive.
         File.rename(tmp_archive_path, archive)
       else
@@ -133,20 +130,20 @@ module Archive # :nodoc:
     def initialize(archive, mode = :r)
       @archive = archive
       mode = mode.to_sym
-      if mode == :r || mode == :w then
+      if mode == :r || mode == :w
         @mode = mode
       else
         raise ArgumentError, "illegal access mode #{mode}"
       end
 
       @close_delegate = false
-      if @archive.kind_of?(String) then
+      if @archive.is_a?(String)
         @close_delegate = true
-        if mode == :r then
-          @archive = File.open(@archive, 'rb')
-        else
-          @archive = File.open(@archive, 'wb')
-        end
+        @archive = if mode == :r
+                     File.open(@archive, 'rb')
+                   else
+                     File.open(@archive, 'wb')
+                   end
       end
       @entries = []
       @comment = ''
@@ -169,7 +166,7 @@ module Archive # :nodoc:
     def close
       raise IOError, 'closed archive' if closed?
 
-      if writable? then
+      if writable?
         # Write the new archive contents.
         dump(@archive)
       end
@@ -206,7 +203,7 @@ module Archive # :nodoc:
       raise IOError, 'non-readable archive' unless readable?
       raise IOError, 'closed archive' if closed?
 
-      unless @parse_complete then
+      unless @parse_complete
         parse(@archive)
         @parse_complete = true
       end
@@ -223,14 +220,12 @@ module Archive # :nodoc:
     def add_entry(entry)
       raise IOError, 'non-writable archive' unless writable?
       raise IOError, 'closed archive' if closed?
-      unless entry.kind_of?(Entry) then
-        raise ArgumentError, 'Archive::Zip::Entry instance required'
-      end
+      raise ArgumentError, 'Archive::Zip::Entry instance required' unless entry.is_a?(Entry)
 
       @entries << entry
       self
     end
-    alias :<< :add_entry
+    alias << add_entry
 
     # Adds _paths_ to the archive.  _paths_ may be either a single path or an
     # Array of paths.  The files and directories referenced by _paths_ are added
@@ -346,13 +341,13 @@ module Archive # :nodoc:
       raise IOError, 'closed archive' if closed?
 
       # Ensure that paths is an enumerable.
-      paths = [paths] unless paths.kind_of?(Enumerable)
+      paths = [paths] unless paths.is_a?(Enumerable)
       # If the basename of a path is '.' or '..', replace the path with the
       # paths of all the entries contained within the directory referenced by
       # the original path.
       paths = paths.collect do |path|
         basename = File.basename(path)
-        if basename == '.' || basename == '..' then
+        if basename == '.' || basename == '..'
           Dir.entries(path).reject do |e|
             e == '.' || e == '..'
           end.collect do |e|
@@ -364,15 +359,15 @@ module Archive # :nodoc:
       end.flatten.uniq
 
       # Ensure that unspecified options have default values.
-      options[:path_prefix]  = ''    unless options.has_key?(:path_prefix)
-      options[:recursion]    = true  unless options.has_key?(:recursion)
-      options[:directories]  = true  unless options.has_key?(:directories)
-      options[:symlinks]     = false unless options.has_key?(:symlinks)
-      options[:flatten]      = false unless options.has_key?(:flatten)
+      options[:path_prefix] = '' unless options.key?(:path_prefix)
+      options[:recursion] = true unless options.key?(:recursion)
+      options[:directories] = true unless options.key?(:directories)
+      options[:symlinks] = false unless options.key?(:symlinks)
+      options[:flatten] = false unless options.key?(:flatten)
 
       # Flattening the directory structure implies that directories are skipped
       # and that the path prefix should be ignored.
-      if options[:flatten] then
+      if options[:flatten]
         options[:path_prefix] = ''
         options[:directories] = false
       end
@@ -384,23 +379,23 @@ module Archive # :nodoc:
         # Generate the zip path.
         zip_entry_path = File.basename(path)
         zip_entry_path += '/' if File.directory?(path)
-        unless options[:path_prefix].empty? then
-          zip_entry_path = "#{options[:path_prefix]}/#{zip_entry_path}"
-        end
+        zip_entry_path = "#{options[:path_prefix]}/#{zip_entry_path}" unless options[:path_prefix].empty?
 
         begin
           # Create the entry, but do not add it to the archive yet.
           zip_entry = Zip::Entry.from_file(
             path,
             options.merge(
-              :zip_path        => zip_entry_path,
-              :follow_symlinks => options.has_key?(:follow_symlinks) ?
+              zip_path: zip_entry_path,
+              follow_symlinks: options.key?(:follow_symlinks) ?
                                   options[:follow_symlinks] :
-                                  ! options[:symlinks]
+                                  !options[:symlinks]
             )
           )
         rescue StandardError => error
-          unless options[:on_error].nil? then
+          if options[:on_error].nil?
+            raise
+          else
             case options[:on_error][path, error]
             when :retry
               retry
@@ -409,40 +404,35 @@ module Archive # :nodoc:
             else
               raise
             end
-          else
-            raise
           end
         end
 
         # Skip this entry if so directed.
-        if (zip_entry.symlink? && ! options[:symlinks]) ||
-           (! options[:exclude].nil? && options[:exclude][zip_entry]) then
+        if (zip_entry.symlink? && !options[:symlinks]) ||
+           (!options[:exclude].nil? && options[:exclude][zip_entry])
           next
         end
 
         # Set the encryption key for the entry.
-        if options[:password].kind_of?(String) then
+        if options[:password].is_a?(String)
           zip_entry.password = options[:password]
-        elsif ! options[:password].nil? then
+        elsif !options[:password].nil?
           zip_entry.password = options[:password][zip_entry]
         end
 
         # Add entries for directories (if requested) and files/symlinks.
-        if (! zip_entry.directory? || options[:directories]) then
-          add_entry(zip_entry)
-        end
+        add_entry(zip_entry) if !zip_entry.directory? || options[:directories]
 
         # Recurse into subdirectories (if requested).
-        if zip_entry.directory? && options[:recursion] then
-          archive(
-            Dir.entries(path).reject do |e|
-              e == '.' || e == '..'
-            end.collect do |e|
-              File.join(path, e)
-            end,
-            options.merge(:path_prefix => zip_entry_path)
-          )
-        end
+        next unless zip_entry.directory? && options[:recursion]
+        archive(
+          Dir.entries(path).reject do |e|
+            e == '.' || e == '..'
+          end.collect do |e|
+            File.join(path, e)
+          end,
+          options.merge(path_prefix: zip_entry_path)
+        )
       end
 
       nil
@@ -560,12 +550,12 @@ module Archive # :nodoc:
       raise IOError, 'closed archive' if closed?
 
       # Ensure that unspecified options have default values.
-      options[:directories] = true  unless options.has_key?(:directories)
-      options[:symlinks]    = false unless options.has_key?(:symlinks)
-      options[:overwrite]   = :all  unless options[:overwrite] == :older ||
-                                           options[:overwrite] == :never
-      options[:create]      = true  unless options.has_key?(:create)
-      options[:flatten]     = false unless options.has_key?(:flatten)
+      options[:directories] = true unless options.key?(:directories)
+      options[:symlinks] = false unless options.key?(:symlinks)
+      options[:overwrite] = :all unless options[:overwrite] == :older ||
+                                        options[:overwrite] == :never
+      options[:create] = true unless options.key?(:create)
+      options[:flatten] = false unless options.key?(:flatten)
 
       # Flattening the archive structure implies that directory entries are
       # skipped.
@@ -585,32 +575,34 @@ module Archive # :nodoc:
 
         begin
           # Skip this entry if so directed.
-          if (! file_exists && ! options[:create]) ||
+          if (!file_exists && !options[:create]) ||
              (file_exists &&
               (options[:overwrite] == :never ||
                options[:overwrite] == :older && entry.mtime <= file_mtime)) ||
-             (! options[:exclude].nil? && options[:exclude][entry]) then
+             (!options[:exclude].nil? && options[:exclude][entry])
             next
           end
 
           # Set the decryption key for the entry.
-          if options[:password].kind_of?(String) then
+          if options[:password].is_a?(String)
             entry.password = options[:password]
-          elsif ! options[:password].nil? then
+          elsif !options[:password].nil?
             entry.password = options[:password][entry]
           end
 
-          if entry.directory? then
+          if entry.directory?
             # Record the directories as they are encountered.
             directories << entry
-          elsif entry.file? || (entry.symlink? && options[:symlinks]) then
+          elsif entry.file? || (entry.symlink? && options[:symlinks])
             # Extract files and symlinks.
             entry.extract(
-              options.merge(:file_path => file_path)
+              options.merge(file_path: file_path)
             )
           end
         rescue StandardError => error
-          unless options[:on_error].nil? then
+          if options[:on_error].nil?
+            raise
+          else
             case options[:on_error][entry, error]
             when :retry
               retry
@@ -618,24 +610,24 @@ module Archive # :nodoc:
             else
               raise
             end
-          else
-            raise
           end
         end
       end
 
-      if options[:directories] then
+      if options[:directories]
         # Then extract the directory entries in depth first order so that time
         # stamps, ownerships, and permissions can be properly restored.
         directories.sort { |a, b| b.zip_path <=> a.zip_path }.each do |entry|
           begin
             entry.extract(
               options.merge(
-                :file_path => File.join(destination, entry.zip_path)
+                file_path: File.join(destination, entry.zip_path)
               )
             )
           rescue StandardError => error
-            unless options[:on_error].nil? then
+            if options[:on_error].nil?
+              raise
+            else
               case options[:on_error][entry, error]
               when :retry
                 retry
@@ -643,8 +635,6 @@ module Archive # :nodoc:
               else
                 raise
               end
-            else
-              raise
             end
           end
         end
@@ -686,10 +676,10 @@ module Archive # :nodoc:
       eocd_offset = -22
       loop do
         io.seek(eocd_offset, IO::SEEK_END)
-        if IOExtensions.read_exactly(io, 4) == EOCD_SIGNATURE then
+        if IOExtensions.read_exactly(io, 4) == EOCD_SIGNATURE
           io.seek(16, IO::SEEK_CUR)
           if IOExtensions.read_exactly(io, 2).unpack('v')[0] ==
-               (eocd_offset + 22).abs then
+             (eocd_offset + 22).abs
             break
           end
         end

@@ -1,5 +1,3 @@
-# encoding: UTF-8
-
 class NullEncryptionSpecs
   class << self
     def test_data
@@ -7,6 +5,6 @@ class NullEncryptionSpecs
         block_given? ? yield(f) : f.read
       end
     end
-    alias :encrypted_data :test_data
+    alias encrypted_data test_data
   end
 end

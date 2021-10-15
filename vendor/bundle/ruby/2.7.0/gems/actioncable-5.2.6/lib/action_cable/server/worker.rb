@@ -1,8 +1,6 @@
-# frozen_string_literal: true
-
-require "active_support/callbacks"
-require "active_support/core_ext/module/attribute_accessors_per_thread"
-require "concurrent"
+require 'active_support/callbacks'
+require 'active_support/core_ext/module/attribute_accessors_per_thread'
+require 'concurrent'
 
 module ActionCable
   module Server
@@ -20,7 +18,7 @@ module ActionCable
         @executor = Concurrent::ThreadPoolExecutor.new(
           min_threads: 1,
           max_threads: max_size,
-          max_queue: 0,
+          max_queue: 0
         )
       end
 
@@ -69,9 +67,9 @@ module ActionCable
 
       private
 
-        def logger
-          ActionCable.server.logger
-        end
+      def logger
+        ActionCable.server.logger
+      end
     end
   end
 end

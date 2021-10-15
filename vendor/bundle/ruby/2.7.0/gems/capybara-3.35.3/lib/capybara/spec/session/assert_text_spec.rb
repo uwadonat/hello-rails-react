@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 Capybara::SpecHelper.spec '#assert_text' do
   it 'should be true if the given text is on the page' do
     @session.visit('/with_html')

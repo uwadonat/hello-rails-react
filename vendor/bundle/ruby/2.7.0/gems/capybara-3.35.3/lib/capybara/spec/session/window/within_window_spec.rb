@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 Capybara::SpecHelper.spec '#within_window', requires: [:windows] do
   before do
     @window = @session.current_window
@@ -39,9 +37,9 @@ Capybara::SpecHelper.spec '#within_window', requires: [:windows] do
     it 'returns value from the block' do
       window = (@session.windows - [@window]).first
       value = @session.within_window window do
-        43252003274489856000
+        43_252_003_274_489_856_000
       end
-      expect(value).to eq(43252003274489856000)
+      expect(value).to eq(43_252_003_274_489_856_000)
     end
 
     it 'should switch back if exception was raised inside block' do

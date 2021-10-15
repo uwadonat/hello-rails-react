@@ -9,7 +9,7 @@ module Sprockets
     #
     #     env = Environment.new(Rails.root)
     #
-    def initialize(root = ".")
+    def initialize(root = '.')
       initialize_configuration(Sprockets)
       self.root = root
       self.cache = Cache::MemoryStore.new
@@ -24,7 +24,7 @@ module Sprockets
     def cached
       CachedEnvironment.new(self)
     end
-    alias_method :index, :cached
+    alias index cached
 
     def find_asset(*args)
       cached.find_asset(*args)

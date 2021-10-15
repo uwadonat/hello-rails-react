@@ -37,7 +37,7 @@ class Sass::Logger::Base
     _log(level, message) if logging_level?(level)
   end
 
-  def _log(level, message)
+  def _log(_level, message)
     if io
       io.puts(message)
     else

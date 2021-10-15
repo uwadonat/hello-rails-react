@@ -2,7 +2,6 @@ require 'concurrent/atomic/mutex_semaphore'
 require 'concurrent/synchronization'
 
 module Concurrent
-
   ###################################################################
 
   # @!macro semaphore_method_initialize
@@ -90,8 +89,7 @@ module Concurrent
 
   # @!visibility private
   # @!macro internal_implementation_note
-  SemaphoreImplementation = case
-                            when defined?(JavaSemaphore)
+  SemaphoreImplementation = if defined?(JavaSemaphore)
                               JavaSemaphore
                             else
                               MutexSemaphore

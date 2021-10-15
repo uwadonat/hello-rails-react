@@ -15,7 +15,7 @@ module Sprockets
   #       Sprockets::YUICompressor.new(munge: true)
   #
   class YUICompressor
-    VERSION = '1'
+    VERSION = '1'.freeze
 
     # Public: Return singleton instance with default options.
     #

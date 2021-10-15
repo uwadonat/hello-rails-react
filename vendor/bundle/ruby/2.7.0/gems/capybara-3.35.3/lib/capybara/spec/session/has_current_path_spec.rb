@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 Capybara::SpecHelper.spec '#has_current_path?' do
   before do
     @session.visit('/with_js')
@@ -47,9 +45,9 @@ Capybara::SpecHelper.spec '#has_current_path?' do
   it 'should compare the full url if url: true is used' do
     expect(@session).to have_current_path(%r{\Ahttp://[^/]*/with_js\Z}, url: true)
     domain_port = if @session.respond_to?(:server) && @session.server
-      "#{@session.server.host}:#{@session.server.port}"
-    else
-      'www.example.com'
+                    "#{@session.server.host}:#{@session.server.port}"
+                  else
+                    'www.example.com'
     end
     expect(@session).to have_current_path("http://#{domain_port}/with_js", url: true)
   end

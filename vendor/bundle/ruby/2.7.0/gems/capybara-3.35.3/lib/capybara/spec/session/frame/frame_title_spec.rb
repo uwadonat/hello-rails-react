@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 Capybara::SpecHelper.spec '#frame_title', requires: [:frames] do
   before do
     @session.visit('/within_frames')

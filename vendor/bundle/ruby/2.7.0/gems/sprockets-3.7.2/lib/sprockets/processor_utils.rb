@@ -24,11 +24,11 @@ module Sprockets
     def compose_processors(*processors)
       context = self
 
-      if processors.length == 1
-        obj = method(:call_processor).to_proc.curry[processors.first]
-      else
-        obj = method(:call_processors).to_proc.curry[processors]
-      end
+      obj = if processors.length == 1
+              method(:call_processor).to_proc.curry[processors.first]
+            else
+              method(:call_processors).to_proc.curry[processors]
+            end
 
       metaclass = (class << obj; self; end)
       metaclass.send(:define_method, :cache_key) do
@@ -50,7 +50,7 @@ module Sprockets
     #
     # Returns a Hash with :data and other processor metadata key/values.
     def call_processors(processors, input)
-      data = input[:data] || ""
+      data = input[:data] || ''
       metadata = (input[:metadata] || {}).dup
 
       processors.reverse_each do |processor|
@@ -72,7 +72,7 @@ module Sprockets
       metadata = (input[:metadata] || {}).dup
       metadata[:data] = input[:data]
 
-      case result = processor.call({data: "", metadata: {}}.merge(input))
+      case result = processor.call({ data: '', metadata: {} }.merge(input))
       when NilClass
         metadata
       when Hash
@@ -110,14 +110,14 @@ module Sprockets
       TrueClass,
       FalseClass,
       NilClass
-    ] + (0.class == Integer ? [Integer] : [Bignum, Fixnum])).freeze
+    ] + (0.class == Integer ? [Integer] : [Integer, Integer])).freeze
 
     # Internal: Set of all nested compound metadata types that can nest values.
     VALID_METADATA_COMPOUND_TYPES = Set.new([
-      Array,
-      Hash,
-      Set
-    ]).freeze
+                                              Array,
+                                              Hash,
+                                              Set
+                                            ]).freeze
 
     # Internal: Hash of all "simple" value types allowed to be returned in
     # processor metadata.
@@ -140,22 +140,20 @@ module Sprockets
     #
     # Returns result or raises a TypeError.
     def validate_processor_result!(result)
-      if !result.instance_of?(Hash)
+      unless result.instance_of?(Hash)
         raise TypeError, "processor metadata result was expected to be a Hash, but was #{result.class}"
       end
 
-      if !result[:data].instance_of?(String)
+      unless result[:data].instance_of?(String)
         raise TypeError, "processor :data was expected to be a String, but as #{result[:data].class}"
       end
 
       result.each do |key, value|
-        if !key.instance_of?(Symbol)
-          raise TypeError, "processor metadata[#{key.inspect}] expected to be a Symbol"
-        end
+        raise TypeError, "processor metadata[#{key.inspect}] expected to be a Symbol" unless key.instance_of?(Symbol)
 
-        if !valid_processor_metadata_value?(value)
-          raise TypeError, "processor metadata[:#{key}] returned a complex type: #{value.inspect}\n" +
-            "Only #{VALID_METADATA_TYPES.to_a.join(", ")} maybe used."
+        unless valid_processor_metadata_value?(value)
+          raise TypeError, "processor metadata[:#{key}] returned a complex type: #{value.inspect}\n" \
+                           "Only #{VALID_METADATA_TYPES.to_a.join(', ')} maybe used."
         end
       end
 

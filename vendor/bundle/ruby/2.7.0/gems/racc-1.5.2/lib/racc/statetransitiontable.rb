@@ -19,7 +19,6 @@ unless Object.method_defined?(:funcall)
 end
 
 module Racc
-
   StateTransitionTable = Struct.new(:action_table,
                                     :action_check,
                                     :action_default,
@@ -36,8 +35,8 @@ module Racc
                                     :token_to_s_table,
                                     :use_result_var,
                                     :debug_parser)
-  class StateTransitionTable   # reopen
-    def StateTransitionTable.generate(states)
+  class StateTransitionTable # reopen
+    def self.generate(states)
       StateTransitionTableGenerator.new(states).generate
     end
 
@@ -58,16 +57,14 @@ module Racc
 
     def token_value_table
       h = {}
-      token_table().each do |sym, i|
+      token_table.each do |sym, i|
         h[sym.value] = i
       end
       h
     end
   end
 
-
   class StateTransitionTableGenerator
-
     def initialize(states)
       @states = states
       @grammar = states.grammar
@@ -82,7 +79,7 @@ module Racc
       t.reduce_n = @states.reduce_n
       t.shift_n = @states.shift_n
       t.nt_base = @grammar.nonterminal_base
-      t.token_to_s_table = @grammar.symbols.map {|sym| sym.to_s }
+      t.token_to_s_table = @grammar.symbols.map(&:to_s)
       t
     end
 
@@ -92,7 +89,7 @@ module Racc
         next if idx == 0
         t.push rule.size
         t.push rule.target.ident
-        t.push(if rule.action.empty?   # and @params.omit_action_call?
+        t.push(if rule.action.empty? # and @params.omit_action_call?
                then :_reduce_none
                else "_reduce_#{idx}".intern
                end)
@@ -109,10 +106,10 @@ module Racc
     end
 
     def gen_action_tables(t, states)
-      t.action_table = yytable  = []
-      t.action_check = yycheck  = []
+      t.action_table = yytable = []
+      t.action_check = yycheck = []
       t.action_default = yydefact = []
-      t.action_pointer = yypact   = []
+      t.action_pointer = yypact = []
       e1 = []
       e2 = []
       states.each do |state|
@@ -131,9 +128,9 @@ module Racc
     end
 
     def gen_goto_tables(t, grammar)
-      t.goto_table   = yytable2  = []
-      t.goto_check   = yycheck2  = []
-      t.goto_pointer = yypgoto   = []
+      t.goto_table = yytable2 = []
+      t.goto_check = yycheck2 = []
+      t.goto_pointer = yypgoto = []
       t.goto_default = yydefgoto = []
       e1 = []
       e2 = []
@@ -153,7 +150,7 @@ module Racc
         max = freq.max
         if max > 1
           default = freq.index(max)
-          tmp.map! {|i| default == i ? nil : i }
+          tmp.map! { |i| default == i ? nil : i }
         else
           default = nil
         end
@@ -176,16 +173,14 @@ module Racc
       max = arr.size
       min = nil
       arr.each_with_index do |item, idx|
-        if item
-          min ||= idx
-        end
+        min ||= idx if item
       end
-      ptr.push(-7777)    # mark
+      ptr.push(-7777) # mark
       arr = arr[min...max]
       all.push [arr, chkval, mkmapexp(arr), min, ptr.size - 1]
     end
 
-    n = 2 ** 16
+    n = 2**16
     begin
       Regexp.compile("a{#{n}}")
       RE_DUP_MAX = n
@@ -197,7 +192,7 @@ module Racc
     def mkmapexp(arr)
       i = ii = 0
       as = arr.size
-      map = String.new
+      map = ''
       maxdup = RE_DUP_MAX
       curr = nil
       while i < as
@@ -206,7 +201,7 @@ module Racc
           ii += 1 while ii < as and arr[ii]
           curr = '-'
         else
-          ii += 1 while ii < as and not arr[ii]
+          ii += 1 while ii < as and !(arr[ii])
           curr = '.'
         end
 
@@ -225,26 +220,23 @@ module Racc
       Regexp.compile(map, 'n')
     end
 
-    def set_table(entries, dummy, tbl, chk, ptr)
+    def set_table(entries, _dummy, tbl, chk, ptr)
       upper = 0
-      map = '-' * 10240
+      map = '-' * 10_240
 
       # sort long to short
-      entries.sort_by!.with_index {|a,i| [-a[0].size, i] }
+      entries.sort_by!.with_index { |a, i| [-a[0].size, i] }
 
       entries.each do |arr, chkval, expr, min, ptri|
-        if upper + arr.size > map.size
-          map << '-' * (arr.size + 1024)
-        end
+        map << '-' * (arr.size + 1024) if upper + arr.size > map.size
         idx = map.index(expr)
         ptr[ptri] = idx - min
         arr.each_with_index do |item, i|
-          if item
-            i += idx
-            tbl[i] = item
-            chk[i] = chkval
-            map[i] = ?o
-          end
+          next unless item
+          i += idx
+          tbl[i] = item
+          chk[i] = chkval
+          map[i] = 'o'
         end
         upper = idx + arr.size
       end
@@ -252,20 +244,17 @@ module Racc
 
     def act2actid(act)
       case act
-      when Shift  then act.goto_id
+      when Shift then act.goto_id
       when Reduce then -act.ruleid
       when Accept then @states.shift_n
-      when Error  then @states.reduce_n * -1
+      when Error then @states.reduce_n * -1
       else
         raise "racc: fatal: wrong act type #{act.class} in action table"
       end
     end
-
   end
 
-
   class ParserClassGenerator
-
     def initialize(states)
       @states = states
       @grammar = states.grammar
@@ -297,7 +286,7 @@ module Racc
     private
 
     def define_actions(c)
-      c.module_eval "def _reduce_none(vals, vstack) vals[0] end"
+      c.module_eval 'def _reduce_none(vals, vstack) vals[0] end'
       @grammar.each do |rule|
         if rule.action.empty?
           c.funcall(:alias_method, "_reduce_#{rule.ident}", :_reduce_none)
@@ -311,7 +300,5 @@ module Racc
         end
       end
     end
-
   end
-
-end   # module Racc
+end # module Racc

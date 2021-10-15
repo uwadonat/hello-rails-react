@@ -2,14 +2,12 @@ require 'concurrent/synchronization'
 
 module Concurrent
   module Collection
-
     # A thread safe observer set implemented using copy-on-write approach:
     # every time an observer is added or removed the whole internal data structure is
     # duplicated and replaced with a new one.
     #
     # @api private
     class CopyOnWriteObserverSet < Synchronization::LockableObject
-
       def initialize
         super()
         synchronize { ns_initialize }
@@ -20,7 +18,7 @@ module Concurrent
         if observer.nil? && block.nil?
           raise ArgumentError, 'should pass observer as a first argument or block'
         elsif observer && block
-          raise ArgumentError.new('cannot provide both an observer and a block')
+          raise ArgumentError, 'cannot provide both an observer and a block'
         end
 
         if block
@@ -84,7 +82,7 @@ module Concurrent
       private
 
       def notify_to(observers, *args)
-        raise ArgumentError.new('cannot give arguments and a block') if block_given? && !args.empty?
+        raise ArgumentError, 'cannot give arguments and a block' if block_given? && !args.empty?
         observers.each do |observer, function|
           args = yield if block_given?
           observer.send(function, *args)

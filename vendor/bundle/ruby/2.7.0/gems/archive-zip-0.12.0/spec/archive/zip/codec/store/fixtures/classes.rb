@@ -1,5 +1,3 @@
-# encoding: UTF-8
-
 class StoreSpecs
   class << self
     def test_data
@@ -7,6 +5,6 @@ class StoreSpecs
         block_given? ? yield(f) : f.read
       end
     end
-    alias :compressed_data :test_data
+    alias compressed_data test_data
   end
 end

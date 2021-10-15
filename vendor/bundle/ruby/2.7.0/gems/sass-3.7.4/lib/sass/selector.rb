@@ -39,16 +39,16 @@ module Sass
       end
 
       # @see Selector#to_s
-      def to_s(opts = {})
-        "&" + (@suffix || '')
+      def to_s(_opts = {})
+        '&' + (@suffix || '')
       end
 
       # Always raises an exception.
       #
       # @raise [Sass::SyntaxError] Parent selectors should be resolved before unification
       # @see Selector#unify
-      def unify(sels)
-        raise Sass::SyntaxError.new("[BUG] Cannot unify parent selectors.")
+      def unify(_sels)
+        raise Sass::SyntaxError, '[BUG] Cannot unify parent selectors.'
       end
     end
 
@@ -65,8 +65,8 @@ module Sass
       end
 
       # @see Selector#to_s
-      def to_s(opts = {})
-        "." + @name
+      def to_s(_opts = {})
+        '.' + @name
       end
 
       # @see AbstractSequence#specificity
@@ -92,8 +92,8 @@ module Sass
       end
 
       # @see Selector#to_s
-      def to_s(opts = {})
-        "#" + @name
+      def to_s(_opts = {})
+        '#' + @name
       end
 
       # Returns `nil` if `sels` contains an {Id} selector
@@ -101,7 +101,7 @@ module Sass
       #
       # @see Selector#unify
       def unify(sels)
-        return if sels.any? {|sel2| sel2.is_a?(Id) && name != sel2.name}
+        return if sels.any? { |sel2| sel2.is_a?(Id) && name != sel2.name }
         super
       end
 
@@ -127,8 +127,8 @@ module Sass
       end
 
       # @see Selector#to_s
-      def to_s(opts = {})
-        "%" + @name
+      def to_s(_opts = {})
+        '%' + @name
       end
 
       # @see AbstractSequence#specificity
@@ -151,8 +151,8 @@ module Sass
       end
 
       # @see Selector#to_s
-      def to_s(opts = {})
-        @namespace ? "#{@namespace}|*" : "*"
+      def to_s(_opts = {})
+        @namespace ? "#{@namespace}|*" : '*'
       end
 
       # Unification of a universal selector is somewhat complicated,
@@ -183,8 +183,8 @@ module Sass
       def unify(sels)
         name =
           case sels.first
-          when Universal; :universal
-          when Element; sels.first.name
+          when Universal then :universal
+          when Element then sels.first.name
           else
             return [self] + sels unless namespace.nil? || namespace == '*'
             return sels unless sels.empty?
@@ -223,7 +223,7 @@ module Sass
       end
 
       # @see Selector#to_s
-      def to_s(opts = {})
+      def to_s(_opts = {})
         @namespace ? "#{@namespace}|#{@name}" : @name
       end
 
@@ -251,8 +251,8 @@ module Sass
       # @see Selector#unify
       def unify(sels)
         case sels.first
-        when Universal;
-        when Element; return unless name == sels.first.name
+        when Universal
+        when Element then return unless name == sels.first.name
         else return [self] + sels
         end
 
@@ -309,13 +309,13 @@ module Sass
       end
 
       # @see Selector#to_s
-      def to_s(opts = {})
-        res = "["
-        res << @namespace << "|" if @namespace
+      def to_s(_opts = {})
+        res = '['
+        res << @namespace << '|' if @namespace
         res << @name
         res << @operator << @value if @value
-        res << " " << @flags if @flags
-        res << "]"
+        res << ' ' << @flags if @flags
+        res << ']'
       end
 
       # @see AbstractSequence#specificity

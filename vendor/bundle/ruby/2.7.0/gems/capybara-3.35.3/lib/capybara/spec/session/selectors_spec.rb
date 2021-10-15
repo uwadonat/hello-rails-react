@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 Capybara::SpecHelper.spec Capybara::Selector do
   before do
     @session.visit('/form')

@@ -1,13 +1,11 @@
-# encoding: UTF-8
-
 require 'minitest/autorun'
 
 require File.expand_path('../../fixtures/classes', __FILE__)
 
 require 'archive/zip/codec/deflate'
 
-describe "Archive::Zip::Codec::Deflate::Decompress#data_descriptor" do
-  it "is an instance of Archive::Zip::DataDescriptor" do
+describe 'Archive::Zip::Codec::Deflate::Decompress#data_descriptor' do
+  it 'is an instance of Archive::Zip::DataDescriptor' do
     DeflateSpecs.compressed_data do |cd|
       closed_decompressor = Archive::Zip::Codec::Deflate::Decompress.open(
         cd
@@ -24,7 +22,7 @@ describe "Archive::Zip::Codec::Deflate::Decompress#data_descriptor" do
     end
   end
 
-  it "has a crc32 attribute containing the CRC32 checksum" do
+  it 'has a crc32 attribute containing the CRC32 checksum' do
     crc32 = Zlib.crc32(DeflateSpecs.test_data)
     DeflateSpecs.compressed_data do |cd|
       closed_decompressor = Archive::Zip::Codec::Deflate::Decompress.open(
@@ -38,7 +36,7 @@ describe "Archive::Zip::Codec::Deflate::Decompress#data_descriptor" do
     end
   end
 
-  it "has a compressed_size attribute containing the size of the compressed data" do
+  it 'has a compressed_size attribute containing the size of the compressed data' do
     compressed_size = DeflateSpecs.compressed_data.size
     DeflateSpecs.compressed_data do |cd|
       closed_decompressor = Archive::Zip::Codec::Deflate::Decompress.open(
@@ -54,7 +52,7 @@ describe "Archive::Zip::Codec::Deflate::Decompress#data_descriptor" do
     end
   end
 
-  it "has an uncompressed_size attribute containing the size of the input data" do
+  it 'has an uncompressed_size attribute containing the size of the input data' do
     uncompressed_size = DeflateSpecs.test_data.size
     DeflateSpecs.compressed_data do |cd|
       closed_decompressor = Archive::Zip::Codec::Deflate::Decompress.open(

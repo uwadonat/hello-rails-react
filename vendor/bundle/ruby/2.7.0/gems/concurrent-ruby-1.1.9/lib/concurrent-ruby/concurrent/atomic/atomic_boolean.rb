@@ -2,7 +2,6 @@ require 'concurrent/atomic/mutex_atomic_boolean'
 require 'concurrent/synchronization'
 
 module Concurrent
-
   ###################################################################
 
   # @!macro atomic_boolean_method_initialize
@@ -78,10 +77,9 @@ module Concurrent
 
   # @!visibility private
   # @!macro internal_implementation_note
-  AtomicBooleanImplementation = case
-                                when defined?(JavaAtomicBoolean)
+  AtomicBooleanImplementation = if defined?(JavaAtomicBoolean)
                                   JavaAtomicBoolean
-                                when defined?(CAtomicBoolean)
+                                elsif defined?(CAtomicBoolean)
                                   CAtomicBoolean
                                 else
                                   MutexAtomicBoolean
@@ -121,6 +119,6 @@ module Concurrent
       format '%s value:%s>', super[0..-2], value
     end
 
-    alias_method :inspect, :to_s
+    alias inspect to_s
   end
 end

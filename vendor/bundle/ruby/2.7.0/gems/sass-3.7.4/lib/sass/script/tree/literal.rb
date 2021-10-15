@@ -18,13 +18,19 @@ module Sass::Script::Tree
     end
 
     # @see Node#children
-    def children; []; end
+    def children
+      []
+    end
 
     # @see Node#to_sass
-    def to_sass(opts = {}); value.to_sass(opts); end
+    def to_sass(opts = {})
+      value.to_sass(opts)
+    end
 
     # @see Node#deep_copy
-    def deep_copy; dup; end
+    def deep_copy
+      dup
+    end
 
     # @see Node#options=
     def options=(options)
@@ -41,7 +47,7 @@ module Sass::Script::Tree
 
     protected
 
-    def _perform(environment)
+    def _perform(_environment)
       value.source_range = source_range
       value
     end

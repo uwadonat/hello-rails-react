@@ -18,44 +18,41 @@ require 'racc/sourcetext'
 require 'stringio'
 
 module Racc
-
-  grammar = Grammar.define {
+  grammar = Grammar.define do
     g = self
 
     g.class = seq(:CLASS, :cname, many(:param), :RULE, :rules, option(:END))
 
-    g.cname       = seq(:rubyconst) {|name|
-                      @result.params.classname = name
-                    }\
-                  | seq(:rubyconst, "<", :rubyconst) {|c, _, s|
+    g.cname = seq(:rubyconst) { |name|
+      @result.params.classname = name
+    }\
+                  | seq(:rubyconst, '<', :rubyconst) do |c, _, s|
                       @result.params.classname = c
                       @result.params.superclass = s
-                    }
+                    end
 
-    g.rubyconst   = separated_by1(:colon2, :SYMBOL) {|syms|
-                      syms.map {|s| s.to_s }.join('::')
-                    }
+    g.rubyconst = separated_by1(:colon2, :SYMBOL) { |syms|
+      syms.map(&:to_s).join('::')
+    }
 
     g.colon2 = seq(':', ':')
 
-    g.param       = seq(:CONV, many1(:convdef), :END) {|*|
-                      #@grammar.end_convert_block   # FIXME
-                    }\
-                  | seq(:PRECHIGH, many1(:precdef), :PRECLOW) {|*|
+    g.param = seq(:CONV, many1(:convdef), :END) { |*|
+      # @grammar.end_convert_block   # FIXME
+    }\
+                  | seq(:PRECHIGH, many1(:precdef), :PRECLOW) do |*|
                       @grammar.end_precedence_declaration true
-                    }\
-                  | seq(:PRECLOW, many1(:precdef), :PRECHIGH) {|*|
+                    end\
+                  | seq(:PRECLOW, many1(:precdef), :PRECHIGH) do |*|
                       @grammar.end_precedence_declaration false
-                    }\
-                  | seq(:START, :symbol) {|_, sym|
+                    end\
+                  | seq(:START, :symbol) do |_, sym|
                       @grammar.start_symbol = sym
-                    }\
-                  | seq(:TOKEN, :symbols) {|_, syms|
-                      syms.each do |s|
-                        s.should_terminal
-                      end
-                    }\
-                  | seq(:OPTION, :options) {|_, syms|
+                    end\
+                  | seq(:TOKEN, :symbols) do |_, syms|
+                      syms.each(&:should_terminal)
+                    end\
+                  | seq(:OPTION, :options) do |_, syms|
                       syms.each do |opt|
                         case opt
                         when 'result_var'
@@ -70,88 +67,81 @@ module Racc
                           raise CompileError, "unknown option: #{opt}"
                         end
                       end
-                    }\
-                  | seq(:EXPECT, :DIGIT) {|_, num|
-                      if @grammar.n_expected_srconflicts
-                        raise CompileError, "`expect' seen twice"
-                      end
+                    end\
+                  | seq(:EXPECT, :DIGIT) do |_, num|
+                      raise CompileError, "`expect' seen twice" if @grammar.n_expected_srconflicts
                       @grammar.n_expected_srconflicts = num
-                    }
+                    end
 
-    g.convdef     = seq(:symbol, :STRING) {|sym, code|
-                      sym.serialized = code
-                    }
+    g.convdef = seq(:symbol, :STRING) { |sym, code|
+      sym.serialized = code
+    }
 
-    g.precdef     = seq(:LEFT, :symbols) {|_, syms|
-                      @grammar.declare_precedence :Left, syms
-                    }\
-                  | seq(:RIGHT, :symbols) {|_, syms|
+    g.precdef = seq(:LEFT, :symbols) { |_, syms|
+      @grammar.declare_precedence :Left, syms
+    }\
+                  | seq(:RIGHT, :symbols) do |_, syms|
                       @grammar.declare_precedence :Right, syms
-                    }\
-                  | seq(:NONASSOC, :symbols) {|_, syms|
+                    end\
+                  | seq(:NONASSOC, :symbols) do |_, syms|
                       @grammar.declare_precedence :Nonassoc, syms
-                    }
+                    end
 
-    g.symbols     = seq(:symbol) {|sym|
-                      [sym]
-                    }\
-                  | seq(:symbols, :symbol) {|list, sym|
+    g.symbols = seq(:symbol) { |sym|
+      [sym]
+    }\
+                  | seq(:symbols, :symbol) do |list, sym|
                       list.push sym
                       list
-                    }\
-                  | seq(:symbols, "|")
+                    end\
+                  | seq(:symbols, '|')
 
-    g.symbol      = seq(:SYMBOL) {|sym| @grammar.intern(sym) }\
-                  | seq(:STRING) {|str| @grammar.intern(str) }
+    g.symbol = seq(:SYMBOL) { |sym| @grammar.intern(sym) }\
+                  | seq(:STRING) { |str| @grammar.intern(str) }
 
-    g.options     = many(:SYMBOL) {|syms| syms.map {|s| s.to_s } }
+    g.options = many(:SYMBOL) { |syms| syms.map(&:to_s) }
 
-    g.rules       = option(:rules_core) {|list|
-                      add_rule_block list  unless list.empty?
-                      nil
-                    }
+    g.rules = option(:rules_core) { |list|
+      add_rule_block list unless list.empty?
+      nil
+    }
 
-    g.rules_core  = seq(:symbol) {|sym|
-                      [sym]
-                    }\
-                  | seq(:rules_core, :rule_item) {|list, i|
+    g.rules_core = seq(:symbol) { |sym|
+      [sym]
+    }\
+                  | seq(:rules_core, :rule_item) do |list, i|
                       list.push i
                       list
-                    }\
-                  | seq(:rules_core, ';') {|list, *|
-                      add_rule_block list  unless list.empty?
+                    end\
+                  | seq(:rules_core, ';') do |list, *|
+                      add_rule_block list unless list.empty?
                       list.clear
                       list
-                    }\
-                  | seq(:rules_core, ':') {|list, *|
+                    end\
+                  | seq(:rules_core, ':') do |list, *|
                       next_target = list.pop
-                      add_rule_block list  unless list.empty?
+                      add_rule_block list unless list.empty?
                       [next_target]
-                    }
+                    end
 
-    g.rule_item   = seq(:symbol)\
-                  | seq("|") {|*|
+    g.rule_item = seq(:symbol)\
+                  | seq('|') do |*|
                       OrMark.new(@scanner.lineno)
-                    }\
-                  | seq("=", :symbol) {|_, sym|
+                    end\
+                  | seq('=', :symbol) do |_, sym|
                       Prec.new(sym, @scanner.lineno)
-                    }\
-                  | seq(:ACTION) {|src|
+                    end\
+                  | seq(:ACTION) do |src|
                       UserAction.source_text(src)
-                    }
-  }
+                    end
+  end
 
   GrammarFileParser = grammar.parser_class
 
-  if grammar.states.srconflict_exist?
-    raise 'Racc boot script fatal: S/R conflict in build'
-  end
-  if grammar.states.rrconflict_exist?
-    raise 'Racc boot script fatal: R/R conflict in build'
-  end
+  raise 'Racc boot script fatal: S/R conflict in build' if grammar.states.srconflict_exist?
+  raise 'Racc boot script fatal: R/R conflict in build' if grammar.states.rrconflict_exist?
 
-  class GrammarFileParser   # reopen
-
+  class GrammarFileParser # reopen
     class Result
       def initialize(grammar)
         @grammar = grammar
@@ -162,12 +152,12 @@ module Racc
       attr_reader :params
     end
 
-    def GrammarFileParser.parse_file(filename)
+    def self.parse_file(filename)
       parse(File.read(filename), filename, 1)
     end
 
-    def GrammarFileParser.parse(src, filename = '-', lineno = 1)
-      new().parse(src, filename, lineno)
+    def self.parse(src, filename = '-', lineno = 1)
+      new.parse(src, filename, lineno)
     end
 
     def initialize(debug_flags = DebugFlags.new)
@@ -194,15 +184,15 @@ module Racc
       @scanner.scan
     end
 
-    def on_error(tok, val, _values)
-      if val.respond_to?(:id2name)
-        v = val.id2name
-      elsif val.kind_of?(String)
-        v = val
-      else
-        v = val.inspect
-      end
-      raise CompileError, "#{location()}: unexpected token '#{v}'"
+    def on_error(_tok, val, _values)
+      v = if val.respond_to?(:id2name)
+            val.id2name
+          elsif val.is_a?(String)
+            val
+          else
+            val.inspect
+          end
+      raise CompileError, "#{location}: unexpected token '#{v}'"
     end
 
     def location
@@ -234,12 +224,12 @@ module Racc
     end
 
     def add_rule(target, list, sprec)
-      if list.last.kind_of?(UserAction)
-        act = list.pop
-      else
-        act = UserAction.empty
-      end
-      list.map! {|s| s.kind_of?(UserAction) ? embedded_action(s) : s }
+      act = if list.last.is_a?(UserAction)
+              list.pop
+            else
+              UserAction.empty
+            end
+      list.map! { |s| s.is_a?(UserAction) ? embedded_action(s) : s }
       rule = Rule.new(target, list, act)
       rule.specified_prec = sprec
       @grammar.add rule
@@ -272,34 +262,29 @@ module Racc
 
     USER_CODE_LABELS = {
       'header'  => :header,
-      'prepare' => :header,   # obsolete
+      'prepare' => :header, # obsolete
       'inner'   => :inner,
       'footer'  => :footer,
-      'driver'  => :footer    # obsolete
-    }
+      'driver'  => :footer # obsolete
+    }.freeze
 
     def canonical_label(src)
       label = src.to_s.strip.downcase.slice(/\w+/)
-      unless USER_CODE_LABELS.key?(label)
-        raise CompileError, "unknown user code type: #{label.inspect}"
-      end
+      raise CompileError, "unknown user code type: #{label.inspect}" unless USER_CODE_LABELS.key?(label)
       label
     end
 
     def add_user_code(label, src)
       @result.params.public_send(USER_CODE_LABELS[label]).push src
     end
-
   end
 
-
   class GrammarFileScanner
-
     def initialize(str, filename = '-')
-      @lines  = str.b.split(/\n|\r\n|\r/)
+      @lines = str.b.split(/\n|\r\n|\r/)
       @filename = filename
       @lineno = -1
-      @line_head   = true
+      @line_head = true
       @in_rule_blk = false
       @in_conv_blk = false
       @in_block = nil
@@ -317,13 +302,13 @@ module Racc
     attr_accessor :debug
 
     def yylex(&block)
-      unless @debug
-        yylex0(&block)
-      else
+      if @debug
         yylex0 do |sym, tok|
-          $stderr.printf "%7d %-10s %s\n", lineno(), sym.inspect, tok.inspect
+          $stderr.printf "%7d %-10s %s\n", lineno, sym.inspect, tok.inspect
           yield [sym, tok]
         end
+      else
+        yylex0(&block)
       end
     end
 
@@ -347,30 +332,27 @@ module Racc
               yield [:STRING, eval(scan_quoted(ch))]
             when '{'
               lineno = lineno()
-              yield [:ACTION, SourceText.new(scan_action(), @filename, lineno)]
+              yield [:ACTION, SourceText.new(scan_action, @filename, lineno)]
             else
-              if ch == '|'
-                @line_head = false
-              end
+              @line_head = false if ch == '|'
               yield [ch, ch]
             end
-          else
           end
         end
-      end while next_line()
+      end while next_line
       yield nil
     end
 
     def next_line
       @lineno += 1
       @line = @lines[@lineno]
-      if not @line or /\A----/ =~ @line
+      if !@line or /\A----/ =~ @line
         @epilogue = @lines.join("\n")
         @lines.clear
         @line = nil
         if @in_block
           @lineno -= 1
-          scan_error! sprintf('unterminated %s', @in_block)
+          scan_error! format('unterminated %s', @in_block)
         end
         false
       else
@@ -394,7 +376,7 @@ module Racc
       'class'    => :CLASS,
       'rule'     => :RULE,
       'end'      => :END
-    }
+    }.freeze
 
     def atom_symbol(token)
       if token == 'end'
@@ -402,11 +384,11 @@ module Racc
         @in_conv_blk = false
         @in_rule_blk = false
       else
-        if @line_head and not @in_conv_blk and not @in_rule_blk
-          symbol = ReservedWord[token] || :SYMBOL
-        else
-          symbol = :SYMBOL
-        end
+        symbol = if @line_head and !@in_conv_blk and !@in_rule_blk
+                   ReservedWord[token] || :SYMBOL
+                 else
+                   :SYMBOL
+                 end
         case symbol
         when :RULE then @in_rule_blk = true
         when :CONV then @in_conv_blk = true
@@ -428,7 +410,7 @@ module Racc
     $raccs_print_type = false
 
     def scan_action
-      buf = String.new
+      buf = ''
       nest = 1
       pre = nil
       @in_block = 'action'
@@ -455,7 +437,7 @@ module Racc
               return buf
             end
             buf << (pre = ch)
-          when '#'   # comment
+          when '#' # comment
             buf << ch << @line
             break
           when "'", '"', '`'
@@ -473,7 +455,7 @@ module Racc
                 buf << ch << (pre = scan_quoted(read(1), '%symbol'))
               when /r/n
                 buf << ch << (pre = scan_quoted(read(1), '%regexp'))
-              when /[a-zA-Z0-9= ]/n   # does not include "_"
+              when /[a-zA-Z0-9= ]/n # does not include "_"
                 scan_error! "unknown type of % literal '%#{ch}'"
               else
                 buf << (pre = scan_quoted(ch, '%string'))
@@ -492,25 +474,25 @@ module Racc
               buf << '||op->' if $raccs_print_type
               buf << (pre = ch)
             end
-          when '$'   # gvar
+          when '$' # gvar
             buf << ch << (pre = read(1))
           else
             raise 'racc: fatal: must not happen'
           end
         end
         buf << "\n"
-      end while next_line()
+      end while next_line
       raise 'racc: fatal: scan finished before parser finished'
     end
 
     def literal_head?(pre, post)
-      (!pre || /[a-zA-Z_0-9]/n !~ pre[-1,1]) &&
-          !post.empty? && /\A[\s\=]/n !~ post
+      (!pre || /[a-zA-Z_0-9]/n !~ pre[-1, 1]) &&
+        !post.empty? && /\A[\s\=]/n !~ post
     end
 
     def read(len)
       s = @line[0, len]
-      @line = @line[len .. -1]
+      @line = @line[len..-1]
       s
     end
 
@@ -524,7 +506,8 @@ module Racc
       buf = left.dup
       buf = "||#{tag}->" + buf if $raccs_print_type
       re = get_quoted_re(left)
-      sv, @in_block = @in_block, tag
+      sv = @in_block
+      @in_block = tag
       begin
         if s = reads(re)
           buf << s
@@ -532,7 +515,7 @@ module Racc
         else
           buf << @line
         end
-      end while next_line()
+      end while next_line
       @in_block = sv
       buf << "<-#{tag}||" if $raccs_print_type
       buf
@@ -543,9 +526,9 @@ module Racc
       '{' => '}',
       '[' => ']',
       '<' => '>'
-    }
+    }.freeze
 
-    CACHE = {}
+    CACHE = {}.freeze
 
     def get_quoted_re(left)
       term = Regexp.quote(LEFT_TO_RIGHT[left] || left)
@@ -553,9 +536,7 @@ module Racc
     end
 
     def scan_error!(msg)
-      raise CompileError, "#{lineno()}: #{msg}"
+      raise CompileError, "#{lineno}: #{msg}"
     end
-
   end
-
-end   # module Racc
+end # module Racc

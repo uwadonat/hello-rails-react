@@ -275,7 +275,7 @@ module Capybara
       #   @param [String, Array<String>] paths     The path(s) of the file(s) that will be attached
       #   @yield Block whose actions will trigger the system file chooser to be shown
       # @return [Capybara::Node::Element]  The file field element
-      def attach_file(locator = nil, paths, make_visible: nil, **options) # rubocop:disable Style/OptionalArguments
+      def attach_file(locator = nil, paths, make_visible: nil, **options)
         if locator && block_given?
           raise ArgumentError, '``#attach_file` does not support passing both a locator and a block'
         end
@@ -309,12 +309,12 @@ module Capybara
       def find_select_or_datalist_input(from, options)
         synchronize(Capybara::Queries::BaseQuery.wait(options, session_options.default_max_wait_time)) do
           find(:select, from, **options)
-        rescue Capybara::ElementNotFound => select_error # rubocop:disable Naming/RescuedExceptionsVariableName
+        rescue Capybara::ElementNotFound => select_error
           raise if %i[selected with_selected multiple].any? { |option| options.key?(option) }
 
           begin
             find(:datalist_input, from, **options)
-          rescue Capybara::ElementNotFound => dlinput_error # rubocop:disable Naming/RescuedExceptionsVariableName
+          rescue Capybara::ElementNotFound => dlinput_error
             raise Capybara::ElementNotFound, "#{select_error.message} and #{dlinput_error.message}"
           end
         end
@@ -357,7 +357,7 @@ module Capybara
 
       def _reset_style(element)
         element.execute_script(RESET_STYLE_SCRIPT)
-      rescue StandardError # rubocop:disable Lint/SuppressedException swallow extra errors
+      rescue StandardError
       end
 
       def _check_with_label(selector, checked, locator,

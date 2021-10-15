@@ -3,7 +3,9 @@ class Sass::Tree::Visitors::Cssize < Sass::Tree::Visitors::Base
   # @param root [Tree::Node] The root node of the tree to visit.
   # @return [(Tree::Node, Sass::Util::SubsetMap)] The resulting tree of static nodes
   #   *and* the extensions defined for this tree
-  def self.visit(root); super; end
+  def self.visit(root)
+    super
+  end
 
   protected
 
@@ -22,7 +24,7 @@ class Sass::Tree::Visitors::Cssize < Sass::Tree::Visitors::Base
   def visit(node)
     super(node)
   rescue Sass::SyntaxError => e
-    e.modify_backtrace(:filename => node.filename, :line => node.line)
+    e.modify_backtrace(filename: node.filename, line: node.line)
     raise e
   end
 
@@ -40,7 +42,7 @@ class Sass::Tree::Visitors::Cssize < Sass::Tree::Visitors::Base
   # @return [Array<Sass::Tree::Node>] the flattened results of
   #   visiting all the children of `node`
   def visit_children_without_parent(node)
-    node.children.map {|c| visit(c)}.flatten
+    node.children.map { |c| visit(c) }.flatten
   end
 
   # Runs a block of code with the current parent node
@@ -76,8 +78,8 @@ class Sass::Tree::Visitors::Cssize < Sass::Tree::Visitors::Base
         end
 
         if !n.is_a?(Sass::Tree::CommentNode) &&
-            !n.is_a?(Sass::Tree::CharsetNode) &&
-            !n.is_a?(Sass::Tree::CssImportNode)
+           !n.is_a?(Sass::Tree::CharsetNode) &&
+           !n.is_a?(Sass::Tree::CssImportNode)
           import_limit = i
         end
 
@@ -86,7 +88,7 @@ class Sass::Tree::Visitors::Cssize < Sass::Tree::Visitors::Base
 
       if import_limit
         node.children = node.children[0...import_limit] + imports_to_move +
-          node.children[import_limit..-1]
+                        node.children[import_limit..-1]
       end
     end
 
@@ -113,7 +115,7 @@ class Sass::Tree::Visitors::Cssize < Sass::Tree::Visitors::Base
   # Registers an extension in the `@extends` subset map.
   def visit_extend(node)
     parent.resolved_rules.populate_extends(@extends, node.resolved_selector, node,
-      @parents.select {|p| p.is_a?(Sass::Tree::DirectiveNode)})
+                                           @parents.select { |p| p.is_a?(Sass::Tree::DirectiveNode) })
     []
   end
 
@@ -121,8 +123,8 @@ class Sass::Tree::Visitors::Cssize < Sass::Tree::Visitors::Base
   def visit_import(node)
     visit_children_without_parent(node)
   rescue Sass::SyntaxError => e
-    e.modify_backtrace(:filename => node.children.first.filename)
-    e.add_backtrace(:filename => node.filename, :line => node.line)
+    e.modify_backtrace(filename: node.children.first.filename)
+    e.add_backtrace(filename: node.filename, line: node.line)
     raise e
   end
 
@@ -130,8 +132,8 @@ class Sass::Tree::Visitors::Cssize < Sass::Tree::Visitors::Base
   def visit_trace(node)
     visit_children_without_parent(node)
   rescue Sass::SyntaxError => e
-    e.modify_backtrace(:mixin => node.name, :filename => node.filename, :line => node.line)
-    e.add_backtrace(:filename => node.filename, :line => node.line)
+    e.modify_backtrace(mixin: node.name, filename: node.filename, line: node.line)
+    e.add_backtrace(filename: node.filename, line: node.line)
     raise e
   end
 
@@ -157,12 +159,10 @@ class Sass::Tree::Visitors::Cssize < Sass::Tree::Visitors::Base
   def visit_atroot(node)
     # If there aren't any more directives or rules that this @at-root needs to
     # exclude, we can get rid of it and just evaluate the children.
-    if @parents.none? {|n| node.exclude_node?(n)}
+    if @parents.none? { |n| node.exclude_node?(n) }
       results = visit_children_without_parent(node)
-      results.each {|c| c.tabs += node.tabs if bubblable?(c)}
-      if !results.empty? && bubblable?(results.last)
-        results.last.group_end = node.group_end
-      end
+      results.each { |c| c.tabs += node.tabs if bubblable?(c) }
+      results.last.group_end = node.group_end if !results.empty? && bubblable?(results.last)
       return results
     end
 
@@ -184,19 +184,17 @@ class Sass::Tree::Visitors::Cssize < Sass::Tree::Visitors::Base
   def visit_rule(node)
     yield
 
-    rules = node.children.select {|c| bubblable?(c)}
-    props = node.children.reject {|c| bubblable?(c) || c.invisible?}
+    rules = node.children.select { |c| bubblable?(c) }
+    props = node.children.reject { |c| bubblable?(c) || c.invisible? }
 
     unless props.empty?
       node.children = props
-      rules.each {|r| r.tabs += 1} if node.style == :nested
+      rules.each { |r| r.tabs += 1 } if node.style == :nested
       rules.unshift(node)
     end
 
     rules = debubble(rules)
-    unless parent.is_a?(Sass::Tree::RuleNode) || rules.empty? || !bubblable?(rules.last)
-      rules.last.group_end = true
-    end
+    rules.last.group_end = true unless parent.is_a?(Sass::Tree::RuleNode) || rules.empty? || !bubblable?(rules.last)
     rules
   end
 
@@ -301,7 +299,7 @@ class Sass::Tree::Visitors::Cssize < Sass::Tree::Visitors::Base
     # `@at-root {@extend %foo}`).
     previous_parent = nil
 
-    Sass::Util.slice_by(children) {|c| c.is_a?(Bubble)}.map do |(is_bubble, slice)|
+    Sass::Util.slice_by(children) { |c| c.is_a?(Bubble) }.map do |(is_bubble, slice)|
       unless is_bubble
         next slice unless parent
         if previous_parent

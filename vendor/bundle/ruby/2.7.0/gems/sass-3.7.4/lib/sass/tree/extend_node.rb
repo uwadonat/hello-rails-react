@@ -25,7 +25,9 @@ module Sass::Tree
     # Whether the `@extend` is allowed to match no selectors or not.
     #
     # @return [Boolean]
-    def optional?; @optional; end
+    def optional?
+      @optional
+    end
 
     # @param selector [Array<String, Sass::Script::Tree::Node>]
     #   The CSS selector to extend,

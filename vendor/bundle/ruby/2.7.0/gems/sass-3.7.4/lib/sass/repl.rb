@@ -33,13 +33,11 @@ module Sass
     def parse_input(environment, text)
       case text
       when Script::MATCH
-        name = $1
-        guarded = !!$3
-        val = Script::Parser.parse($2, @line, text.size - ($3 || '').size - $2.size)
+        name = Regexp.last_match(1)
+        guarded = !!Regexp.last_match(3)
+        val = Script::Parser.parse(Regexp.last_match(2), @line, text.size - (Regexp.last_match(3) || '').size - Regexp.last_match(2).size)
 
-        unless guarded && environment.var(name)
-          environment.set_var(name, val.perform(environment))
-        end
+        environment.set_var(name, val.perform(environment)) unless guarded && environment.var(name)
 
         p environment.var(name)
       else

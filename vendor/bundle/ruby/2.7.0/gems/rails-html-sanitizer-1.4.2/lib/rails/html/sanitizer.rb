@@ -1,10 +1,10 @@
 module Rails
   module Html
-    XPATHS_TO_REMOVE = %w{.//script .//form comment()}
+    XPATHS_TO_REMOVE = %w[.//script .//form comment()].freeze
 
     class Sanitizer # :nodoc:
-      def sanitize(html, options = {})
-        raise NotImplementedError, "subclasses must implement sanitize method."
+      def sanitize(_html, _options = {})
+        raise NotImplementedError, 'subclasses must implement sanitize method.'
       end
 
       private
@@ -26,7 +26,7 @@ module Rails
     # full_sanitizer.sanitize("<b>Bold</b> no more!  <a href='more.html'>See more here</a>...")
     # # => Bold no more!  See more here...
     class FullSanitizer < Sanitizer
-      def sanitize(html, options = {})
+      def sanitize(html, _options = {})
         return unless html
         return html if html.empty?
 
@@ -49,11 +49,11 @@ module Rails
     class LinkSanitizer < Sanitizer
       def initialize
         @link_scrubber = TargetScrubber.new
-        @link_scrubber.tags = %w(a)
-        @link_scrubber.attributes = %w(href)
+        @link_scrubber.tags = %w[a]
+        @link_scrubber.attributes = %w[href]
       end
 
-      def sanitize(html, options = {})
+      def sanitize(html, _options = {})
         Loofah.scrub_fragment(html, @link_scrubber).to_s
       end
     end
@@ -105,10 +105,10 @@ module Rails
         attr_accessor :allowed_tags
         attr_accessor :allowed_attributes
       end
-      self.allowed_tags = Set.new(%w(strong em b i p code pre tt samp kbd var sub
-        sup dfn cite big small address hr br div span h1 h2 h3 h4 h5 h6 ul ol li dl dt dd abbr
-        acronym a img blockquote del ins))
-      self.allowed_attributes = Set.new(%w(href src width height alt cite datetime title class name xml:lang abbr))
+      self.allowed_tags = Set.new(%w[strong em b i p code pre tt samp kbd var sub
+                                     sup dfn cite big small address hr br div span h1 h2 h3 h4 h5 h6 ul ol li dl dt dd abbr
+                                     acronym a img blockquote del ins])
+      self.allowed_attributes = Set.new(%w[href src width height alt cite datetime title class name xml:lang abbr])
 
       def initialize
         @permit_scrubber = PermitScrubber.new

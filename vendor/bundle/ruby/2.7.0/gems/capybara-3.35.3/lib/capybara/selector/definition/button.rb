@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 Capybara.add_selector(:button, locator_type: [String, Symbol]) do
   xpath(:value, :title, :type, :name) do |locator, **options|
     input_btn_xpath = XPath.descendant(:input)[XPath.attr(:type).one_of('submit', 'reset', 'image', 'button')]

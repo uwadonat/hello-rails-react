@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 module ActiveJob
   module QueueAdapters
     # == Active Job Inline adapter
@@ -16,7 +14,7 @@ module ActiveJob
       end
 
       def enqueue_at(*) #:nodoc:
-        raise NotImplementedError, "Use a queueing backend to enqueue jobs in the future. Read more at http://guides.rubyonrails.org/active_job_basics.html"
+        raise NotImplementedError, 'Use a queueing backend to enqueue jobs in the future. Read more at http://guides.rubyonrails.org/active_job_basics.html'
       end
     end
   end

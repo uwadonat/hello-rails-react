@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 module Capybara
   # @api private
   module Queries
@@ -67,7 +65,7 @@ module Capybara
         +"expected not to find #{description}" << count_message
       end
 
-    private
+      private
 
       def count_specified?
         COUNT_KEYS.any? { |key| options.key? key }

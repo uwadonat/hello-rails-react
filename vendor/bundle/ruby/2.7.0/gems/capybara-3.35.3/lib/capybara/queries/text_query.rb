@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 module Capybara
   # @api private
   module Queries
@@ -46,7 +44,7 @@ module Capybara
         end
       end
 
-    private
+      private
 
       def exact?
         options.fetch(:exact, session_options.exact_text)

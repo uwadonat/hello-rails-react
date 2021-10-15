@@ -14,7 +14,7 @@ class Capybara::Selenium::EdgeNode < Capybara::Selenium::Node
     end
   end
 
-  def set_file(value) # rubocop:disable Naming/AccessorMethodName
+  def set_file(value)
     # In Chrome 75+ files are appended (due to WebDriver spec - why?) so we have to clear here if its multiple and already set
     if chrome_edge?
       driver.execute_script(<<~JS, self)

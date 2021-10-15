@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 Capybara::SpecHelper.spec '#click_link_or_button' do
   it 'should click on a link' do
     @session.visit('/with_html')

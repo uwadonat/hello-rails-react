@@ -1,16 +1,14 @@
 module Concurrent
   module Synchronization
-
     # @!visibility private
     # @!macro internal_implementation_note
-    ObjectImplementation = case
-                           when Concurrent.on_cruby?
+    ObjectImplementation = if Concurrent.on_cruby?
                              MriObject
-                           when Concurrent.on_jruby?
+                           elsif Concurrent.on_jruby?
                              JRubyObject
-                           when Concurrent.on_rbx?
+                           elsif Concurrent.on_rbx?
                              RbxObject
-                           when Concurrent.on_truffleruby?
+                           elsif Concurrent.on_truffleruby?
                              TruffleRubyObject
                            else
                              warn 'Possibly unsupported Ruby implementation'
@@ -23,7 +21,7 @@ module Concurrent
     # - volatile instance variables see {Object.attr_volatile}
     # - volatile instance variables see {Object.attr_atomic}
     class Object < ObjectImplementation
-      # TODO make it a module if possible
+      # TODO: make it a module if possible
 
       # @!method self.attr_volatile(*names)
       #   Creates methods for reading and writing (as `attr_accessor` does) to a instance variable with
@@ -120,7 +118,7 @@ module Concurrent
         define_initialize_atomic_fields
 
         names.each do |name|
-          ivar = :"@Atomic#{name.to_s.gsub(/(?:^|_)(.)/) { $1.upcase }}"
+          ivar = :"@Atomic#{name.to_s.gsub(/(?:^|_)(.)/) { Regexp.last_match(1).upcase }}"
           class_eval <<-RUBY, __FILE__, __LINE__ + 1
             def #{name}
               #{ivar}.get
@@ -162,7 +160,7 @@ module Concurrent
 
       def self.define_initialize_atomic_fields
         assignments = @__atomic_fields__.map do |name|
-          "@Atomic#{name.to_s.gsub(/(?:^|_)(.)/) { $1.upcase }} = Concurrent::AtomicReference.new(nil)"
+          "@Atomic#{name.to_s.gsub(/(?:^|_)(.)/) { Regexp.last_match(1).upcase }} = Concurrent::AtomicReference.new(nil)"
         end.join("\n")
 
         class_eval <<-RUBY, __FILE__, __LINE__ + 1
@@ -175,9 +173,7 @@ module Concurrent
 
       private_class_method :define_initialize_atomic_fields
 
-      def __initialize_atomic_fields__
-      end
-
+      def __initialize_atomic_fields__; end
     end
   end
 end

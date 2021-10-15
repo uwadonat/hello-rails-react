@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 Capybara.add_selector(:frame, locator_type: [String, Symbol]) do
   xpath do |locator, name: nil, **|
     xpath = XPath.descendant(:iframe).union(XPath.descendant(:frame))

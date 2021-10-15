@@ -3,11 +3,9 @@ require 'concurrent/atomic/abstract_thread_local_var'
 if Concurrent.on_jruby?
 
   module Concurrent
-
     # @!visibility private
     # @!macro internal_implementation_note
     class JavaThreadLocalVar < AbstractThreadLocalVar
-
       # @!macro thread_local_var_method_get
       def value
         value = @var.get

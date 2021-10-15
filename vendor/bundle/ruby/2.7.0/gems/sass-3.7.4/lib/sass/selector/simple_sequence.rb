@@ -43,13 +43,13 @@ module Sass
       end
 
       def pseudo_elements
-        @pseudo_elements ||= members.select {|sel| sel.is_a?(Pseudo) && sel.type == :element}
+        @pseudo_elements ||= members.select { |sel| sel.is_a?(Pseudo) && sel.type == :element }
       end
 
       def selector_pseudo_classes
-        @selector_pseudo_classes ||= members.
-          select {|sel| sel.is_a?(Pseudo) && sel.type == :class && sel.selector}.
-          group_by {|sel| sel.normalized_name}
+        @selector_pseudo_classes ||= members
+          .select { |sel| sel.is_a?(Pseudo) && sel.type == :class && sel.selector }
+          .group_by(&:normalized_name)
       end
 
       # Returns the non-base, non-pseudo-element selectors in this sequence.
@@ -99,43 +99,45 @@ module Sass
         return super_cseq if @members.size == 1 && parent.suffix.nil?
 
         CommaSequence.new(super_cseq.members.map do |super_seq|
-          members = super_seq.members.dup
-          newline = members.pop if members.last == "\n"
-          unless members.last.is_a?(SimpleSequence)
-            raise Sass::SyntaxError.new("Invalid parent selector for \"#{self}\": \"" +
-              super_seq.to_s + '"')
-          end
+                            members = super_seq.members.dup
+                            newline = members.pop if members.last == "\n"
+                            unless members.last.is_a?(SimpleSequence)
+                              raise Sass::SyntaxError, "Invalid parent selector for \"#{self}\": \"" +
+                                super_seq.to_s + '"'
+                            end
 
-          parent_sub = members.last.members
-          unless parent.suffix.nil?
-            parent_sub = parent_sub.dup
-            parent_sub[-1] = parent_sub.last.dup
-            case parent_sub.last
-            when Sass::Selector::Class, Sass::Selector::Id, Sass::Selector::Placeholder
-              parent_sub[-1] = parent_sub.last.class.new(parent_sub.last.name + parent.suffix)
-            when Sass::Selector::Element
-              parent_sub[-1] = parent_sub.last.class.new(
-                parent_sub.last.name + parent.suffix,
-                parent_sub.last.namespace)
-            when Sass::Selector::Pseudo
-              if parent_sub.last.arg || parent_sub.last.selector
-                raise Sass::SyntaxError.new("Invalid parent selector for \"#{self}\": \"" +
-                  super_seq.to_s + '"')
-              end
-              parent_sub[-1] = Sass::Selector::Pseudo.new(
-                parent_sub.last.type,
-                parent_sub.last.name + parent.suffix,
-                nil, nil)
-            else
-              raise Sass::SyntaxError.new("Invalid parent selector for \"#{self}\": \"" +
-                super_seq.to_s + '"')
-            end
-          end
+                            parent_sub = members.last.members
+                            unless parent.suffix.nil?
+                              parent_sub = parent_sub.dup
+                              parent_sub[-1] = parent_sub.last.dup
+                              case parent_sub.last
+                              when Sass::Selector::Class, Sass::Selector::Id, Sass::Selector::Placeholder
+                                parent_sub[-1] = parent_sub.last.class.new(parent_sub.last.name + parent.suffix)
+                              when Sass::Selector::Element
+                                parent_sub[-1] = parent_sub.last.class.new(
+                                  parent_sub.last.name + parent.suffix,
+                                  parent_sub.last.namespace
+                                )
+                              when Sass::Selector::Pseudo
+                                if parent_sub.last.arg || parent_sub.last.selector
+                                  raise Sass::SyntaxError, "Invalid parent selector for \"#{self}\": \"" +
+                                    super_seq.to_s + '"'
+                                end
+                                parent_sub[-1] = Sass::Selector::Pseudo.new(
+                                  parent_sub.last.type,
+                                  parent_sub.last.name + parent.suffix,
+                                  nil, nil
+                                )
+                              else
+                                raise Sass::SyntaxError, "Invalid parent selector for \"#{self}\": \"" +
+                                  super_seq.to_s + '"'
+                              end
+                            end
 
-          Sequence.new(members[0...-1] +
-            [SimpleSequence.new(parent_sub + resolved_members[1..-1], subject?)] +
-            [newline].compact)
-          end)
+                            Sequence.new(members[0...-1] +
+                              [SimpleSequence.new(parent_sub + resolved_members[1..-1], subject?)] +
+                              [newline].compact)
+                          end)
       end
 
       # Non-destructively extends this selector with the extensions specified in a hash
@@ -163,7 +165,7 @@ module Sass
           next sel if seen.include?([sel])
           extended = sel.selector.do_extend(extends, parent_directives, replace, seen, false)
           next sel if extended == sel.selector
-          extended.members.reject! {|seq| seq.invisible?}
+          extended.members.reject!(&:invisible?)
 
           # For `:not()`, we usually want to get rid of any complex
           # selectors because that will cause the selector to fail to
@@ -173,28 +175,28 @@ module Sass
           # because either way we aren't breaking anything that isn't
           # already broken.
           if sel.normalized_name == 'not' &&
-              (sel.selector.members.none? {|seq| seq.members.length > 1} &&
-               extended.members.any? {|seq| seq.members.length == 1})
-            extended.members.reject! {|seq| seq.members.length > 1}
+             (sel.selector.members.none? { |seq| seq.members.length > 1 } &&
+              extended.members.any? { |seq| seq.members.length == 1 })
+            extended.members.reject! { |seq| seq.members.length > 1 }
           end
 
           modified_original = true
           result = sel.with_selector(extended)
-          result.each {|new_sel| seen_with_pseudo_selectors << [new_sel]}
+          result.each { |new_sel| seen_with_pseudo_selectors << [new_sel] }
           result
         end.flatten
 
-        groups = extends[members.to_set].group_by {|ex| ex.extender}.to_a
+        groups = extends[members.to_set].group_by(&:extender).to_a
         groups.map! do |seq, group|
-          sels = group.map {|e| e.target}.flatten
+          sels = group.map(&:target).flatten
           # If A {@extend B} and C {...},
           # seq is A, sels is B, and self is C
 
           self_without_sel = Sass::Util.array_minus(members, sels)
-          group.each {|e| e.success = true}
+          group.each { |e| e.success = true }
           unified = seq.members.last.unify(SimpleSequence.new(self_without_sel, subject?))
           next unless unified
-          group.each {|e| check_directives_match!(e, parent_directives)}
+          group.each { |e| check_directives_match!(e, parent_directives) }
           new_seq = Sequence.new(seq.members[0...-1] + [unified])
           new_seq.add_sources!(sources + [seq])
           [sels, new_seq]
@@ -203,7 +205,8 @@ module Sass
         groups.map! do |sels, seq|
           next [] if seen.include?(sels)
           seq.do_extend(
-            extends, parent_directives, false, seen_with_pseudo_selectors + [sels], false)
+            extends, parent_directives, false, seen_with_pseudo_selectors + [sels], false
+          )
         end
         groups.flatten!
 
@@ -259,8 +262,8 @@ module Sass
 
         # Some psuedo-selectors can be subselectors of non-pseudo selectors.
         # Pull those out here so we can efficiently check against them below.
-        their_subselector_pseudos = %w(matches any nth-child nth-last-child).
-          map {|name| their_spcs[name] || []}.flatten
+        their_subselector_pseudos = %w[matches any nth-child nth-last-child]
+          .map { |name| their_spcs[name] || [] }.flatten
 
         # If `self`'s non-pseudo simple selectors aren't a subset of `their_sseq`'s,
         # it's definitely not a superselector. This also considers being matched
@@ -279,13 +282,13 @@ module Sass
         end
 
         our_spcs.all? do |_name, pseudos|
-          pseudos.all? {|pseudo| pseudo.superselector?(their_sseq, parents)}
+          pseudos.all? { |pseudo| pseudo.superselector?(their_sseq, parents) }
         end
       end
 
       # @see Simple#to_s
       def to_s(opts = {})
-        res = @members.map {|m| m.to_s(opts)}.join
+        res = @members.map { |m| m.to_s(opts) }.join
 
         # :not(%foo) may resolve to the empty string, but it should match every
         # selector so we replace it with "*".
@@ -300,7 +303,7 @@ module Sass
       #
       # @return [String]
       def inspect
-        res = members.map {|m| m.inspect}.join
+        res = members.map(&:inspect).join
         res << '!' if subject?
         res
       end
@@ -320,15 +323,15 @@ module Sass
       private
 
       def check_directives_match!(extend, parent_directives)
-        dirs1 = extend.directives.map {|d| d.resolved_value}
-        dirs2 = parent_directives.map {|d| d.resolved_value}
+        dirs1 = extend.directives.map(&:resolved_value)
+        dirs2 = parent_directives.map(&:resolved_value)
         return if Sass::Util.subsequence?(dirs1, dirs2)
         line = extend.node.line
         filename = extend.node.filename
 
         # TODO(nweiz): this should use the Sass stack trace of the extend node,
         # not the selector.
-        raise Sass::SyntaxError.new(<<MESSAGE)
+        raise Sass::SyntaxError, <<MESSAGE
 You may not @extend an outer selector from within #{extend.directives.last.name}.
 You may only @extend selectors within the same directive.
 From "@extend #{extend.target.join(', ')}" on line #{line}#{" of #{filename}" if filename}.

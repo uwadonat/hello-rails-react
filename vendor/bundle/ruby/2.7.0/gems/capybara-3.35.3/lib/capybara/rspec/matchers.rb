@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 require 'capybara/rspec/matchers/have_selector'
 require 'capybara/rspec/matchers/have_ancestor'
 require 'capybara/rspec/matchers/have_sibling'
@@ -130,7 +128,7 @@ module Capybara
     def have_text(text_or_type, *args, **options)
       Matchers::HaveText.new(text_or_type, *args, **options)
     end
-    alias_method :have_content, :have_text
+    alias have_content have_text
 
     def have_title(title, **options)
       Matchers::HaveTitle.new(title, **options)
@@ -147,7 +145,10 @@ module Capybara
     #
     # @see Capybara::Node::Matchers#matches_style?
     def match_style(styles = nil, **options)
-      styles, options = options, {} if styles.nil?
+      if styles.nil?
+        styles = options
+        options = {}
+      end
       Matchers::MatchStyle.new(styles, **options)
     end
 
@@ -166,7 +167,7 @@ module Capybara
         Matchers::NegatedMatcher.new(send("have_#{matcher_type}", *args, **kw_args, &optional_filter_block))
       end
     end
-    alias_method :have_no_content, :have_no_text
+    alias have_no_content have_no_text
 
     %w[selector css xpath].each do |matcher_type|
       define_method "not_match_#{matcher_type}" do |*args, **kw_args, &optional_filter_block|

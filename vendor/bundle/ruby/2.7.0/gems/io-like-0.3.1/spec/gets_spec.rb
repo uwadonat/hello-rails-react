@@ -1,14 +1,14 @@
 require File.dirname(__FILE__) + '/../spec_helper'
 require File.dirname(__FILE__) + '/fixtures/classes'
 
-describe "IO::Like#gets" do
-  it "returns the next line of string that were separated by $/" do
+describe 'IO::Like#gets' do
+  it 'returns the next line of string that were separated by $/' do
     IOSpecs.readable_iowrapper do |f|
       IOSpecs.lines.each { |line| line.should == f.gets }
     end
   end
 
-  it "returns tainted strings" do
+  it 'returns tainted strings' do
     IOSpecs.readable_iowrapper do |f|
       while (line = f.gets(nil))
         line.tainted?.should == true
@@ -16,7 +16,7 @@ describe "IO::Like#gets" do
     end
 
     IOSpecs.readable_iowrapper do |f|
-      while (line = f.gets(""))
+      while (line = f.gets(''))
         line.tainted?.should == true
       end
     end
@@ -28,13 +28,13 @@ describe "IO::Like#gets" do
     end
 
     IOSpecs.readable_iowrapper do |f|
-      while (line = f.gets("la"))
+      while (line = f.gets('la'))
         line.tainted?.should == true
       end
     end
   end
 
-  it "updates lineno with each invocation" do
+  it 'updates lineno with each invocation' do
     count = 1
     IOSpecs.readable_iowrapper do |f|
       while (line = f.gets(nil))
@@ -45,7 +45,7 @@ describe "IO::Like#gets" do
 
     count = 1
     IOSpecs.readable_iowrapper do |f|
-      while (line = f.gets(""))
+      while (line = f.gets(''))
         f.lineno.should == count
         count += 1
       end
@@ -61,26 +61,26 @@ describe "IO::Like#gets" do
 
     count = 1
     IOSpecs.readable_iowrapper do |f|
-      while (line = f.gets("la"))
+      while (line = f.gets('la'))
         f.lineno.should == count
         count += 1
       end
     end
   end
 
-  it "updates $. with each invocation" do
+  it 'updates $. with each invocation' do
     count = 1
     IOSpecs.readable_iowrapper do |f|
       while (line = f.gets(nil))
-        $..should == count
+        $INPUT_LINE_NUMBER.should == count
         count += 1
       end
     end
 
     count = 1
     IOSpecs.readable_iowrapper do |f|
-      while (line = f.gets(""))
-        $..should == count
+      while (line = f.gets(''))
+        $INPUT_LINE_NUMBER.should == count
         count += 1
       end
     end
@@ -88,15 +88,15 @@ describe "IO::Like#gets" do
     count = 1
     IOSpecs.readable_iowrapper do |f|
       while (line = f.gets)
-        $..should == count
+        $INPUT_LINE_NUMBER.should == count
         count += 1
       end
     end
 
     count = 1
     IOSpecs.readable_iowrapper do |f|
-      while (line = f.gets("la"))
-        $..should == count
+      while (line = f.gets('la'))
+        $INPUT_LINE_NUMBER.should == count
         count += 1
       end
     end
@@ -106,36 +106,36 @@ describe "IO::Like#gets" do
   # $_ will not cross out of the implementation of gets since its value is
   # limited to the local scope in managed code.
   #
-  #it "assigns the returned line to $_" do
+  # it "assigns the returned line to $_" do
   #  IOSpecs.readable_iowrapper do |f|
   #    IOSpecs.lines.each do |line|
   #      f.gets
   #      $line.should == line
   #    end
   #  end
-  #end
+  # end
 
-  it "returns nil if called at the end of the stream" do
+  it 'returns nil if called at the end of the stream' do
     IOSpecs.readable_iowrapper do |f|
       IOSpecs.lines.length.times { f.gets }
-      f.gets.should == nil
+      f.gets.should.nil?
     end
   end
 
-  it "returns the entire content if the separator is nil" do
+  it 'returns the entire content if the separator is nil' do
     IOSpecs.readable_iowrapper do |f|
       f.gets(nil).should == IOSpecs.lines.join('')
     end
   end
 
-  it "reads and returns all data available before a SystemCallError is raised when the separator is nil" do
+  it 'reads and returns all data available before a SystemCallError is raised when the separator is nil' do
     file = File.open(IOSpecs.gets_fixtures)
     # Overrride file.sysread to raise SystemCallError every other time it's
     # called.
     class << file
-      alias :sysread_orig :sysread
+      alias_method :sysread_orig, :sysread
       def sysread(length)
-        if @error_raised then
+        if @error_raised
           @error_raised = false
           sysread_orig(length)
         else
@@ -146,7 +146,7 @@ describe "IO::Like#gets" do
     end
 
     ReadableIOWrapper.open(file) do |iowrapper|
-      lambda { iowrapper.gets(nil) }.should raise_error(SystemCallError)
+      -> { iowrapper.gets(nil) }.should raise_error(SystemCallError)
       iowrapper.gets(nil).should == IOSpecs.lines.join('')
     end
     file.close
@@ -160,9 +160,9 @@ describe "IO::Like#gets" do
     c = "Est\303\241 aqui a linha cinco.\nHere is line six.\n"
 
     IOSpecs.readable_iowrapper do |f|
-      f.gets("").should == a
-      f.gets("").should == b
-      f.gets("").should == c
+      f.gets('').should == a
+      f.gets('').should == b
+      f.gets('').should == c
     end
   end
 
@@ -180,26 +180,26 @@ describe "IO::Like#gets" do
     end
   end
 
-  it "raises an IOError if the stream is not opened for reading" do
-    path = tmp("gets_spec")
+  it 'raises an IOError if the stream is not opened for reading' do
+    path = tmp('gets_spec')
     lambda do
       File.open(path, 'w') do |f|
-        WritableIOWrapper.open(f) { |iowrapper| iowrapper.gets }
+        WritableIOWrapper.open(f, &:gets)
       end
     end.should raise_error(IOError)
     File.unlink(path) if File.exist?(path)
   end
 
-  it "raises IOError on closed stream" do
-    lambda { IOSpecs.closed_file.gets }.should raise_error(IOError)
+  it 'raises IOError on closed stream' do
+    -> { IOSpecs.closed_file.gets }.should raise_error(IOError)
   end
 
-  it "accepts a separator" do
-    path = tmp("gets_specs")
-    f = File.open(path, "w")
+  it 'accepts a separator' do
+    path = tmp('gets_specs')
+    f = File.open(path, 'w')
     f.print("A\n\n\nB\n")
     f.close
-    f = File.open(path, "r")
+    f = File.open(path, 'r')
     iowrapper = ReadableIOWrapper.open(f)
     iowrapper.gets("\n\n")
     b = iowrapper.gets("\n\n")

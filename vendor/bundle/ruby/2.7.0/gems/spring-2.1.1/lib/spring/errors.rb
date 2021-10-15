@@ -9,9 +9,9 @@ module Spring
     end
 
     def message
-      "Spring was unable to locate the root of your project. There was no Gemfile " \
+      'Spring was unable to locate the root of your project. There was no Gemfile ' \
         "present in the current directory (#{current_dir}) or any of the parent " \
-        "directories."
+        'directories.'
     end
   end
 
@@ -23,11 +23,11 @@ module Spring
     end
 
     def message
-      "Spring was unable to find your config/application.rb file. " \
+      'Spring was unable to find your config/application.rb file. ' \
         "Your project root was detected at #{project_root}, so Spring " \
         "looked for #{project_root}/config/application.rb but it doesn't exist. You can " \
-        "configure the root of your application by setting Spring.application_root in " \
-        "config/spring.rb."
+        'configure the root of your application by setting Spring.application_root in ' \
+        'config/spring.rb.'
     end
   end
 

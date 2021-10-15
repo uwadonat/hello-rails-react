@@ -6,9 +6,9 @@ require 'rack'
 require 'yaml'
 
 class TestApp < Sinatra::Base
-  class TestAppError < Exception; end # rubocop:disable Lint/InheritException
+  class TestAppError < Exception; end
 
-  class TestAppOtherError < Exception # rubocop:disable Lint/InheritException
+  class TestAppOtherError < Exception
     def initialize(string1, msg)
       super()
       @something = string1

@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 require 'regexp_parser'
 
 module Capybara
@@ -25,7 +23,7 @@ module Capybara
         end
       end
 
-    private
+      private
 
       def remove_and_covered(strings)
         # delete_if is documented to modify the array after every block iteration - this doesn't appear to be true
@@ -111,7 +109,7 @@ module Capybara
           strings
         end
 
-      protected
+        protected
 
         def alternation?
           (type == :meta) && !terminal?
@@ -139,10 +137,10 @@ module Capybara
 
         def terminal_strings
           text = case @exp.type
-          when :literal then @exp.text
-          when :escape then @exp.char
-          else
-            return [nil]
+                 when :literal then @exp.text
+                 when :escape then @exp.char
+                 else
+                   return [nil]
           end
 
           optional? ? options_set(text) : repeat_set(text)
@@ -166,7 +164,7 @@ module Capybara
            Regexp::Expression::Assertion::NegativeLookbehind].any? { |klass| @exp.is_a? klass }
         end
 
-      private
+        private
 
         def indeterminate?
           %i[meta set].include?(type)

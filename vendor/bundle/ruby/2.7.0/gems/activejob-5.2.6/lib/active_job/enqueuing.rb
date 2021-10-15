@@ -1,6 +1,4 @@
-# frozen_string_literal: true
-
-require "active_job/arguments"
+require 'active_job/arguments'
 
 module ActiveJob
   # Provides behavior for enqueuing jobs.
@@ -21,9 +19,10 @@ module ActiveJob
       end
 
       private
-        def job_or_instantiate(*args) # :doc:
-          args.first.is_a?(self) ? args.first : new(*args)
-        end
+
+      def job_or_instantiate(*args) # :doc:
+        args.first.is_a?(self) ? args.first : new(*args)
+      end
     end
 
     # Enqueues the job to be performed by the queue adapter.
@@ -44,8 +43,8 @@ module ActiveJob
     def enqueue(options = {})
       self.scheduled_at = options[:wait].seconds.from_now.to_f if options[:wait]
       self.scheduled_at = options[:wait_until].to_f if options[:wait_until]
-      self.queue_name   = self.class.queue_name_from_part(options[:queue]) if options[:queue]
-      self.priority     = options[:priority].to_i if options[:priority]
+      self.queue_name = self.class.queue_name_from_part(options[:queue]) if options[:queue]
+      self.priority = options[:priority].to_i if options[:priority]
       run_callbacks :enqueue do
         if scheduled_at
           self.class.queue_adapter.enqueue_at self, scheduled_at

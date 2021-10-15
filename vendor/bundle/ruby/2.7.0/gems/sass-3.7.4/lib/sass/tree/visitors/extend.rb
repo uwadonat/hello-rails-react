@@ -27,7 +27,7 @@ class Sass::Tree::Visitors::Extend < Sass::Tree::Visitors::Base
   def visit(node)
     super(node)
   rescue Sass::SyntaxError => e
-    e.modify_backtrace(:filename => node.filename, :line => node.line)
+    e.modify_backtrace(filename: node.filename, line: node.line)
     raise e
   end
 
@@ -53,7 +53,7 @@ class Sass::Tree::Visitors::Extend < Sass::Tree::Visitors::Base
         message = "\"#{ex.extender}\" failed to @extend \"#{ex.target.join}\"."
 
         # TODO(nweiz): this should use the Sass stack trace of the extend node.
-        raise Sass::SyntaxError.new(<<MESSAGE, :filename => ex.node.filename, :line => ex.node.line)
+        raise Sass::SyntaxError.new(<<MESSAGE, filename: ex.node.filename, line: ex.node.line)
 #{message}
 The selector "#{ex.target.join}" was not found.
 Use "@extend #{ex.target.join} !optional" if the extend should be able to fail.

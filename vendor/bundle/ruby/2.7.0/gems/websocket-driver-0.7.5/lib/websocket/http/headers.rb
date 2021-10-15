@@ -1,6 +1,5 @@
 module WebSocket
   module HTTP
-
     module Headers
       MAX_LINE_LENGTH = 4096
       CR = 0x0D
@@ -38,10 +37,10 @@ module WebSocket
       attr_reader :headers
 
       def initialize
-        @buffer  = []
-        @env     = {}
+        @buffer = []
+        @env = {}
         @headers = {}
-        @stage   = 0
+        @stage = 0
       end
 
       def complete?
@@ -79,7 +78,7 @@ module WebSocket
         @env['rack.input'] = StringIO.new(string_buffer)
       end
 
-    private
+      private
 
       def complete
         @stage = 2
@@ -92,10 +91,10 @@ module WebSocket
       def header_line(line)
         return false unless parsed = line.scan(HEADER_LINE).first
 
-        key   = HTTP.normalize_header(parsed[0])
+        key = HTTP.normalize_header(parsed[0])
         value = parsed[1].strip
 
-        if @headers.has_key?(key)
+        if @headers.key?(key)
           @headers[key] << ', ' << value
         else
           @headers[key] = value
@@ -107,6 +106,5 @@ module WebSocket
         @buffer.pack('C*')
       end
     end
-
   end
 end

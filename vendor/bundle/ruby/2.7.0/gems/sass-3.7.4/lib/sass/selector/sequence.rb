@@ -9,7 +9,7 @@ module Sass
       # @param line [Integer]
       # @return [Integer]
       def line=(line)
-        members.each {|m| m.line = line if m.is_a?(SimpleSequence)}
+        members.each { |m| m.line = line if m.is_a?(SimpleSequence) }
         @line = line
       end
 
@@ -20,7 +20,7 @@ module Sass
       # @param filename [String, nil]
       # @return [String, nil]
       def filename=(filename)
-        members.each {|m| m.filename = filename if m.is_a?(SimpleSequence)}
+        members.each { |m| m.filename = filename if m.is_a?(SimpleSequence) }
         filename
       end
 
@@ -56,7 +56,8 @@ module Sass
         return CommaSequence.new([self]) if !implicit_parent && !contains_parent_ref
 
         unless contains_parent_ref
-          old_members, members = members, []
+          old_members = members
+          members = []
           members << nl if nl
           members << SimpleSequence.new([Parent.new], false)
           members += old_members
@@ -70,9 +71,7 @@ module Sass
             next seq_or_op unless seq_or_op.is_a?(Sequence)
             seq_or_op.members
           end
-          if path_members.length == 2 && path_members[1][0] == "\n"
-            path_members[0].unshift path_members[1].shift
-          end
+          path_members[0].unshift path_members[1].shift if path_members.length == 2 && path_members[1][0] == "\n"
           Sequence.new(path_members.flatten)
         end)
       end
@@ -121,10 +120,10 @@ module Sass
           # (`extended.first`) original specificity.
           extended.first.add_sources!([self]) if original && !invisible?
 
-          extended.map {|seq| seq.members}
+          extended.map(&:members)
         end
-        weaves = Sass::Util.paths(extended_not_expanded).map {|path| weave(path)}
-        trim(weaves).map {|p| Sequence.new(p)}
+        weaves = Sass::Util.paths(extended_not_expanded).map { |path| weave(path) }
+        trim(weaves).map { |p| Sequence.new(p) }
       end
 
       # Unifies this with another selector sequence to produce a selector
@@ -145,7 +144,7 @@ module Sass
         return unless (unified = other_base.unify(base))
 
         woven = weave([members[0...-1], other.members[0...-1] + [unified]])
-        CommaSequence.new(woven.map {|w| Sequence.new(w)})
+        CommaSequence.new(woven.map { |w| Sequence.new(w) })
       end
 
       # Returns whether or not this selector matches all elements
@@ -162,7 +161,7 @@ module Sass
 
       # @see AbstractSequence#to_s
       def to_s(opts = {})
-        @members.map {|m| m.is_a?(String) ? m : m.to_s(opts)}.join(" ").gsub(/ ?\n ?/, "\n")
+        @members.map { |m| m.is_a?(String) ? m : m.to_s(opts) }.join(' ').gsub(/ ?\n ?/, "\n")
       end
 
       # Returns a string representation of the sequence.
@@ -170,7 +169,7 @@ module Sass
       #
       # @return [String]
       def inspect
-        members.map {|m| m.inspect}.join(" ")
+        members.map(&:inspect).join(' ')
       end
 
       # Add to the {SimpleSequence#sources} sets of the child simple sequences.
@@ -179,7 +178,7 @@ module Sass
       #
       # @param sources [Set<Sequence>]
       def add_sources!(sources)
-        members.map! {|m| m.is_a?(SimpleSequence) ? m.with_more_sources(sources) : m}
+        members.map! { |m| m.is_a?(SimpleSequence) ? m.with_more_sources(sources) : m }
       end
 
       # Converts the subject operator "!", if it exists, into a ":has()"
@@ -205,9 +204,7 @@ module Sass
 
         return self unless subject
 
-        unless has.empty?
-          subject.members << Pseudo.new(:class, 'has', nil, CommaSequence.new([Sequence.new(has)]))
-        end
+        subject.members << Pseudo.new(:class, 'has', nil, CommaSequence.new([Sequence.new(has)])) unless has.empty?
         Sequence.new(pre_subject + [subject])
       end
 
@@ -232,11 +229,11 @@ module Sass
           next if current.empty?
           current = current.dup
           last_current = [current.pop]
-          prefixes = prefixes.map do |prefix|
+          prefixes = prefixes.flat_map do |prefix|
             sub = subweave(prefix, current)
             next [] unless sub
-            sub.map {|seqs| seqs + last_current}
-          end.flatten(1)
+            sub.map { |seqs| seqs + last_current }
+          end
         end
         prefixes
       end
@@ -263,7 +260,8 @@ module Sass
         return [seq2] if seq1.empty?
         return [seq1] if seq2.empty?
 
-        seq1, seq2 = seq1.dup, seq2.dup
+        seq1 = seq1.dup
+        seq2 = seq2.dup
         return unless (init = merge_initial_ops(seq1, seq2))
         return unless (fin = merge_final_ops(seq1, seq2))
 
@@ -295,15 +293,15 @@ module Sass
         diff = [[init]]
 
         until lcs.empty?
-          diff << chunks(seq1, seq2) {|s| parent_superselector?(s.first, lcs.first)} << [lcs.shift]
+          diff << chunks(seq1, seq2) { |s| parent_superselector?(s.first, lcs.first) } << [lcs.shift]
           seq1.shift
           seq2.shift
         end
-        diff << chunks(seq1, seq2) {|s| s.empty?}
-        diff += fin.map {|sel| sel.is_a?(Array) ? sel : [sel]}
-        diff.reject! {|c| c.empty?}
+        diff << chunks(seq1, seq2, &:empty?)
+        diff += fin.map { |sel| sel.is_a?(Array) ? sel : [sel] }
+        diff.reject!(&:empty?)
 
-        Sass::Util.paths(diff).map {|p| p.flatten}.reject {|p| path_has_two_subjects?(p)}
+        Sass::Util.paths(diff).map(&:flatten).reject { |p| path_has_two_subjects?(p) }
       end
 
       # Extracts initial selector combinators (`"+"`, `">"`, `"~"`, and `"\n"`)
@@ -316,7 +314,8 @@ module Sass
       #   sequence, this will be the empty array. If the operators cannot be
       #   merged, this will be nil.
       def merge_initial_ops(seq1, seq2)
-        ops1, ops2 = [], []
+        ops1 = []
+        ops2 = []
         ops1 << seq1.shift while seq1.first.is_a?(String)
         ops2 << seq2.shift while seq2.first.is_a?(String)
 
@@ -345,15 +344,16 @@ module Sass
       #   elements are [Sass::Util#paths]-style options; conceptually, an "or"
       #   of multiple selectors.
       def merge_final_ops(seq1, seq2, res = [])
-        ops1, ops2 = [], []
+        ops1 = []
+        ops2 = []
         ops1 << seq1.pop while seq1.last.is_a?(String)
         ops2 << seq2.pop while seq2.last.is_a?(String)
 
         # Not worth the headache of trying to preserve newlines here. The most
         # important use of newlines is at the beginning of the selector to wrap
         # across lines anyway.
-        ops1.reject! {|o| o == "\n"}
-        ops2.reject! {|o| o == "\n"}
+        ops1.reject! { |o| o == "\n" }
+        ops2.reject! { |o| o == "\n" }
 
         return res if ops1.empty? && ops2.empty?
         if ops1.size > 1 || ops2.size > 1
@@ -367,7 +367,8 @@ module Sass
 
         # This code looks complicated, but it's actually just a bunch of special
         # cases for interactions between different combinators.
-        op1, op2 = ops1.first, ops2.first
+        op1 = ops1.first
+        op2 = ops2.first
         if op1 && op2
           sel1 = seq1.pop
           sel2 = seq2.pop
@@ -386,9 +387,11 @@ module Sass
             end
           elsif (op1 == '~' && op2 == '+') || (op1 == '+' && op2 == '~')
             if op1 == '~'
-              tilde_sel, plus_sel = sel1, sel2
+              tilde_sel = sel1
+              plus_sel = sel2
             else
-              tilde_sel, plus_sel = sel2, sel1
+              tilde_sel = sel2
+              plus_sel = sel1
             end
 
             if tilde_sel.superselector?(plus_sel)
@@ -400,10 +403,10 @@ module Sass
                 ([merged, '+'] if merged)
               ].compact
             end
-          elsif op1 == '>' && %w(~ +).include?(op2)
+          elsif op1 == '>' && %w[~ +].include?(op2)
             res.unshift sel2, op2
             seq1.push sel1, op1
-          elsif op2 == '>' && %w(~ +).include?(op1)
+          elsif op2 == '>' && %w[~ +].include?(op1)
             res.unshift sel1, op1
             seq2.push sel2, op2
           elsif op1 == op2
@@ -487,12 +490,12 @@ module Sass
       # @param seq2 [Array<SimpleSequence or String>]
       # @return [Boolean]
       def _superselector?(seq1, seq2)
-        seq1 = seq1.reject {|e| e == "\n"}
-        seq2 = seq2.reject {|e| e == "\n"}
+        seq1 = seq1.reject { |e| e == "\n" }
+        seq2 = seq2.reject { |e| e == "\n" }
         # Selectors with leading or trailing operators are neither
         # superselectors nor subselectors.
         return if seq1.last.is_a?(String) || seq2.last.is_a?(String) ||
-          seq1.first.is_a?(String) || seq2.first.is_a?(String)
+                  seq1.first.is_a?(String) || seq2.first.is_a?(String)
         # More complex selectors are never superselectors of less complex ones
         return if seq1.size > seq2.size
         return seq1.first.superselector?(seq2.last, seq2[0...-1]) if seq1.size == 1
@@ -508,7 +511,7 @@ module Sass
           return unless seq2[si + 1].is_a?(String)
 
           # .foo ~ .bar is a superselector of .foo + .bar
-          return unless seq1[1] == "~" ? seq2[si + 1] != ">" : seq1[1] == seq2[si + 1]
+          return unless seq1[1] == '~' ? seq2[si + 1] != '>' : seq1[1] == seq2[si + 1]
 
           # .foo > .baz is not a superselector of .foo > .bar > .baz or .foo >
           # .bar .baz, despite the fact that .baz is a superselector of .bar >
@@ -517,7 +520,7 @@ module Sass
 
           return _superselector?(seq1[2..-1], seq2[si + 2..-1])
         elsif seq2[si + 1].is_a?(String)
-          return unless seq2[si + 1] == ">"
+          return unless seq2[si + 1] == '>'
           return _superselector?(seq1[1..-1], seq2[si + 2..-1])
         else
           return _superselector?(seq1[1..-1], seq2[si + 1..-1])
@@ -550,7 +553,7 @@ module Sass
       def must_unify?(seq1, seq2)
         unique_selectors = seq1.map do |sseq|
           next [] if sseq.is_a?(String)
-          sseq.members.select {|sel| sel.unique?}
+          sseq.members.select(&:unique?)
         end.flatten.to_set
 
         return false if unique_selectors.empty?
@@ -617,11 +620,11 @@ module Sass
       end
 
       def _hash
-        members.reject {|m| m == "\n"}.hash
+        members.reject { |m| m == "\n" }.hash
       end
 
       def _eql?(other)
-        other.members.reject {|m| m == "\n"}.eql?(members.reject {|m| m == "\n"})
+        other.members.reject { |m| m == "\n" }.eql?(members.reject { |m| m == "\n" })
       end
 
       def path_has_two_subjects?(path)
@@ -637,7 +640,7 @@ module Sass
 
       def _sources(seq)
         s = Set.new
-        seq.map {|sseq_or_op| s.merge sseq_or_op.sources if sseq_or_op.is_a?(SimpleSequence)}
+        seq.map { |sseq_or_op| s.merge sseq_or_op.sources if sseq_or_op.is_a?(SimpleSequence) }
         s
       end
 
@@ -645,7 +648,7 @@ module Sass
         extended_not_expanded.map do |choices|
           choices = choices.map do |sel|
             next sel.first.to_s if sel.size == 1
-            "#{sel.join ' '}"
+            (sel.join ' ').to_s
           end
           next choices.first if choices.size == 1 && !choices.include?(' ')
           "(#{choices.join ', '})"
@@ -654,7 +657,7 @@ module Sass
 
       def has_root?(sseq)
         sseq.is_a?(SimpleSequence) &&
-          sseq.members.any? {|sel| sel.is_a?(Pseudo) && sel.normalized_name == "root"}
+          sseq.members.any? { |sel| sel.is_a?(Pseudo) && sel.normalized_name == 'root' }
       end
     end
   end

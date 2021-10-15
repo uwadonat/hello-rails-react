@@ -1,6 +1,4 @@
-# frozen_string_literal: true
-
-require "active_support/core_ext/numeric/time"
+require 'active_support/core_ext/numeric/time'
 
 module ActiveJob
   # Provides behavior for retrying and discarding jobs on exceptions.
@@ -113,22 +111,23 @@ module ActiveJob
     end
 
     private
-      def determine_delay(seconds_or_duration_or_algorithm)
-        case seconds_or_duration_or_algorithm
-        when :exponentially_longer
-          (executions**4) + 2
-        when ActiveSupport::Duration
-          duration = seconds_or_duration_or_algorithm
-          duration.to_i
-        when Integer
-          seconds = seconds_or_duration_or_algorithm
-          seconds
-        when Proc
-          algorithm = seconds_or_duration_or_algorithm
-          algorithm.call(executions)
-        else
-          raise "Couldn't determine a delay based on #{seconds_or_duration_or_algorithm.inspect}"
-        end
+
+    def determine_delay(seconds_or_duration_or_algorithm)
+      case seconds_or_duration_or_algorithm
+      when :exponentially_longer
+        (executions**4) + 2
+      when ActiveSupport::Duration
+        duration = seconds_or_duration_or_algorithm
+        duration.to_i
+      when Integer
+        seconds = seconds_or_duration_or_algorithm
+        seconds
+      when Proc
+        algorithm = seconds_or_duration_or_algorithm
+        algorithm.call(executions)
+      else
+        raise "Couldn't determine a delay based on #{seconds_or_duration_or_algorithm.inspect}"
       end
+    end
   end
 end

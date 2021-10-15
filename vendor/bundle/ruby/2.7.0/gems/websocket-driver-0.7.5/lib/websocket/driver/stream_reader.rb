@@ -1,6 +1,5 @@
 module WebSocket
   class Driver
-
     class StreamReader
       # Try to minimise the number of reallocations done:
       MINIMUM_AUTOMATIC_PRUNE_OFFSET = 128
@@ -24,7 +23,7 @@ module WebSocket
 
         prune if @offset > MINIMUM_AUTOMATIC_PRUNE_OFFSET
 
-        return chunk
+        chunk
       end
 
       def each_byte
@@ -36,20 +35,19 @@ module WebSocket
         end
       end
 
-    private
+      private
 
       def prune
         buffer_size = @buffer.bytesize
 
-        if @offset > buffer_size
-          @buffer = String.new('').force_encoding(Encoding::BINARY)
-        else
-          @buffer = @buffer.byteslice(@offset, buffer_size - @offset)
-        end
+        @buffer = if @offset > buffer_size
+                    String.new('').force_encoding(Encoding::BINARY)
+                  else
+                    @buffer.byteslice(@offset, buffer_size - @offset)
+                  end
 
         @offset = 0
       end
     end
-
   end
 end

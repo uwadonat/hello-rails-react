@@ -1,20 +1,20 @@
-require "spring/boot"
-require "set"
-require "pty"
+require 'spring/boot'
+require 'set'
+require 'pty'
 
 module Spring
   class Application
     attr_reader :manager, :watcher, :spring_env, :original_env
 
     def initialize(manager, original_env, spring_env = Env.new)
-      @manager      = manager
+      @manager = manager
       @original_env = original_env
-      @spring_env   = spring_env
-      @mutex        = Mutex.new
-      @waiting      = Set.new
-      @preloaded    = false
-      @state        = :initialized
-      @interrupt    = IO.pipe
+      @spring_env = spring_env
+      @mutex = Mutex.new
+      @waiting = Set.new
+      @preloaded = false
+      @state = :initialized
+      @interrupt = IO.pipe
     end
 
     def state(val)
@@ -25,7 +25,7 @@ module Spring
 
     def state!(val)
       state val
-      @interrupt.last.write "."
+      @interrupt.last.write '.'
     end
 
     def app_env
@@ -81,18 +81,18 @@ module Spring
     end
 
     def preload
-      log "preloading app"
+      log 'preloading app'
 
       begin
-        require "spring/commands"
+        require 'spring/commands'
       ensure
         start_watcher
       end
 
-      require Spring.application_root_path.join("config", "application")
+      require Spring.application_root_path.join('config', 'application')
 
       unless Rails.respond_to?(:gem_version) && Rails.gem_version >= Gem::Version.new('4.2.0')
-        raise "Spring only supports Rails >= 4.2.0"
+        raise 'Spring only supports Rails >= 4.2.0'
       end
 
       # config/environments/test.rb will have config.cache_classes = true. However
@@ -103,7 +103,7 @@ module Spring
         ActiveSupport::Dependencies.mechanism = :load
       end
 
-      require Spring.application_root_path.join("config", "environment")
+      require Spring.application_root_path.join('config', 'environment')
 
       @original_cache_classes = Rails.application.config.cache_classes
       Rails.application.config.cache_classes = false
@@ -120,9 +120,9 @@ module Spring
       watcher.add Spring.gemfile, "#{Spring.gemfile}.lock"
 
       if defined?(Rails) && Rails.application
-        watcher.add Rails.application.paths["config/initializers"]
-        watcher.add Rails.application.paths["config/database"]
-        if secrets_path = Rails.application.paths["config/secrets"]
+        watcher.add Rails.application.paths['config/initializers']
+        watcher.add Rails.application.paths['config/database']
+        if secrets_path = Rails.application.paths['config/secrets']
           watcher.add secrets_path
         end
       end
@@ -148,7 +148,7 @@ module Spring
     end
 
     def serve(client)
-      log "got client"
+      log 'got client'
       manager.puts
 
       _stdout, stderr, _stdin = streams = 3.times.map { client.recv_io }
@@ -156,8 +156,8 @@ module Spring
 
       preload unless preloaded?
 
-      args, env = JSON.load(client.read(client.gets.to_i)).values_at("args", "env")
-      command   = Spring.command(args.shift)
+      args, env = JSON.load(client.read(client.gets.to_i)).values_at('args', 'env')
+      command = Spring.command(args.shift)
 
       connect_database
       setup command
@@ -177,20 +177,20 @@ module Spring
       original_dir = Dir.pwd
       Dir.chdir(env['PWD'] || original_dir)
 
-      pid = fork {
+      pid = fork do
         Process.setsid
-        IGNORE_SIGNALS.each { |sig| trap(sig, "DEFAULT") }
-        trap("TERM", "DEFAULT")
+        IGNORE_SIGNALS.each { |sig| trap(sig, 'DEFAULT') }
+        trap('TERM', 'DEFAULT')
 
         unless Spring.quiet
           STDERR.puts "Running via Spring preloader in process #{Process.pid}"
 
           if Rails.env.production?
-            STDERR.puts "WARNING: Spring is running in production. To fix "         \
-                        "this make sure the spring gem is only present "            \
-                        "in `development` and `test` groups in your Gemfile "       \
-                        "and make sure you always use "                             \
-                        "`bundle install --without development test` in production"
+            STDERR.puts 'WARNING: Spring is running in production. To fix '         \
+                        'this make sure the spring gem is only present '            \
+                        'in `development` and `test` groups in your Gemfile '       \
+                        'and make sure you always use '                             \
+                        '`bundle install --without development test` in production'
           end
         end
 
@@ -218,7 +218,7 @@ module Spring
         shush_backtraces
 
         command.call
-      }
+      end
 
       disconnect_database
 
@@ -248,8 +248,8 @@ module Spring
     def terminate
       if exiting?
         # Ensure that we do not ignore subsequent termination attempts
-        log "forced exit"
-        @waiting.each { |pid| Process.kill("TERM", pid) }
+        log 'forced exit'
+        @waiting.each { |pid| Process.kill('TERM', pid) }
         Kernel.exit
       else
         state! :terminating
@@ -264,9 +264,9 @@ module Spring
     end
 
     def exit_if_finished
-      @mutex.synchronize {
+      @mutex.synchronize do
         Kernel.exit if exiting? && @waiting.empty?
-      }
+      end
     end
 
     # The command might need to require some files in the
@@ -279,9 +279,7 @@ module Spring
     end
 
     def invoke_after_fork_callbacks
-      Spring.after_fork_callbacks.each do |callback|
-        callback.call
-      end
+      Spring.after_fork_callbacks.each(&:call)
     end
 
     def loaded_application_features
@@ -306,9 +304,9 @@ module Spring
           begin
             old_raise.call(*args)
           ensure
-            if $!
-              lib = File.expand_path("..", __FILE__)
-              $!.backtrace.reject! { |line| line.start_with?(lib) }
+            if $ERROR_INFO
+              lib = File.expand_path('..', __FILE__)
+              $ERROR_INFO.backtrace.reject! { |line| line.start_with?(lib) }
             end
           end
         end
@@ -317,7 +315,8 @@ module Spring
     end
 
     def print_exception(stream, error)
-      first, rest = error.backtrace.first, error.backtrace.drop(1)
+      first = error.backtrace.first
+      rest = error.backtrace.drop(1)
       stream.puts("#{first}: #{error} (#{error.class})")
       rest.each { |line| stream.puts("\tfrom #{line}") }
     end
@@ -337,14 +336,14 @@ module Spring
 
     def reset_streams
       [STDOUT, STDERR].each { |stream| stream.reopen(spring_env.log_file) }
-      STDIN.reopen("/dev/null")
+      STDIN.reopen('/dev/null')
     end
 
     def wait(pid, streams, client)
       @mutex.synchronize { @waiting << pid }
 
       # Wait in a separate thread so we can run multiple commands at once
-      Spring.failsafe_thread {
+      Spring.failsafe_thread do
         begin
           _, status = Process.wait2 pid
           log "#{pid} exited with #{status.exitstatus}"
@@ -356,9 +355,9 @@ module Spring
           @mutex.synchronize { @waiting.delete pid }
           exit_if_finished
         end
-      }
+      end
 
-      Spring.failsafe_thread {
+      Spring.failsafe_thread do
         while signal = client.gets.chomp
           begin
             Process.kill(signal, -Process.getpgid(pid))
@@ -367,7 +366,7 @@ module Spring
             client.puts(1)
           end
         end
-      }
+      end
     end
 
     private

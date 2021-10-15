@@ -15,7 +15,7 @@ module Sprockets
   #       Sprockets::ClosureCompressor.new({ ... })
   #
   class ClosureCompressor
-    VERSION = '1'
+    VERSION = '1'.freeze
 
     # Public: Return singleton instance with default options.
     #

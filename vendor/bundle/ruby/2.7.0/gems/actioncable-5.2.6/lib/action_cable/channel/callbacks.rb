@@ -1,11 +1,9 @@
-# frozen_string_literal: true
-
-require "active_support/callbacks"
+require 'active_support/callbacks'
 
 module ActionCable
   module Channel
     module Callbacks
-      extend  ActiveSupport::Concern
+      extend ActiveSupport::Concern
       include ActiveSupport::Callbacks
 
       included do
@@ -21,7 +19,7 @@ module ActionCable
         def after_subscribe(*methods, &block)
           set_callback(:subscribe, :after, *methods, &block)
         end
-        alias_method :on_subscribe, :after_subscribe
+        alias on_subscribe after_subscribe
 
         def before_unsubscribe(*methods, &block)
           set_callback(:unsubscribe, :before, *methods, &block)
@@ -30,7 +28,7 @@ module ActionCable
         def after_unsubscribe(*methods, &block)
           set_callback(:unsubscribe, :after, *methods, &block)
         end
-        alias_method :on_unsubscribe, :after_unsubscribe
+        alias on_unsubscribe after_unsubscribe
       end
     end
   end

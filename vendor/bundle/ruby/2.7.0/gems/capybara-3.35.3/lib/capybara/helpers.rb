@@ -1,9 +1,7 @@
-# frozen_string_literal: true
-
 module Capybara
   # @api private
   module Helpers
-  module_function
+    module_function
 
     ##
     # @deprecated
@@ -95,9 +93,13 @@ module Capybara
     end
 
     if defined?(Process::CLOCK_MONOTONIC)
-      def monotonic_time; Process.clock_gettime Process::CLOCK_MONOTONIC; end
+      def monotonic_time
+        Process.clock_gettime Process::CLOCK_MONOTONIC
+      end
     else
-      def monotonic_time; Time.now.to_f; end
+      def monotonic_time
+        Time.now.to_f
+      end
     end
 
     def timer(expire_in:)
@@ -122,7 +124,7 @@ module Capybara
         @start == current
       end
 
-    private
+      private
 
       def current
         Capybara::Helpers.monotonic_time

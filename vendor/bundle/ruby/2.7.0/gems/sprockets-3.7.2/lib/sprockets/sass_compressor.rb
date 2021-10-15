@@ -15,7 +15,7 @@ module Sprockets
   #       Sprockets::SassCompressor.new({ ... })
   #
   class SassCompressor
-    VERSION = '1'
+    VERSION = '1'.freeze
 
     # Public: Return singleton instance with default options.
     #

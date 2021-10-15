@@ -1,6 +1,5 @@
 module WebSocket
   module HTTP
-
     class Response
       include Headers
 
@@ -16,7 +15,7 @@ module WebSocket
         @buffer.pack('C*')
       end
 
-    private
+      private
 
       def start_line(line)
         return false unless parsed = line.scan(STATUS_LINE).first
@@ -24,6 +23,5 @@ module WebSocket
         true
       end
     end
-
   end
 end

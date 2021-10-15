@@ -23,7 +23,7 @@ module Sprockets
       32 => Digest::SHA256,
       48 => Digest::SHA384,
       64 => Digest::SHA512
-    }
+    }.freeze
 
     # Internal: Detect digest class hash algorithm for digest bytes.
     #
@@ -36,51 +36,51 @@ module Sprockets
 
     ADD_VALUE_TO_DIGEST = {
       String     => ->(val, digest) { digest << val },
-      FalseClass => ->(val, digest) { digest << 'FalseClass'.freeze },
-      TrueClass  => ->(val, digest) { digest << 'TrueClass'.freeze  },
-      NilClass   => ->(val, digest) { digest << 'NilClass'.freeze   },
+      FalseClass => ->(_val, digest) { digest << 'FalseClass'.freeze },
+      TrueClass  => ->(_val, digest) { digest << 'TrueClass'.freeze },
+      NilClass   => ->(_val, digest) { digest << 'NilClass'.freeze },
 
-      Symbol => ->(val, digest) {
+      Symbol => lambda { |val, digest|
         digest << 'Symbol'.freeze
         digest << val.to_s
       },
-      Integer => ->(val, digest) {
+      Integer => lambda { |val, digest|
         digest << 'Integer'.freeze
         digest << val.to_s
       },
-      Array => ->(val, digest) {
+      Array => lambda { |val, digest|
         digest << 'Array'.freeze
         val.each do |element|
           ADD_VALUE_TO_DIGEST[element.class].call(element, digest)
         end
       },
-      Hash => ->(val, digest) {
+      Hash => lambda { |val, digest|
         digest << 'Hash'.freeze
         val.sort.each do |array|
           ADD_VALUE_TO_DIGEST[Array].call(array, digest)
         end
       },
-      Set => ->(val, digest) {
+      Set => lambda { |val, digest|
         digest << 'Set'.freeze
         ADD_VALUE_TO_DIGEST[Array].call(val.to_a, digest)
       },
-      Encoding => ->(val, digest) {
+      Encoding => lambda { |val, digest|
         digest << 'Encoding'.freeze
         digest << val.name
-      },
-    }
+      }
+    }.freeze
     if 0.class != Integer # Ruby < 2.4
-      ADD_VALUE_TO_DIGEST[Fixnum] = ->(val, digest) {
+      ADD_VALUE_TO_DIGEST[Integer] = ->(val, digest) {
         digest << 'Integer'.freeze
         digest << val.to_s
       }
-      ADD_VALUE_TO_DIGEST[Bignum] = ->(val, digest) {
+      ADD_VALUE_TO_DIGEST[Integer] = ->(val, digest) {
         digest << 'Integer'.freeze
         digest << val.to_s
       }
     end
     ADD_VALUE_TO_DIGEST.default_proc = ->(_, val) {
-      raise TypeError, "couldn't digest #{ val }"
+      raise TypeError, "couldn't digest #{val}"
     }
     private_constant :ADD_VALUE_TO_DIGEST
 
@@ -143,7 +143,7 @@ module Sprockets
       Digest::SHA256 => 'sha256'.freeze,
       Digest::SHA384 => 'sha384'.freeze,
       Digest::SHA512 => 'sha512'.freeze
-    }
+    }.freeze
 
     # Public: Generate hash for use in the `integrity` attribute of an asset tag
     # as per the subresource integrity specification.

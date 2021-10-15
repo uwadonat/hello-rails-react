@@ -35,7 +35,7 @@ module Sass::Tree
       @last_else = node
     end
 
-    def _dump(f)
+    def _dump(_f)
       Marshal.dump([expr, self.else, children])
     end
 
@@ -45,7 +45,7 @@ module Sass::Tree
       node.else = else_
       node.children = children
       node.instance_variable_set('@last_else',
-        node.else ? node.else.instance_variable_get('@last_else') : node)
+                                 node.else ? node.else.instance_variable_get('@last_else') : node)
       node
     end
   end

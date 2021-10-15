@@ -2,7 +2,6 @@ require 'concurrent/synchronization/abstract_struct'
 require 'concurrent/synchronization'
 
 module Concurrent
-
   # An thread-safe variation of Ruby's standard `Struct`. Values can be set at
   # construction or safely changed at any time during the object's lifecycle.
   #
@@ -51,7 +50,7 @@ module Concurrent
     def values
       synchronize { ns_values }
     end
-    alias_method :to_a, :values
+    alias to_a values
 
     # @!macro struct_values_at
     #
@@ -72,7 +71,7 @@ module Concurrent
     def inspect
       synchronize { ns_inspect }
     end
-    alias_method :to_s, :inspect
+    alias to_s inspect
 
     # @!macro struct_merge
     #
@@ -185,15 +184,13 @@ module Concurrent
     def []=(member, value)
       if member.is_a? Integer
         length = synchronize { @values.length }
-        if member >= length
-          raise IndexError.new("offset #{member} too large for struct(size:#{length})")
-        end
+        raise IndexError, "offset #{member} too large for struct(size:#{length})" if member >= length
         synchronize { @values[member] = value }
       else
         send("#{member}=", value)
       end
     rescue NoMethodError
-      raise NameError.new("no member '#{member}' in struct")
+      raise NameError, "no member '#{member}' in struct"
     end
 
     private
@@ -209,9 +206,9 @@ module Concurrent
     # @!macro struct_new
     def self.new(*args, &block)
       clazz_name = nil
-      if args.length == 0
-        raise ArgumentError.new('wrong number of arguments (0 for 1+)')
-      elsif args.length > 0 && args.first.is_a?(String)
+      if args.empty?
+        raise ArgumentError, 'wrong number of arguments (0 for 1+)'
+      elsif !args.empty? && args.first.is_a?(String)
         clazz_name = args.shift
       end
       FACTORY.define_struct(clazz_name, args, &block)

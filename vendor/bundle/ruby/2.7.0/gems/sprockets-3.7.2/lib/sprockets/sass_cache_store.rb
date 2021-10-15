@@ -4,10 +4,11 @@ module Sprockets
   class SassProcessor
     # Internal: Cache wrapper for Sprockets cache adapter.
     class CacheStore < ::Sass::CacheStores::Base
-      VERSION = '1'
+      VERSION = '1'.freeze
 
       def initialize(cache, version)
-        @cache, @version = cache, "#{VERSION}/#{version}"
+        @cache = cache
+        @version = "#{VERSION}/#{version}"
       end
 
       def _store(key, version, sha, contents)
@@ -27,7 +28,7 @@ module Sprockets
   # Deprecated: Use Sprockets::SassProcessor::CacheStore instead.
   class SassCacheStore < SassProcessor::CacheStore
     def initialize(*args)
-      Deprecation.new.warn "SassCacheStore is deprecated please use SassProcessor::CacheStore instead"
+      Deprecation.new.warn 'SassCacheStore is deprecated please use SassProcessor::CacheStore instead'
       super
     end
   end

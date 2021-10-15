@@ -6,7 +6,7 @@ module Sass::Script::Value
     #
     # @return [Hash<Node, Node>]
     attr_reader :value
-    alias_method :to_h, :value
+    alias to_h value
 
     # Creates a new map.
     #
@@ -48,12 +48,12 @@ module Sass::Script::Value
     end
 
     # @see Value#to_s
-    def to_s(opts = {})
-      raise Sass::SyntaxError.new("#{inspect} isn't a valid CSS value.")
+    def to_s(_opts = {})
+      raise Sass::SyntaxError, "#{inspect} isn't a valid CSS value."
     end
 
     def to_sass(opts = {})
-      return "()" if value.empty?
+      return '()' if value.empty?
 
       to_sass = lambda do |value|
         if value.is_a?(List) && value.separator == :comma
@@ -63,8 +63,8 @@ module Sass::Script::Value
         end
       end
 
-      "(#{value.map {|(k, v)| "#{to_sass[k]}: #{to_sass[v]}"}.join(', ')})"
+      "(#{value.map { |(k, v)| "#{to_sass[k]}: #{to_sass[v]}" }.join(', ')})"
     end
-    alias_method :inspect, :to_sass
+    alias inspect to_sass
   end
 end

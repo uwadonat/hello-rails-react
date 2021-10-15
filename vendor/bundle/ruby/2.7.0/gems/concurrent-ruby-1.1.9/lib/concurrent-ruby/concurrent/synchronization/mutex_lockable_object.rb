@@ -1,7 +1,6 @@
 module Concurrent
   # noinspection RubyInstanceVariableNamingConvention
   module Synchronization
-
     # @!visibility private
     # @!macro internal_implementation_note
     module ConditionSignalling
@@ -18,7 +17,6 @@ module Concurrent
       end
     end
 
-
     # @!visibility private
     # @!macro internal_implementation_note
     class MutexLockableObject < AbstractLockableObject
@@ -28,13 +26,13 @@ module Concurrent
 
       def initialize(*defaults)
         super(*defaults)
-        @__Lock__      = ::Mutex.new
+        @__Lock__ = ::Mutex.new
         @__Condition__ = ::ConditionVariable.new
       end
 
       def initialize_copy(other)
         super
-        @__Lock__      = ::Mutex.new
+        @__Lock__ = ::Mutex.new
         @__Condition__ = ::ConditionVariable.new
       end
 
@@ -63,19 +61,19 @@ module Concurrent
 
       def initialize(*defaults)
         super(*defaults)
-        @__Lock__      = ::Monitor.new
+        @__Lock__ = ::Monitor.new
         @__Condition__ = @__Lock__.new_cond
       end
 
       def initialize_copy(other)
         super
-        @__Lock__      = ::Monitor.new
+        @__Lock__ = ::Monitor.new
         @__Condition__ = @__Lock__.new_cond
       end
 
       protected
 
-      def synchronize # TODO may be a problem with lock.synchronize { lock.wait }
+      def synchronize # TODO: may be a problem with lock.synchronize { lock.wait }
         @__Lock__.synchronize { yield }
       end
 

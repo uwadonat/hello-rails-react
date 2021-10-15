@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 module ActionCable
   module Server
     class Worker
@@ -7,9 +5,7 @@ module ActionCable
         extend ActiveSupport::Concern
 
         included do
-          if defined?(ActiveRecord::Base)
-            set_callback :work, :around, :with_database_connections
-          end
+          set_callback :work, :around, :with_database_connections if defined?(ActiveRecord::Base)
         end
 
         def with_database_connections

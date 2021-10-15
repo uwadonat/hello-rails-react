@@ -9,15 +9,24 @@ module Sass
     class CssParser < StaticParser
       private
 
-      def placeholder_selector; nil; end
-      def parent_selector; nil; end
-      def interpolation(warn_for_color = false); nil; end
-      def use_css_import?; true; end
+      def placeholder_selector
+        nil
+      end
+
+      def parent_selector
+        nil
+      end
+
+      def interpolation(_warn_for_color = false)
+        nil
+      end
+
+      def use_css_import?
+        true
+      end
 
       def block_contents(node, context)
-        if node.is_a?(Sass::Tree::DirectiveNode) && node.normalized_name == '@keyframes'
-          context = :keyframes
-        end
+        context = :keyframes if node.is_a?(Sass::Tree::DirectiveNode) && node.normalized_name == '@keyframes'
         super(node, context)
       end
 
@@ -34,7 +43,7 @@ module Sass
         end
       end
 
-      def nested_properties!(node)
+      def nested_properties!(_node)
         expected('expression (e.g. 1px, bold)')
       end
 
@@ -50,9 +59,12 @@ module Sass
         block(
           node(
             Sass::Tree::KeyframeRuleNode.new(
-              Sass::Util.strip_except_escapes(selector)),
-            start_pos),
-          :ruleset)
+              Sass::Util.strip_except_escapes(selector)
+            ),
+            start_pos
+          ),
+          :ruleset
+        )
       end
 
       @sass_script_parser = Sass::Script::CssParser

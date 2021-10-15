@@ -5,20 +5,18 @@ require 'concurrent/executor/ruby_executor_service'
 require 'concurrent/utility/monotonic_time'
 
 module Concurrent
-
   # @!macro thread_pool_executor
   # @!macro thread_pool_options
   # @!visibility private
   class RubyThreadPoolExecutor < RubyExecutorService
-
     # @!macro thread_pool_executor_constant_default_max_pool_size
-    DEFAULT_MAX_POOL_SIZE      = 2_147_483_647 # java.lang.Integer::MAX_VALUE
+    DEFAULT_MAX_POOL_SIZE = 2_147_483_647 # java.lang.Integer::MAX_VALUE
 
     # @!macro thread_pool_executor_constant_default_min_pool_size
-    DEFAULT_MIN_POOL_SIZE      = 0
+    DEFAULT_MIN_POOL_SIZE = 0
 
     # @!macro thread_pool_executor_constant_default_max_queue_size
-    DEFAULT_MAX_QUEUE_SIZE     = 0
+    DEFAULT_MAX_QUEUE_SIZE = 0
 
     # @!macro thread_pool_executor_constant_default_thread_timeout
     DEFAULT_THREAD_IDLETIMEOUT = 60
@@ -116,31 +114,31 @@ module Concurrent
 
     # @!visibility private
     def ns_initialize(opts)
-      @min_length      = opts.fetch(:min_threads, DEFAULT_MIN_POOL_SIZE).to_i
-      @max_length      = opts.fetch(:max_threads, DEFAULT_MAX_POOL_SIZE).to_i
-      @idletime        = opts.fetch(:idletime, DEFAULT_THREAD_IDLETIMEOUT).to_i
-      @max_queue       = opts.fetch(:max_queue, DEFAULT_MAX_QUEUE_SIZE).to_i
-      @synchronous     = opts.fetch(:synchronous, DEFAULT_SYNCHRONOUS)
+      @min_length = opts.fetch(:min_threads, DEFAULT_MIN_POOL_SIZE).to_i
+      @max_length = opts.fetch(:max_threads, DEFAULT_MAX_POOL_SIZE).to_i
+      @idletime = opts.fetch(:idletime, DEFAULT_THREAD_IDLETIMEOUT).to_i
+      @max_queue = opts.fetch(:max_queue, DEFAULT_MAX_QUEUE_SIZE).to_i
+      @synchronous = opts.fetch(:synchronous, DEFAULT_SYNCHRONOUS)
       @fallback_policy = opts.fetch(:fallback_policy, :abort)
 
-      raise ArgumentError.new("`synchronous` cannot be set unless `max_queue` is 0") if @synchronous && @max_queue > 0
-      raise ArgumentError.new("#{@fallback_policy} is not a valid fallback policy") unless FALLBACK_POLICIES.include?(@fallback_policy)
-      raise ArgumentError.new("`max_threads` cannot be less than #{DEFAULT_MIN_POOL_SIZE}") if @max_length < DEFAULT_MIN_POOL_SIZE
-      raise ArgumentError.new("`max_threads` cannot be greater than #{DEFAULT_MAX_POOL_SIZE}") if @max_length > DEFAULT_MAX_POOL_SIZE
-      raise ArgumentError.new("`min_threads` cannot be less than #{DEFAULT_MIN_POOL_SIZE}") if @min_length < DEFAULT_MIN_POOL_SIZE
-      raise ArgumentError.new("`min_threads` cannot be more than `max_threads`") if min_length > max_length
+      raise ArgumentError, '`synchronous` cannot be set unless `max_queue` is 0' if @synchronous && @max_queue > 0
+      raise ArgumentError, "#{@fallback_policy} is not a valid fallback policy" unless FALLBACK_POLICIES.include?(@fallback_policy)
+      raise ArgumentError, "`max_threads` cannot be less than #{DEFAULT_MIN_POOL_SIZE}" if @max_length < DEFAULT_MIN_POOL_SIZE
+      raise ArgumentError, "`max_threads` cannot be greater than #{DEFAULT_MAX_POOL_SIZE}" if @max_length > DEFAULT_MAX_POOL_SIZE
+      raise ArgumentError, "`min_threads` cannot be less than #{DEFAULT_MIN_POOL_SIZE}" if @min_length < DEFAULT_MIN_POOL_SIZE
+      raise ArgumentError, '`min_threads` cannot be more than `max_threads`' if min_length > max_length
 
-      @pool                 = [] # all workers
-      @ready                = [] # used as a stash (most idle worker is at the start)
-      @queue                = [] # used as queue
+      @pool = [] # all workers
+      @ready = [] # used as a stash (most idle worker is at the start)
+      @queue = [] # used as queue
       # @ready or @queue is empty at all times
       @scheduled_task_count = 0
       @completed_task_count = 0
-      @largest_length       = 0
-      @workers_counter      = 0
-      @ruby_pid             = $$ # detects if Ruby has forked
+      @largest_length = 0
+      @workers_counter = 0
+      @ruby_pid = $PROCESS_ID # detects if Ruby has forked
 
-      @gc_interval  = opts.fetch(:gc_interval, @idletime / 2.0).to_i # undocumented
+      @gc_interval = opts.fetch(:gc_interval, @idletime / 2.0).to_i # undocumented
       @next_gc_time = Concurrent.monotonic_time + @gc_interval
     end
 
@@ -179,7 +177,7 @@ module Concurrent
 
     # @!visibility private
     def ns_kill_execution
-      # TODO log out unprocessed tasks in queue
+      # TODO: log out unprocessed tasks in queue
       # TODO try to shutdown first?
       @pool.each(&:kill)
       @pool.clear
@@ -210,7 +208,7 @@ module Concurrent
     # @!visibility private
     def ns_enqueue(*args, &task)
       return false if @synchronous
-      
+
       if !ns_limited_queue? || @queue.size < @max_queue
         @queue << [task, args]
         true
@@ -242,7 +240,7 @@ module Concurrent
     # handle ready worker, giving it new job or assigning back to @ready
     #
     # @!visibility private
-    def ns_ready_worker(worker, success = true)
+    def ns_ready_worker(worker, _success = true)
       task_and_args = @queue.shift
       if task_and_args
         worker << task_and_args
@@ -287,15 +285,15 @@ module Concurrent
     end
 
     def ns_reset_if_forked
-      if $$ != @ruby_pid
+      if $PROCESS_ID != @ruby_pid
         @queue.clear
         @ready.clear
         @pool.clear
         @scheduled_task_count = 0
         @completed_task_count = 0
-        @largest_length       = 0
-        @workers_counter      = 0
-        @ruby_pid             = $$
+        @largest_length = 0
+        @workers_counter = 0
+        @ruby_pid = $PROCESS_ID
       end
     end
 
@@ -305,13 +303,11 @@ module Concurrent
 
       def initialize(pool, id)
         # instance variables accessed only under pool's lock so no need to sync here again
-        @queue  = Queue.new
-        @pool   = pool
+        @queue = Queue.new
+        @pool = pool
         @thread = create_worker @queue, pool, pool.idletime
 
-        if @thread.respond_to?(:name=)
-          @thread.name = [pool.name, 'worker', id].compact.join('-')
-        end
+        @thread.name = [pool.name, 'worker', id].compact.join('-') if @thread.respond_to?(:name=)
       end
 
       def <<(message)
@@ -333,7 +329,6 @@ module Concurrent
           last_message = Concurrent.monotonic_time
           catch(:stop) do
             loop do
-
               case message = my_queue.pop
               when :idle_test
                 if (Concurrent.monotonic_time - last_message) > my_idletime
@@ -362,7 +357,7 @@ module Concurrent
       def run_task(pool, task, args)
         task.call(*args)
         pool.worker_task_completed
-      rescue => ex
+      rescue StandardError => ex
         # let it fail
         log DEBUG, ex
       rescue Exception => ex

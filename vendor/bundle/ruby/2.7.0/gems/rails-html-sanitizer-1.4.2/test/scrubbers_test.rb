@@ -1,5 +1,5 @@
-require "minitest/autorun"
-require "rails-html-sanitizer"
+require 'minitest/autorun'
+require 'rails-html-sanitizer'
 
 class ScrubberTest < Minitest::Test
   protected
@@ -28,7 +28,6 @@ class ScrubberTest < Minitest::Test
 end
 
 class PermitScrubberTest < ScrubberTest
-
   def setup
     @scrubber = Rails::Html::PermitScrubber.new
   end
@@ -56,47 +55,47 @@ class PermitScrubberTest < ScrubberTest
   end
 
   def test_leaves_supplied_tags
-    @scrubber.tags = %w(a)
+    @scrubber.tags = %w[a]
     assert_scrubbed '<a>hello</a>'
   end
 
   def test_leaves_only_supplied_tags
     html = '<tag>leave me <span>now</span></tag>'
-    @scrubber.tags = %w(tag)
+    @scrubber.tags = %w[tag]
     assert_scrubbed html, '<tag>leave me now</tag>'
   end
 
   def test_leaves_comments_when_supplied_as_tag
-    @scrubber.tags = %w(div comment)
+    @scrubber.tags = %w[div comment]
     assert_scrubbed('<div>one</div><!-- two --><span>three</span>',
                     '<div>one</div><!-- two -->three')
   end
 
   def test_leaves_only_supplied_tags_nested
     html = '<tag>leave <em>me <span>now</span></em></tag>'
-    @scrubber.tags = %w(tag)
+    @scrubber.tags = %w[tag]
     assert_scrubbed html, '<tag>leave me now</tag>'
   end
 
   def test_leaves_supplied_attributes
-    @scrubber.attributes = %w(cooler)
+    @scrubber.attributes = %w[cooler]
     assert_scrubbed '<a cooler="hello"></a>'
   end
 
   def test_leaves_only_supplied_attributes
-    @scrubber.attributes = %w(cooler)
+    @scrubber.attributes = %w[cooler]
     assert_scrubbed '<a cooler="hello" b="c" d="e"></a>', '<a cooler="hello"></a>'
   end
 
   def test_leaves_supplied_tags_and_attributes
-    @scrubber.tags = %w(tag)
-    @scrubber.attributes = %w(cooler)
+    @scrubber.tags = %w[tag]
+    @scrubber.attributes = %w[cooler]
     assert_scrubbed '<tag cooler="hello"></tag>'
   end
 
   def test_leaves_only_supplied_tags_and_attributes
-    @scrubber.tags = %w(tag)
-    @scrubber.attributes = %w(cooler)
+    @scrubber.tags = %w[tag]
+    @scrubber.attributes = %w[cooler]
     html = '<a></a><tag href=""></tag><tag cooler=""></tag>'
     assert_scrubbed html, '<tag></tag><tag cooler=""></tag>'
   end
@@ -114,8 +113,8 @@ class PermitScrubberTest < ScrubberTest
       @scrubber.tags = 'tag'
     end
 
-    assert_equal "You should pass :tags as an Enumerable", e.message
-    assert_nil @scrubber.tags, "Tags should be nil when validation fails"
+    assert_equal 'You should pass :tags as an Enumerable', e.message
+    assert_nil @scrubber.tags, 'Tags should be nil when validation fails'
   end
 
   def test_attributes_accessor_validation
@@ -123,8 +122,8 @@ class PermitScrubberTest < ScrubberTest
       @scrubber.attributes = 'cooler'
     end
 
-    assert_equal "You should pass :attributes as an Enumerable", e.message
-    assert_nil @scrubber.attributes, "Attributes should be nil when validation fails"
+    assert_equal 'You should pass :attributes as an Enumerable', e.message
+    assert_nil @scrubber.attributes, 'Attributes should be nil when validation fails'
   end
 end
 
@@ -134,26 +133,26 @@ class TargetScrubberTest < ScrubberTest
   end
 
   def test_targeting_tags_removes_only_them
-    @scrubber.tags = %w(a h1)
+    @scrubber.tags = %w[a h1]
     html = '<script></script><a></a><h1></h1>'
     assert_scrubbed html, '<script></script>'
   end
 
   def test_targeting_tags_removes_only_them_nested
-    @scrubber.tags = %w(a)
+    @scrubber.tags = %w[a]
     html = '<tag><a><tag><a></a></tag></a></tag>'
     assert_scrubbed html, '<tag><tag></tag></tag>'
   end
 
   def test_targeting_attributes_removes_only_them
-    @scrubber.attributes = %w(class id)
+    @scrubber.attributes = %w[class id]
     html = '<a class="a" id="b" onclick="c"></a>'
     assert_scrubbed html, '<a onclick="c"></a>'
   end
 
   def test_targeting_tags_and_attributes_removes_only_them
-    @scrubber.tags = %w(tag)
-    @scrubber.attributes = %w(remove)
+    @scrubber.tags = %w[tag]
+    @scrubber.attributes = %w[remove]
     html = '<tag remove="" other=""></tag><a remove="" other=""></a>'
     assert_scrubbed html, '<a other=""></a>'
   end
@@ -175,7 +174,7 @@ end
 
 class ReturningStopFromScrubNodeTest < ScrubberTest
   class ScrubStopper < Rails::Html::PermitScrubber
-    def scrub_node(node)
+    def scrub_node(_node)
       Loofah::Scrubber::STOP
     end
   end

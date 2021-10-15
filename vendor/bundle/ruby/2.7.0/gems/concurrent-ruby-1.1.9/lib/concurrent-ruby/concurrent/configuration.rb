@@ -18,11 +18,11 @@ module Concurrent
 
   # @return [Logger] Logger with provided level and output.
   def self.create_simple_logger(level = Logger::FATAL, output = $stderr)
-    # TODO (pitr-ch 24-Dec-2016): figure out why it had to be replaced, stdlogger was deadlocking
+    # TODO: (pitr-ch 24-Dec-2016): figure out why it had to be replaced, stdlogger was deadlocking
     lambda do |severity, progname, message = nil, &block|
       return false if severity < level
 
-      message           = block ? block.call : message
+      message = block ? block.call : message
       formatted_message = case message
                           when String
                             message
@@ -50,8 +50,8 @@ module Concurrent
   # @return [Logger] Logger with provided level and output.
   # @deprecated
   def self.create_stdlib_logger(level = Logger::FATAL, output = $stderr)
-    logger           = Logger.new(output)
-    logger.level     = level
+    logger = Logger.new(output)
+    logger.level = level
     logger.formatter = lambda do |severity, datetime, progname, msg|
       formatted_message = case msg
                           when String
@@ -80,10 +80,10 @@ module Concurrent
     Concurrent.global_logger = create_stdlib_logger level, output
   end
 
-  # TODO (pitr-ch 27-Dec-2016): remove deadlocking stdlib_logger methods
+  # TODO: (pitr-ch 27-Dec-2016): remove deadlocking stdlib_logger methods
 
   # Suppresses all output when used for logging.
-  NULL_LOGGER   = lambda { |level, progname, message = nil, &block| }
+  NULL_LOGGER = ->(level, progname, message = nil, &block) {}
 
   # @!visibility private
   GLOBAL_LOGGER = AtomicReference.new(create_simple_logger(Logger::WARN))
@@ -129,7 +129,7 @@ module Concurrent
   # @deprecated Has no effect since it is no longer needed, see https://github.com/ruby-concurrency/concurrent-ruby/pull/841.
   #
   def self.disable_at_exit_handlers!
-    deprecated "Method #disable_at_exit_handlers! has no effect since it is no longer needed, see https://github.com/ruby-concurrency/concurrent-ruby/pull/841."
+    deprecated 'Method #disable_at_exit_handlers! has no effect since it is no longer needed, see https://github.com/ruby-concurrency/concurrent-ruby/pull/841.'
   end
 
   # Global thread pool optimized for short, fast *operations*.
@@ -169,20 +169,20 @@ module Concurrent
 
   def self.new_fast_executor(opts = {})
     FixedThreadPool.new(
-        [2, Concurrent.processor_count].max,
-        auto_terminate:  opts.fetch(:auto_terminate, true),
-        idletime:        60, # 1 minute
-        max_queue:       0, # unlimited
-        fallback_policy: :abort, # shouldn't matter -- 0 max queue
-        name:            "fast"
+      [2, Concurrent.processor_count].max,
+      auto_terminate:  opts.fetch(:auto_terminate, true),
+      idletime:        60, # 1 minute
+      max_queue:       0, # unlimited
+      fallback_policy: :abort, # shouldn't matter -- 0 max queue
+      name:            'fast'
     )
   end
 
   def self.new_io_executor(opts = {})
     CachedThreadPool.new(
-        auto_terminate:  opts.fetch(:auto_terminate, true),
-        fallback_policy: :abort, # shouldn't matter -- 0 max queue
-        name:            "io"
+      auto_terminate:  opts.fetch(:auto_terminate, true),
+      fallback_policy: :abort, # shouldn't matter -- 0 max queue
+      name:            'io'
     )
   end
 end

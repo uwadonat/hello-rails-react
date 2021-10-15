@@ -1,7 +1,7 @@
 require 'sprockets/path_utils'
 
 module Sprockets
- # Internal: used to "expand" and "compress" values for storage
+  # Internal: used to "expand" and "compress" values for storage
   class URITar
     attr_reader :scheme, :root, :path
 
@@ -11,14 +11,14 @@ module Sprockets
     # env - The current "environment" that assets are being loaded into.
     def initialize(uri, env)
       @root = env.root
-      @env  = env
-      uri   = uri.to_s
-      if uri.include?("://".freeze)
-        @scheme, _, @path = uri.partition("://".freeze)
-        @scheme << "://".freeze
+      @env = env
+      uri = uri.to_s
+      if uri.include?('://'.freeze)
+        @scheme, _, @path = uri.partition('://'.freeze)
+        @scheme << '://'.freeze
       else
-        @scheme = "".freeze
-        @path   = uri
+        @scheme = ''.freeze
+        @path = uri
       end
     end
 
@@ -66,7 +66,7 @@ module Sprockets
         else
           # We always want to return an absolute uri,
           # make sure the path starts with a slash.
-          scheme + File.join("/".freeze, root, path)
+          scheme + File.join('/'.freeze, root, path)
         end
       end
     end
@@ -82,11 +82,11 @@ module Sprockets
     # Returns String
     def compressed_path
       # windows
-      if !@root.start_with?("/".freeze) && path.start_with?("/".freeze)
-        consistent_root = "/".freeze + @root
-      else
-        consistent_root = @root
-      end
+      consistent_root = if !@root.start_with?('/'.freeze) && path.start_with?('/'.freeze)
+                          '/'.freeze + @root
+                        else
+                          @root
+                        end
 
       if compressed_path = PathUtils.split_subpath(consistent_root, path)
         compressed_path

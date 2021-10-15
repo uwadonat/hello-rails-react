@@ -1,10 +1,10 @@
 require File.dirname(__FILE__) + '/../spec_helper'
 require File.dirname(__FILE__) + '/fixtures/classes'
 
-describe "IO::Like#binmode" do
+describe 'IO::Like#binmode' do
   before :each do
-    @filename = tmp("IO_binmode_file")
-    @file = File.open(@filename, "w")
+    @filename = tmp('IO_binmode_file')
+    @file = File.open(@filename, 'w')
     @iowrapper = WritableIOWrapper.open(@file)
   end
 
@@ -14,16 +14,16 @@ describe "IO::Like#binmode" do
     File.delete(@filename) if File.exist?(@filename)
   end
 
-  it "returns a reference to the stream" do
+  it 'returns a reference to the stream' do
     @iowrapper.binmode.should == @iowrapper
   end
 
-  it "does not raise any errors on closed stream" do
-    lambda { IOSpecs.closed_file.binmode }.should_not raise_error()
+  it 'does not raise any errors on closed stream' do
+    -> { IOSpecs.closed_file.binmode }.should_not raise_error
   end
 
   # Even if it does nothing in Unix it should not raise any errors.
-  it "puts a stream in binary mode" do
-    lambda { @iowrapper.binmode }.should_not raise_error
+  it 'puts a stream in binary mode' do
+    -> { @iowrapper.binmode }.should_not raise_error
   end
 end

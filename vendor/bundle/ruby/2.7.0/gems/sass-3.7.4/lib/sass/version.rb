@@ -45,14 +45,14 @@ module Sass
     def version
       return @@version if defined?(@@version)
 
-      numbers = File.read(Sass::Util.scope('VERSION')).strip.split('.').
-        map {|n| n =~ /^[0-9]+$/ ? n.to_i : n}
+      numbers = File.read(Sass::Util.scope('VERSION')).strip.split('.')
+        .map { |n| n =~ /^[0-9]+$/ ? n.to_i : n }
       name = File.read(Sass::Util.scope('VERSION_NAME')).strip
       @@version = {
-        :major => numbers[0],
-        :minor => numbers[1],
-        :teeny => numbers[2],
-        :name => name
+        major: numbers[0],
+        minor: numbers[1],
+        teeny: numbers[2],
+        name: name
       }
 
       if (date = version_date)
@@ -70,9 +70,7 @@ module Sass
 
       if (rev = revision_number)
         @@version[:rev] = rev
-        unless rev[0] == ?(
-          @@version[:string] << "." << rev[0...7]
-        end
+        @@version[:string] << '.' << rev[0...7] unless rev[0] == '('
       end
 
       @@version
@@ -90,9 +88,9 @@ module Sass
       rev = File.read(Sass::Util.scope('.git/HEAD')).strip
       return rev unless rev =~ /^ref: (.*)$/
 
-      ref_name = $1
+      ref_name = Regexp.last_match(1)
       ref_file = Sass::Util.scope(".git/#{ref_name}")
-      info_file = Sass::Util.scope(".git/info/refs")
+      info_file = Sass::Util.scope('.git/info/refs')
       return File.read(ref_file).strip if File.exist?(ref_file)
       return unless File.exist?(info_file)
       File.open(info_file) do |f|

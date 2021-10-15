@@ -26,11 +26,11 @@ module Sass::Script::Value
     end
 
     # @return [String] '' (An empty string)
-    def to_s(opts = {})
+    def to_s(_opts = {})
       ''
     end
 
-    def to_sass(opts = {})
+    def to_sass(_opts = {})
       'null'
     end
 

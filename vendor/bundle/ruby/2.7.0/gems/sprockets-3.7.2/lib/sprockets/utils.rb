@@ -14,7 +14,7 @@ module Sprockets
     #
     # Returns false if .dup would raise a TypeError, otherwise true.
     def duplicable?(obj)
-      if RUBY_VERSION >= "2.4.0"
+      if RUBY_VERSION >= '2.4.0'
         true
       else
         case obj
@@ -86,9 +86,7 @@ module Sprockets
         # 0x20 == " "
         # 0x09 == "\t"
         # 0x3B == ";"
-        unless c == 0x0A || c == 0x20 || c == 0x09
-          return c === 0x3B
-        end
+        return c === 0x3B unless c == 0x0A || c == 0x20 || c == 0x09
       end
 
       true
@@ -188,7 +186,8 @@ module Sprockets
     #
     # Returns a Set of nodes.
     def dfs(initial)
-      nodes, seen = Set.new, Set.new
+      nodes = Set.new
+      seen = Set.new
       stack = Array(initial).reverse
 
       while node = stack.pop
@@ -216,16 +215,16 @@ module Sprockets
     # Returns an Array of node Arrays.
     def dfs_paths(path)
       paths = []
-      stack, seen = [path], Set.new
+      stack = [path]
+      seen = Set.new
 
       while path = stack.pop
-        if !seen.include?(path.last)
-          seen.add(path.last)
-          paths << path if path.size > 1
+        next if seen.include?(path.last)
+        seen.add(path.last)
+        paths << path if path.size > 1
 
-          Array(yield path.last).reverse_each do |node|
-            stack.push(path + [node])
-          end
+        Array(yield path.last).reverse_each do |node|
+          stack.push(path + [node])
         end
       end
 

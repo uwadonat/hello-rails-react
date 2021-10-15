@@ -4,7 +4,8 @@ require 'sprockets/utils'
 
 module Sprockets
   module Mime
-    include HTTPUtils, Utils
+    include Utils
+    include HTTPUtils
 
     # Public: Mapping of MIME type Strings to properties Hash.
     #
@@ -45,13 +46,11 @@ module Sprockets
     # Returns nothing.
     def register_mime_type(mime_type, options = {})
       # Legacy extension argument, will be removed from 4.x
-      if options.is_a?(String)
-        options = { extensions: [options] }
-      end
+      options = { extensions: [options] } if options.is_a?(String)
 
-      extnames = Array(options[:extensions]).map { |extname|
+      extnames = Array(options[:extensions]).map do |extname|
         Sprockets::Utils.normalize_extension(extname)
-      }
+      end
 
       charset = options[:charset]
       charset ||= :default if mime_type.start_with?('text/')
@@ -81,7 +80,7 @@ module Sprockets
     def mime_type_charset_detecter(mime_type)
       if type = config[:mime_types][mime_type]
         if detect = type[:charset]
-          return detect
+          detect
         end
       end
     end
@@ -97,34 +96,35 @@ module Sprockets
       data = File.binread(filename)
 
       if detect = mime_type_charset_detecter(content_type)
-        detect.call(data).encode(Encoding::UTF_8, :universal_newline => true)
+        detect.call(data).encode(Encoding::UTF_8, universal_newline: true)
       else
         data
       end
     end
 
     private
-      def extname_map
-        self.computed_config[:_extnames] ||= compute_extname_map
-      end
 
-      def compute_extname_map
-        graph = {}
+    def extname_map
+      computed_config[:_extnames] ||= compute_extname_map
+    end
 
-        ([nil] + pipelines.keys.map(&:to_s)).each do |pipeline|
-          pipeline_extname = ".#{pipeline}" if pipeline
-          ([[nil, nil]] + config[:mime_exts].to_a).each do |format_extname, format_type|
-            4.times do |n|
-              config[:engines].keys.permutation(n).each do |engine_extnames|
-                key = "#{pipeline_extname}#{format_extname}#{engine_extnames.join}"
-                type = format_type || config[:engine_mime_types][engine_extnames.first]
-                graph[key] = {type: type, engines: engine_extnames, pipeline: pipeline}
-              end
+    def compute_extname_map
+      graph = {}
+
+      ([nil] + pipelines.keys.map(&:to_s)).each do |pipeline|
+        pipeline_extname = ".#{pipeline}" if pipeline
+        ([[nil, nil]] + config[:mime_exts].to_a).each do |format_extname, format_type|
+          4.times do |n|
+            config[:engines].keys.permutation(n).each do |engine_extnames|
+              key = "#{pipeline_extname}#{format_extname}#{engine_extnames.join}"
+              type = format_type || config[:engine_mime_types][engine_extnames.first]
+              graph[key] = { type: type, engines: engine_extnames, pipeline: pipeline }
             end
           end
         end
-
-        graph
       end
+
+      graph
+    end
   end
 end

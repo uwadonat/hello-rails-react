@@ -11,9 +11,8 @@
 #++
 
 module Racc
-
   class DebugFlags
-    def DebugFlags.parse_option_string(s)
+    def self.parse_option_string(s)
       parse = rule = token = state = la = prec = conf = false
       s.split(//).each do |ch|
         case ch
@@ -56,5 +55,4 @@ module Racc
 
     attr_reader :status_logging
   end
-
 end

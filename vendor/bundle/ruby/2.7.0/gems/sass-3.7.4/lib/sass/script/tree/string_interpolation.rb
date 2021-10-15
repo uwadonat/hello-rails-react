@@ -50,12 +50,12 @@ module Sass::Script::Tree
     # @see Node#to_sass
     def to_sass(opts = {})
       quote = type == :string ? opts[:quote] || quote_for(self) || '"' : :none
-      opts = opts.merge(:quote => quote)
+      opts = opts.merge(quote: quote)
 
-      res = ""
+      res = ''
       res << quote if quote != :none
       res << _to_sass(before, opts)
-      res << '#{' << @mid.to_sass(opts.merge(:quote => nil)) << '}'
+      res << '#{' << @mid.to_sass(opts.merge(quote: nil)) << '}'
       res << _to_sass(after, opts)
       res << quote if quote != :none
       res
@@ -87,11 +87,11 @@ module Sass::Script::Tree
     # @return [Sass::Script::Value::String]
     #   The SassScript string that is the value of the interpolation
     def _perform(environment)
-      res = ""
+      res = ''
       before = @before.perform(environment)
       res << before.value
       mid = @mid.perform(environment)
-      res << (mid.is_a?(Sass::Script::Value::String) ? mid.value : mid.to_s(:quote => :none))
+      res << (mid.is_a?(Sass::Script::Value::String) ? mid.value : mid.to_s(quote: :none))
       res << @after.perform(environment).value
       opts(Sass::Script::Value::String.new(res, before.type))
     end

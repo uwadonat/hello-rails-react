@@ -1,6 +1,6 @@
 require File.dirname(__FILE__) + '/../fixtures/classes'
 
-describe :io_like__eof, :shared => true do
+describe :io_like__eof, shared: true do
   before :each do
     @filename = File.dirname(__FILE__) + '/../fixtures/readlines.txt'
     @file = File.open(@filename, 'r')
@@ -12,35 +12,35 @@ describe :io_like__eof, :shared => true do
     @file.close unless @file.closed?
   end
 
-  it "returns false when not at end of file" do
+  it 'returns false when not at end of file' do
     @iowrapper.send(@method).should == false
     @iowrapper.read(1)
     @iowrapper.send(@method).should == false
   end
 
-  it "returns true after reading with read with no parameters" do
+  it 'returns true after reading with read with no parameters' do
     @iowrapper.read
     @iowrapper.send(@method).should == true
   end
 
-  it "returns true after reading with read" do
+  it 'returns true after reading with read' do
     @iowrapper.read(File.size(@filename))
     @iowrapper.send(@method).should == true
   end
 
-  it "returns true after reading with sysread" do
+  it 'returns true after reading with sysread' do
     @iowrapper.sysread(File.size(@filename))
     @iowrapper.send(@method).should == true
   end
 
-  it "returns true after reading with readlines" do
+  it 'returns true after reading with readlines' do
     @iowrapper.readlines
     @iowrapper.send(@method).should == true
   end
 
-  it "returns true on just opened empty stream" do
+  it 'returns true on just opened empty stream' do
     path = tmp('empty.txt')
-    File.open(path, "w") { |empty| } # ensure it exists
+    File.open(path, 'w') { |empty| } # ensure it exists
     File.open(path) do |empty|
       ReadableIOWrapper.open(empty) do |iowrapper|
         iowrapper.send(@method).should == true
@@ -49,40 +49,40 @@ describe :io_like__eof, :shared => true do
     File.delete(path)
   end
 
-  it "returns false on just opened non-empty stream" do
+  it 'returns false on just opened non-empty stream' do
     @iowrapper.send(@method).should == false
   end
 
-  it "should not consume the data from the stream" do
+  it 'should not consume the data from the stream' do
     @iowrapper.send(@method).should == false
     @iowrapper.getc.should == 86
   end
 
-  it "raises IOError on closed stream" do
-    lambda { IOSpecs.closed_file.send(@method) }.should raise_error(IOError)
+  it 'raises IOError on closed stream' do
+    -> { IOSpecs.closed_file.send(@method) }.should raise_error(IOError)
   end
 
-  it "raises IOError on stream not opened for reading" do
+  it 'raises IOError on stream not opened for reading' do
     IOSpecs.writable_iowrapper do |iowrapper|
-      lambda { iowrapper.send(@method) }.should raise_error(IOError)
+      -> { iowrapper.send(@method) }.should raise_error(IOError)
     end
   end
 
-  it "raises IOError on stream closed for reading by close_read" do
+  it 'raises IOError on stream closed for reading by close_read' do
     @iowrapper.close_read
-    lambda { @iowrapper.send(@method) }.should raise_error(IOError)
+    -> { @iowrapper.send(@method) }.should raise_error(IOError)
   end
 
-  it "returns true on one-byte stream after single-byte read" do
+  it 'returns true on one-byte stream after single-byte read' do
     File.open(File.dirname(__FILE__) + '/../fixtures/one_byte.txt') do |one_byte|
-      WritableIOWrapper.open(one_byte) do |iowrapper|
+      WritableIOWrapper.open(one_byte) do |_iowrapper|
         one_byte.read(1)
         one_byte.send(@method).should == true
       end
     end
   end
 
-  it "returns true on receiving side of Pipe when writing side is closed" do
+  it 'returns true on receiving side of Pipe when writing side is closed' do
     r, w = IO.pipe
     iowrapper_r = ReadableIOWrapper.open(r)
     iowrapper_w = WritableIOWrapper.open(w)
@@ -95,13 +95,13 @@ describe :io_like__eof, :shared => true do
     r.close
   end
 
-  it "returns false on receiving side of Pipe when writing side wrote some data" do
+  it 'returns false on receiving side of Pipe when writing side wrote some data' do
     r, w = IO.pipe
     iowrapper_r = ReadableIOWrapper.open(r)
     iowrapper_w = WritableIOWrapper.open(w)
     iowrapper_w.sync = true
 
-    iowrapper_w.puts "hello"
+    iowrapper_w.puts 'hello'
     iowrapper_r.send(@method).should == false
     iowrapper_w.close
     w.close

@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 Capybara.add_selector(:option, locator_type: [String, Symbol, Integer]) do
   xpath do |locator|
     xpath = XPath.descendant(:option)

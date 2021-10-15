@@ -1,8 +1,7 @@
 module WebSocket
   class Driver
-
     class Client < Hybi
-      VALID_SCHEMES = %w[ws wss]
+      VALID_SCHEMES = %w[ws wss].freeze
 
       def self.generate_key
         Base64.strict_encode64(SecureRandom.random_bytes(16))
@@ -14,37 +13,33 @@ module WebSocket
         super
 
         @ready_state = -1
-        @key         = Client.generate_key
-        @accept      = Hybi.generate_accept(@key)
-        @http        = HTTP::Response.new
+        @key = Client.generate_key
+        @accept = Hybi.generate_accept(@key)
+        @http = HTTP::Response.new
 
         uri = URI.parse(@socket.url)
-        unless VALID_SCHEMES.include?(uri.scheme)
-          raise URIError, "#{ socket.url } is not a valid WebSocket URL"
-        end
+        raise URIError, "#{socket.url} is not a valid WebSocket URL" unless VALID_SCHEMES.include?(uri.scheme)
 
-        host      = uri.host + (uri.port ? ":#{ uri.port }" : '')
-        path      = (uri.path == '') ? '/' : uri.path
+        host = uri.host + (uri.port ? ":#{uri.port}" : '')
+        path = uri.path == '' ? '/' : uri.path
         @pathname = path + (uri.query ? '?' + uri.query : '')
 
-        @headers['Host']                  = host
-        @headers['Upgrade']               = 'websocket'
-        @headers['Connection']            = 'Upgrade'
-        @headers['Sec-WebSocket-Key']     = @key
+        @headers['Host'] = host
+        @headers['Upgrade'] = 'websocket'
+        @headers['Connection'] = 'Upgrade'
+        @headers['Sec-WebSocket-Key'] = @key
         @headers['Sec-WebSocket-Version'] = VERSION
 
-        if @protocols.size > 0
-          @headers['Sec-WebSocket-Protocol'] = @protocols * ', '
-        end
+        @headers['Sec-WebSocket-Protocol'] = @protocols * ', ' unless @protocols.empty?
 
         if uri.user
-          auth = Base64.strict_encode64([uri.user, uri.password] * ':')
+          auth = Base64.strict_encode64([uri.user, uri.password].join(':'))
           @headers['Authorization'] = 'Basic ' + auth
         end
       end
 
       def version
-        "hybi-#{ VERSION }"
+        "hybi-#{VERSION}"
       end
 
       def proxy(origin, options = {})
@@ -73,52 +68,48 @@ module WebSocket
         parse(@http.body)
       end
 
-    private
+      private
 
       def handshake_request
         extensions = @extensions.generate_offer
         @headers['Sec-WebSocket-Extensions'] = extensions if extensions
 
-        start   = "GET #{ @pathname } HTTP/1.1"
+        start = "GET #{@pathname} HTTP/1.1"
         headers = [start, @headers.to_s, '']
         headers.join("\r\n")
       end
 
       def fail_handshake(message)
-        message = "Error during WebSocket handshake: #{ message }"
+        message = "Error during WebSocket handshake: #{message}"
         @ready_state = 3
         emit(:error, ProtocolError.new(message))
         emit(:close, CloseEvent.new(ERRORS[:protocol_error], message))
       end
 
       def validate_handshake
-        @status  = @http.code
+        @status = @http.code
         @headers = Headers.new(@http.headers)
 
-        unless @http.code == 101
-          return fail_handshake("Unexpected response code: #{ @http.code }")
-        end
+        return fail_handshake("Unexpected response code: #{@http.code}") unless @http.code == 101
 
-        upgrade    = @http['Upgrade'] || ''
+        upgrade = @http['Upgrade'] || ''
         connection = @http['Connection'] || ''
-        accept     = @http['Sec-WebSocket-Accept'] || ''
-        protocol   = @http['Sec-WebSocket-Protocol'] || ''
+        accept = @http['Sec-WebSocket-Accept'] || ''
+        protocol = @http['Sec-WebSocket-Protocol'] || ''
 
         if upgrade == ''
           return fail_handshake("'Upgrade' header is missing")
-        elsif upgrade.downcase != 'websocket'
+        elsif !upgrade.casecmp('websocket').zero?
           return fail_handshake("'Upgrade' header value is not 'WebSocket'")
         end
 
         if connection == ''
           return fail_handshake("'Connection' header is missing")
-        elsif connection.downcase != 'upgrade'
+        elsif !connection.casecmp('upgrade').zero?
           return fail_handshake("'Connection' header value is not 'Upgrade'")
         end
 
-        unless accept == @accept
-          return fail_handshake('Sec-WebSocket-Accept mismatch')
-        end
+        return fail_handshake('Sec-WebSocket-Accept mismatch') unless accept == @accept
 
         unless protocol == ''
           if @protocols.include?(protocol)
@@ -135,6 +126,5 @@ module WebSocket
         end
       end
     end
-
   end
 end

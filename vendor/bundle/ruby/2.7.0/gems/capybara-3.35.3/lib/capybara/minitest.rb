@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 require 'minitest'
 require 'capybara/dsl'
 
@@ -60,12 +58,12 @@ module Capybara
         ASSERTION
       end
 
-      alias_method :refute_title, :assert_no_title
-      alias_method :refute_text, :assert_no_text
-      alias_method :refute_content, :refute_text
-      alias_method :refute_current_path, :assert_no_current_path
-      alias_method :assert_content, :assert_text
-      alias_method :assert_no_content, :refute_text
+      alias refute_title assert_no_title
+      alias refute_text assert_no_text
+      alias refute_content refute_text
+      alias refute_current_path assert_no_current_path
+      alias assert_content assert_text
+      alias assert_no_content refute_text
 
       ##
       # Assert selector exists on page
@@ -159,10 +157,10 @@ module Capybara
         ruby2_keywords "assert_#{assertion_name}" if respond_to?(:ruby2_keywords)
       end
 
-      alias_method :refute_selector, :assert_no_selector
-      alias_method :refute_matches_selector, :assert_not_matches_selector
-      alias_method :refute_ancestor, :assert_no_ancestor
-      alias_method :refute_sibling, :assert_no_sibling
+      alias refute_selector assert_no_selector
+      alias refute_matches_selector assert_not_matches_selector
+      alias refute_ancestor assert_no_ancestor
+      alias refute_sibling assert_no_sibling
 
       ##
       # Assert that provided xpath exists
@@ -362,7 +360,7 @@ module Capybara
         alias_method "refute_matches_#{selector_type}", "assert_not_matches_#{selector_type}"
       end
 
-    private
+      private
 
       def determine_subject(args)
         case args.first
@@ -377,7 +375,10 @@ module Capybara
 
       def extract_locator(args)
         locator, options = *args, {}
-        locator, options = nil, locator if locator.is_a? Hash
+        if locator.is_a? Hash
+          options = locator
+          locator = nil
+        end
         [locator, options]
       end
     end

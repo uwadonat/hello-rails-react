@@ -4,7 +4,8 @@ require 'sprockets/path_utils'
 module Sprockets
   # Internal: Crossover of path and digest utilities functions.
   module PathDigestUtils
-    include DigestUtils, PathUtils
+    include PathUtils
+    include DigestUtils
 
     # Internal: Compute digest for file stat.
     #
@@ -15,7 +16,7 @@ module Sprockets
     def stat_digest(path, stat)
       if stat.directory?
         # If its a directive, digest the list of filenames
-        digest_class.digest(self.entries(path).join(','))
+        digest_class.digest(entries(path).join(','))
       elsif stat.file?
         # If its a file, digest the contents
         digest_class.file(path.to_s).digest
@@ -31,7 +32,7 @@ module Sprockets
     # Returns String digest bytes or nil.
     def file_digest(path)
       if stat = self.stat(path)
-        self.stat_digest(path, stat)
+        stat_digest(path, stat)
       end
     end
 
@@ -41,7 +42,7 @@ module Sprockets
     #
     # Returns String digest bytes.
     def files_digest(paths)
-      self.digest(paths.map { |path| self.file_digest(path) })
+      digest(paths.map { |path| file_digest(path) })
     end
   end
 end

@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 require 'spec_helper'
 nokogumbo_required = begin
   require 'nokogumbo'
@@ -38,7 +36,7 @@ Capybara::SpecHelper.run_specs TestSessions::RackTest, 'RackTest', capybara_skip
   end
 end
 
-RSpec.describe Capybara::Session do # rubocop:disable RSpec/MultipleDescribes
+RSpec.describe Capybara::Session do
   include Capybara::RSpecMatchers
   context 'with rack test driver' do
     let(:session) { TestSessions::RackTest }

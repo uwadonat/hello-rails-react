@@ -10,7 +10,9 @@ module Sass
       private
 
       # @private
-      def lexer_class; CssLexer; end
+      def lexer_class
+        CssLexer
+      end
 
       # We need a production that only does /,
       # since * and % aren't allowed in plain CSS
@@ -28,9 +30,9 @@ module Sass
         first || send(inner)
       end
 
-      alias_method :or_expr, :div
-      alias_method :unary_div, :ident
-      alias_method :paren, :string
+      alias or_expr div
+      alias unary_div ident
+      alias paren string
     end
   end
 end

@@ -6,9 +6,7 @@ module Sass::Script::Value
     # @param function [Sass::Callable] The callable to be used when the
     # function is invoked.
     def initialize(function)
-      unless function.type == "function"
-        raise ArgumentError.new("A callable of type function was expected.")
-      end
+      raise ArgumentError, 'A callable of type function was expected.' unless function.type == 'function'
       super
     end
 

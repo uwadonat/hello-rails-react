@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 require 'capybara/rspec/matchers/base'
 
 module Capybara

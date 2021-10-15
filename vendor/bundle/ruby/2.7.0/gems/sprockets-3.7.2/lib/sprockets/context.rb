@@ -25,18 +25,18 @@ module Sprockets
     attr_accessor :__LINE__
 
     def initialize(input)
-      @environment  = input[:environment]
-      @metadata     = input[:metadata]
-      @load_path    = input[:load_path]
+      @environment = input[:environment]
+      @metadata = input[:metadata]
+      @load_path = input[:load_path]
       @logical_path = input[:name]
-      @filename     = input[:filename]
-      @dirname      = File.dirname(@filename)
-      @pathname     = Pathname.new(@filename)
+      @filename = input[:filename]
+      @dirname = File.dirname(@filename)
+      @pathname = Pathname.new(@filename)
       @content_type = input[:content_type]
 
-      @required     = Set.new(@metadata[:required])
-      @stubbed      = Set.new(@metadata[:stubbed])
-      @links        = Set.new(@metadata[:links])
+      @required = Set.new(@metadata[:required])
+      @stubbed = Set.new(@metadata[:stubbed])
+      @links = Set.new(@metadata[:links])
       @dependencies = Set.new(input[:metadata][:dependencies])
     end
 
@@ -53,7 +53,7 @@ module Sprockets
     # current file is `app/javascripts/foo/bar.js`, `load_path` would
     # return `app/javascripts`.
     attr_reader :load_path
-    alias_method :root_path, :load_path
+    alias root_path load_path
 
     # Returns logical path without any file extensions.
     #
@@ -184,7 +184,7 @@ module Sprockets
     # customized by the application. Though, in the future, some
     # basics implemention may be provided with different methods that
     # are required to be overridden.
-    def asset_path(path, options = {})
+    def asset_path(_path, _options = {})
       message = <<-EOS
 Custom asset_path helper is not implemented
 

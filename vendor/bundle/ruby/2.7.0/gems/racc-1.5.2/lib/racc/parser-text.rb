@@ -1,6 +1,5 @@
 module Racc
-  PARSER_TEXT = <<'__end_of_file__'
-# frozen_string_literal: false
+  PARSER_TEXT = <<'__end_of_file__'.freeze
 #--
 # Copyright (c) 1999-2006 Minero Aoki
 #

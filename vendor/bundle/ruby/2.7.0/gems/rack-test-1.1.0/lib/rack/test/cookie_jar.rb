@@ -20,8 +20,8 @@ module Rack
         @name, @value = parse_query(@name_value_raw, ';').to_a.first
         @options = parse_query(options, ';')
 
-        @options['domain']  ||= (uri.host || default_host)
-        @options['path']    ||= uri.path.sub(/\/[^\/]*\Z/, '')
+        @options['domain'] ||= (uri.host || default_host)
+        @options['path'] ||= uri.path.sub(/\/[^\/]*\Z/, '')
       end
 
       def replaces?(other)

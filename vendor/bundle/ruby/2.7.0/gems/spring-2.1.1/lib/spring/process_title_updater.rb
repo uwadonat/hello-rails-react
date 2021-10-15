@@ -5,15 +5,15 @@ module Spring
   class ProcessTitleUpdater
     SECOND = 1
     MINUTE = 60
-    HOUR   = 60*60
+    HOUR = 60 * 60
 
     def self.run(&block)
       updater = new(&block)
 
-      Spring.failsafe_thread {
+      Spring.failsafe_thread do
         $0 = updater.value
         loop { $0 = updater.next }
-      }
+      end
     end
 
     attr_reader :block
@@ -48,11 +48,11 @@ module Spring
       distance = now - @start
 
       if distance < MINUTE
-        pluralize(distance, "sec")
+        pluralize(distance, 'sec')
       elsif distance < HOUR
-        pluralize(distance / MINUTE, "min")
+        pluralize(distance / MINUTE, 'min')
       else
-        pluralize(distance / HOUR, "hour")
+        pluralize(distance / HOUR, 'hour')
       end
     end
 

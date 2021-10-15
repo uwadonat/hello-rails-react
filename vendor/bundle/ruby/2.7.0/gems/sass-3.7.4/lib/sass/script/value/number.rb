@@ -62,7 +62,7 @@ module Sass::Script::Value
     end
 
     # Used so we don't allocate two new arrays for each new number.
-    NO_UNITS = []
+    NO_UNITS = [].freeze
 
     # @param value [Numeric] The value of the number
     # @param numerator_units [::String, Array<::String>] See \{#numerator\_units}
@@ -172,9 +172,7 @@ module Sass::Script::Value
     def div(other)
       if other.is_a? Number
         res = operate(other, :/)
-        if original && other.original
-          res.original = "#{original}/#{other.original}"
-        end
+        res.original = "#{original}/#{other.original}" if original && other.original
         res
       else
         super
@@ -270,9 +268,9 @@ module Sass::Script::Value
     # @return [String] The CSS representation of this number
     # @raise [Sass::SyntaxError] if this number has units that can't be used in CSS
     #   (e.g. `px*in`)
-    def to_s(opts = {})
+    def to_s(_opts = {})
       return original if original
-      raise Sass::SyntaxError.new("#{inspect} isn't a valid CSS value.") unless legal_units?
+      raise Sass::SyntaxError, "#{inspect} isn't a valid CSS value." unless legal_units?
       inspect
     end
 
@@ -282,7 +280,7 @@ module Sass::Script::Value
     # as long as there is only one unit.
     #
     # @return [String] The representation
-    def inspect(opts = {})
+    def inspect(_opts = {})
       return original if original
 
       value = self.class.round(self.value)
@@ -291,21 +289,17 @@ module Sass::Script::Value
       # Ruby will occasionally print in scientific notation if the number is
       # small enough. That's technically valid CSS, but it's not well-supported
       # and confusing.
-      str = ("%0.#{self.class.precision}f" % value).gsub(/0*$/, '') if str.include?('e')
+      str = format("%0.#{self.class.precision}f", value).gsub(/0*$/, '') if str.include?('e')
 
       # Sometimes numeric formatting will result in a decimal number with a trailing zero (x.0)
-      if str =~ /(.*)\.0$/
-        str = $1
-      end
+      str = Regexp.last_match(1) if str =~ /(.*)\.0$/
 
       # We omit a leading zero before the decimal point in compressed mode.
-      if @options && options[:style] == :compressed
-        str.sub!(/^(-)?0\./, '\1.')
-      end
+      str.sub!(/^(-)?0\./, '\1.') if @options && options[:style] == :compressed
 
       unitless? ? str : "#{str}#{unit_str}"
     end
-    alias_method :to_sass, :inspect
+    alias to_sass inspect
 
     # @return [Integer] The integer value of the number
     # @raise [Sass::SyntaxError] if the number isn't an integer
@@ -336,7 +330,7 @@ module Sass::Script::Value
     # @see Number#unitless? The unitless? method may be more readable.
     def is_unit?(unit)
       if unit
-        denominator_units.size == 0 && numerator_units.size == 1 && numerator_units.first == unit
+        denominator_units.empty? && numerator_units.size == 1 && numerator_units.first == unit
       else
         unitless?
       end
@@ -387,10 +381,10 @@ module Sass::Script::Value
     # numerator_unit1 * numerator_unit2 / denominator_unit1 * denominator_unit2
     # @return [String] a string that represents the units in this number
     def unit_str
-      rv = @numerator_units.sort.join("*")
+      rv = @numerator_units.sort.join('*')
       if @denominator_units.any?
-        rv << "/"
-        rv << @denominator_units.sort.join("*")
+        rv << '/'
+        rv << @denominator_units.sort.join('*')
       end
       rv
     end
@@ -420,7 +414,7 @@ module Sass::Script::Value
       end
     end
 
-    OPERATIONS = [:+, :-, :<=, :<, :>, :>=, :%]
+    OPERATIONS = %i[+ - <= < > >= %].freeze
 
     def operate(other, operation)
       this = self
@@ -432,7 +426,7 @@ module Sass::Script::Value
         end
       end
       # avoid integer division
-      value = :/ == operation ? this.value.to_f : this.value
+      value = operation == :/ ? this.value.to_f : this.value
       result = value.send(operation, other.value)
 
       if result.is_a?(Numeric)
@@ -447,11 +441,10 @@ module Sass::Script::Value
       from_units, to_units = sans_common_units(from_units, to_units)
 
       if from_units.size != to_units.size || !convertable?(from_units | to_units)
-        raise Sass::UnitConversionError.new(
-          "Incompatible units: '#{from_units.join('*')}' and '#{to_units.join('*')}'.")
+        raise Sass::UnitConversionError, "Incompatible units: '#{from_units.join('*')}' and '#{to_units.join('*')}'."
       end
 
-      from_units.zip(to_units).inject(1) {|m, p| m * conversion_factor(p[0], p[1])}
+      from_units.zip(to_units).inject(1) { |m, p| m * conversion_factor(p[0], p[1]) }
     end
 
     def compute_units(this, other, operation)
@@ -473,7 +466,7 @@ module Sass::Script::Value
         sans_common_units(@numerator_units, @denominator_units)
 
       @denominator_units.each_with_index do |d, i|
-        next unless convertable?(d) && (u = @numerator_units.find {|n| convertable?([n, d])})
+        next unless convertable?(d) && (u = @numerator_units.find { |n| convertable?([n, d]) })
         @value /= conversion_factor(d, u)
         @denominator_units.delete_at(i)
         @numerator_units.delete_at(@numerator_units.index(u))
@@ -518,15 +511,15 @@ module Sass::Script::Value
 
     # A hash from each known unit to the set of units that it's mutually
     # convertible with.
-    MUTUALLY_CONVERTIBLE = {}
+    MUTUALLY_CONVERTIBLE = {}.freeze
     relative_sizes.map do |values|
       set = values.keys.to_set
-      values.keys.each {|name| MUTUALLY_CONVERTIBLE[name] = set}
+      values.keys.each { |name| MUTUALLY_CONVERTIBLE[name] = set }
     end
 
     # A two-dimensional hash from two units to the conversion ratio between
     # them. Multiply `X` by `CONVERSION_TABLE[X][Y]` to convert it to `Y`.
-    CONVERSION_TABLE = {}
+    CONVERSION_TABLE = {}.freeze
     relative_sizes.each do |values|
       values.each do |(name1, value1)|
         CONVERSION_TABLE[name1] ||= {}
@@ -558,7 +551,7 @@ module Sass::Script::Value
         nil
       end
       units1.compact!
-      return units1, units2
+      [units1, units2]
     end
   end
 end

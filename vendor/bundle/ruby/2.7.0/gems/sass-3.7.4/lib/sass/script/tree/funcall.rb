@@ -66,10 +66,10 @@ module Sass::Script::Tree
 
     # @return [String] A string representation of the function call
     def inspect
-      args = @args.map {|a| a.inspect}.join(', ')
-      keywords = @keywords.as_stored.to_a.map {|k, v| "$#{k}: #{v.inspect}"}.join(', ')
-      if self.splat
-        splat = args.empty? && keywords.empty? ? "" : ", "
+      args = @args.map(&:inspect).join(', ')
+      keywords = @keywords.as_stored.to_a.map { |k, v| "$#{k}: #{v.inspect}" }.join(', ')
+      if splat
+        splat = args.empty? && keywords.empty? ? '' : ', '
         splat = "#{splat}#{self.splat.inspect}..."
         splat = "#{splat}, #{kwarg_splat.inspect}..." if kwarg_splat
       end
@@ -85,11 +85,11 @@ module Sass::Script::Tree
       end
 
       args = @args.map(&arg_to_sass)
-      keywords = @keywords.as_stored.to_a.map {|k, v| "$#{dasherize(k, opts)}: #{arg_to_sass[v]}"}
+      keywords = @keywords.as_stored.to_a.map { |k, v| "$#{dasherize(k, opts)}: #{arg_to_sass[v]}" }
 
-      if self.splat
+      if splat
         splat = "#{arg_to_sass[self.splat]}..."
-        kwarg_splat = "#{arg_to_sass[self.kwarg_splat]}..." if self.kwarg_splat
+        kwarg_splat = "#{arg_to_sass[self.kwarg_splat]}..." if kwarg_splat
       end
 
       arglist = [args, splat, keywords, kwarg_splat].flatten.compact.join(', ')
@@ -110,9 +110,9 @@ module Sass::Script::Tree
     # @see Node#deep_copy
     def deep_copy
       node = dup
-      node.instance_variable_set('@args', args.map {|a| a.deep_copy})
+      node.instance_variable_set('@args', args.map(&:deep_copy))
       copied_keywords = Sass::Util::NormalizedMap.new
-      @keywords.as_stored.each {|k, v| copied_keywords[k] = v.deep_copy}
+      @keywords.as_stored.each { |k, v| copied_keywords[k] = v.deep_copy }
       node.instance_variable_set('@keywords', copied_keywords)
       node
     end
@@ -125,13 +125,14 @@ module Sass::Script::Tree
     # @return [Sass::Script::Value] The SassScript object that is the value of the function call
     # @raise [Sass::SyntaxError] if the function call raises an ArgumentError
     def _perform(environment)
-      args = @args.each_with_index.
-        map {|a, i| perform_arg(a, environment, signature && signature.args[i])}
+      args = @args.each_with_index
+        .map { |a, i| perform_arg(a, environment, signature && signature.args[i]) }
       keywords = Sass::Util.map_hash(@keywords) do |k, v|
         [k, perform_arg(v, environment, k.tr('-', '_'))]
       end
       splat = Sass::Tree::Visitors::Perform.perform_splat(
-        @splat, keywords, @kwarg_splat, environment)
+        @splat, keywords, @kwarg_splat, environment
+      )
 
       fn = @callable || environment.function(@name)
 
@@ -148,7 +149,8 @@ module Sass::Script::Tree
         local_environment.caller = Sass::ReadOnlyEnvironment.new(environment, environment.options)
         result = local_environment.stack.with_function(filename, line, name) do
           opts(Sass::Script::Functions::EvaluationContext.new(
-            local_environment).send(ruby_name, *args))
+            local_environment
+          ).send(ruby_name, *args))
         end
         without_original(result)
       else
@@ -193,7 +195,7 @@ module Sass::Script::Tree
       value
     end
 
-    def construct_ruby_args(name, args, splat, environment)
+    def construct_ruby_args(name, args, splat, _environment)
       args += splat.to_a if splat
 
       # All keywords are contained in splat.keywords for consistency,
@@ -204,7 +206,7 @@ module Sass::Script::Tree
 
       unless (signature = Sass::Script::Functions.signature(name.to_sym, args.size, keywords.size))
         return args if keywords.empty?
-        raise Sass::SyntaxError.new("Function #{name} doesn't support keyword arguments")
+        raise Sass::SyntaxError, "Function #{name} doesn't support keyword arguments"
       end
 
       # If the user passes more non-keyword args than the function expects,
@@ -212,8 +214,7 @@ module Sass::Script::Tree
       # Since we don't want to make functions think about this,
       # we'll handle it for them here.
       if signature.var_kwargs && !signature.var_args && args.size > signature.args.size
-        raise Sass::SyntaxError.new(
-          "#{args[signature.args.size].inspect} is not a keyword argument for `#{name}'")
+        raise Sass::SyntaxError, "#{args[signature.args.size].inspect} is not a keyword argument for `#{name}'"
       elsif keywords.empty?
         args << {} if signature.var_kwargs
         return args
@@ -222,30 +223,28 @@ module Sass::Script::Tree
       argnames = signature.args[args.size..-1] || []
       deprecated_argnames = (signature.deprecated && signature.deprecated[args.size..-1]) || []
       args += argnames.zip(deprecated_argnames).map do |(argname, deprecated_argname)|
-        if keywords.has_key?(argname)
+        if keywords.key?(argname)
           keywords.delete(argname)
-        elsif deprecated_argname && keywords.has_key?(deprecated_argname)
+        elsif deprecated_argname && keywords.key?(deprecated_argname)
           deprecated_argname = keywords.denormalize(deprecated_argname)
-          Sass::Util.sass_warn("DEPRECATION WARNING: The `$#{deprecated_argname}' argument for " +
+          Sass::Util.sass_warn("DEPRECATION WARNING: The `$#{deprecated_argname}' argument for " \
             "`#{@name}()' has been renamed to `$#{argname}'.")
           keywords.delete(deprecated_argname)
         else
-          raise Sass::SyntaxError.new("Function #{name} requires an argument named $#{argname}")
+          raise Sass::SyntaxError, "Function #{name} requires an argument named $#{argname}"
         end
       end
 
-      if keywords.size > 0
+      unless keywords.empty?
         if signature.var_kwargs
           # Don't pass a NormalizedMap to a Ruby function.
           args << keywords.to_hash
         else
           argname = keywords.keys.sort.first
           if signature.args.include?(argname)
-            raise Sass::SyntaxError.new(
-              "Function #{name} was passed argument $#{argname} both by position and by name")
+            raise Sass::SyntaxError, "Function #{name} was passed argument $#{argname} both by position and by name"
           else
-            raise Sass::SyntaxError.new(
-              "Function #{name} doesn't have an argument named $#{argname}")
+            raise Sass::SyntaxError, "Function #{name} doesn't have an argument named $#{argname}"
           end
         end
       end
@@ -258,8 +257,8 @@ module Sass::Script::Tree
         env.caller = Sass::Environment.new(environment)
 
         val = catch :_sass_return do
-          function.tree.each {|c| Sass::Tree::Visitors::Perform.visit(c, env)}
-          raise Sass::SyntaxError.new("Function #{@name} finished without @return")
+          function.tree.each { |c| Sass::Tree::Visitors::Perform.visit(c, env) }
+          raise Sass::SyntaxError, "Function #{@name} finished without @return"
         end
         val
       end
@@ -276,14 +275,17 @@ module Sass::Script::Tree
         # thrown in the backtrace, nor does it include `send`, so we look for
         # `_perform`.
         if e.message =~ /^method '([^']+)': given (\d+), expected (\d+)/
-          error_name, given, expected = $1, $2, $3
+          error_name = Regexp.last_match(1)
+          given = Regexp.last_match(2)
+          expected = Regexp.last_match(3)
           raise e if error_name != ruby_name || e.backtrace[0] !~ /:in `_perform'$/
           message = "wrong number of arguments (#{given} for #{expected})"
         end
       elsif Sass::Util.jruby?
         should_maybe_raise =
           e.message =~ /^wrong number of arguments calling `[^`]+` \((\d+) for (\d+)\)/
-        given, expected = $1, $2
+        given = Regexp.last_match(1)
+        expected = Regexp.last_match(2)
 
         if should_maybe_raise
           # JRuby 1.7 includes __send__ before send and _perform.
@@ -308,7 +310,7 @@ module Sass::Script::Tree
             e.backtrace[0] !~ /:in `(block in )?#{ruby_name}'$/
         raise e
       end
-      raise Sass::SyntaxError.new("#{message} for `#{name}'")
+      raise Sass::SyntaxError, "#{message} for `#{name}'"
     end
   end
 end

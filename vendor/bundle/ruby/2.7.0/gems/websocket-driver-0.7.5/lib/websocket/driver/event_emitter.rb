@@ -1,9 +1,8 @@
 module WebSocket
   class Driver
-
     module EventEmitter
       def initialize
-        @listeners = Hash.new { |h,k| h[k] = [] }
+        @listeners = Hash.new { |h, k| h[k] = [] }
       end
 
       def add_listener(event, callable = nil, &block)
@@ -41,7 +40,7 @@ module WebSocket
       end
 
       def listener_count(event)
-        return 0 unless @listeners.has_key?(event.to_s)
+        return 0 unless @listeners.key?(event.to_s)
         @listeners[event.to_s].size
       end
 
@@ -49,6 +48,5 @@ module WebSocket
         @listeners[event.to_s]
       end
     end
-
   end
 end

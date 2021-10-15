@@ -1,12 +1,11 @@
-# frozen_string_literal: true
-
 module Capybara
   class Server
     class Checker
       TRY_HTTPS_ERRORS = [EOFError, Net::ReadTimeout, Errno::ECONNRESET].freeze
 
       def initialize(host, port)
-        @host, @port = host, port
+        @host = host
+        @port = port
         @ssl = false
       end
 
@@ -22,7 +21,7 @@ module Capybara
         @ssl
       end
 
-    private
+      private
 
       def http_request(&block)
         make_request(read_timeout: 2, &block)

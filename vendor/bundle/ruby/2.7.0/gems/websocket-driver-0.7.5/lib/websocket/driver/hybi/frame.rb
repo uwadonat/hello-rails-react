@@ -1,7 +1,6 @@
 module WebSocket
   class Driver
     class Hybi
-
       class Frame
         attr_accessor :final,
                       :rsv1,
@@ -14,7 +13,6 @@ module WebSocket
                       :length,
                       :payload
       end
-
     end
   end
 end

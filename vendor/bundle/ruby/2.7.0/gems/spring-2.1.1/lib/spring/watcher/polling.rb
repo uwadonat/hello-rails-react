@@ -1,4 +1,4 @@
-require "spring/watcher/abstract"
+require 'spring/watcher/abstract'
 
 module Spring
   module Watcher
@@ -7,7 +7,7 @@ module Spring
 
       def initialize(root, latency)
         super
-        @mtime  = 0
+        @mtime = 0
         @poller = nil
       end
 
@@ -28,24 +28,22 @@ module Spring
 
       def start
         debug { "start: poller=#{@poller.inspect}" }
-        unless @poller
-          @poller = Thread.new {
-            Thread.current.abort_on_exception = true
+        @poller ||= Thread.new do
+          Thread.current.abort_on_exception = true
 
-            begin
-              until stale?
-                Kernel.sleep latency
-                check_stale
-              end
-            rescue Exception => e
-              debug do
-                "poller: aborted: #{e.class}: #{e}\n  #{e.backtrace.join("\n  ")}"
-              end
-              raise
-            ensure
-              @poller = nil
+          begin
+            until stale?
+              Kernel.sleep latency
+              check_stale
             end
-          }
+          rescue Exception => e
+            debug do
+              "poller: aborted: #{e.class}: #{e}\n  #{e.backtrace.join("\n  ")}"
+            end
+            raise
+          ensure
+            @poller = nil
+          end
         end
       end
 
@@ -91,7 +89,7 @@ module Spring
       end
 
       def expanded_files
-        files + Dir["{#{directories.map { |d| "#{d}/**/*" }.join(",")}}"]
+        files + Dir["{#{directories.map { |d| "#{d}/**/*" }.join(',')}}"]
       end
     end
   end

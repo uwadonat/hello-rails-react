@@ -34,7 +34,7 @@ module Sass
       # @param opts [Hash] rendering options.
       # @option opts [Symbol] :style The css rendering style.
       # @return [String]
-      def to_s(opts = {})
+      def to_s(_opts = {})
         Sass::Util.abstract(self)
       end
 
@@ -60,7 +60,7 @@ module Sass
       def eql?(other)
         other.class == self.class && other.hash == hash && other.equality_key == equality_key
       end
-      alias_method :==, :eql?
+      alias == eql?
 
       # Unifies this selector with a {SimpleSequence}'s {SimpleSequence#members members array},
       # returning another `SimpleSequence` members array
@@ -81,9 +81,9 @@ module Sass
       #   this exception will only ever be raised as a result of programmer error
       def unify(sels)
         return sels.first.unify([self]) if sels.length == 1 && sels.first.is_a?(Universal)
-        return sels if sels.any? {|sel2| eql?(sel2)}
+        return sels if sels.any? { |sel2| eql?(sel2) }
         if !is_a?(Pseudo) || (sels.last.is_a?(Pseudo) && sels.last.type == :element)
-          _, i = sels.each_with_index.find {|sel, _| sel.is_a?(Pseudo)}
+          _, i = sels.each_with_index.find { |sel, _| sel.is_a?(Pseudo) }
         end
         return sels + [self] unless i
         sels[0...i] + [self] + sels[i..-1]

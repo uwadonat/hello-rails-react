@@ -122,7 +122,7 @@ class Capybara::RackTest::Node < Capybara::Driver::Node
 
   public_instance_methods(false).each do |meth_name|
     alias_method "unchecked_#{meth_name}", meth_name
-    private "unchecked_#{meth_name}" # rubocop:disable Style/AccessModifierDeclarations
+    private "unchecked_#{meth_name}"
 
     if RUBY_VERSION >= '2.7'
       class_eval <<~METHOD, __FILE__, __LINE__ + 1
@@ -195,13 +195,13 @@ private
     end.first
   end
 
-  def set_radio(_value) # rubocop:disable Naming/AccessorMethodName
+  def set_radio(_value)
     other_radios_xpath = XPath.generate { |xp| xp.anywhere(:input)[xp.attr(:name) == self[:name]] }.to_s
     driver.dom.xpath(other_radios_xpath).each { |node| node.remove_attribute('checked') }
     native['checked'] = 'checked'
   end
 
-  def set_checkbox(value) # rubocop:disable Naming/AccessorMethodName
+  def set_checkbox(value)
     if value && !native['checked']
       native['checked'] = 'checked'
     elsif !value && native['checked']
@@ -209,7 +209,7 @@ private
     end
   end
 
-  def set_range(value) # rubocop:disable Naming/AccessorMethodName
+  def set_range(value)
     min, max, step = (native['min'] || 0).to_f, (native['max'] || 100).to_f, (native['step'] || 1).to_f
     value = value.to_f
     value = value.clamp(min, max)
@@ -217,7 +217,7 @@ private
     native['value'] = value.clamp(min, max)
   end
 
-  def set_input(value) # rubocop:disable Naming/AccessorMethodName
+  def set_input(value)
     if text_or_password? && attribute_is_not_blank?(:maxlength)
       # Browser behavior for maxlength="0" is inconsistent, so we stick with
       # Firefox, allowing no input

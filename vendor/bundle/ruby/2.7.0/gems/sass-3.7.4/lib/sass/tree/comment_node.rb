@@ -29,7 +29,7 @@ module Sass::Tree
     # @param value [Array<String, Sass::Script::Tree::Node>] See \{#value}
     # @param type [Symbol] See \{#type}
     def initialize(value, type)
-      @value = Sass::Util.with_extracted_values(value) {|str| normalize_indentation str}
+      @value = Sass::Util.with_extracted_values(value) { |str| normalize_indentation str }
       @type = type
       super()
     end
@@ -51,8 +51,8 @@ module Sass::Tree
     # @return [Boolean]
     def invisible?
       case @type
-      when :loud; false
-      when :silent; true
+      when :loud then false
+      when :silent then true
       else; style == :compressed
       end
     end
@@ -70,8 +70,8 @@ module Sass::Tree
     private
 
     def normalize_indentation(str)
-      ind = str.split("\n").inject(str[/^[ \t]*/].split("")) do |pre, line|
-        line[/^[ \t]*/].split("").zip(pre).inject([]) do |arr, (a, b)|
+      ind = str.split("\n").inject(str[/^[ \t]*/].split('')) do |pre, line|
+        line[/^[ \t]*/].split('').zip(pre).inject([]) do |arr, (a, b)|
           break arr if a != b
           arr << a
         end

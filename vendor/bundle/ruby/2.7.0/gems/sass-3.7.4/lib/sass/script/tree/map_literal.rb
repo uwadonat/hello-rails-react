@@ -22,7 +22,7 @@ module Sass::Script::Tree
 
     # @see Node#to_sass
     def to_sass(opts = {})
-      return "()" if pairs.empty?
+      return '()' if pairs.empty?
 
       to_sass = lambda do |value|
         if value.is_a?(ListLiteral) && value.separator == :comma
@@ -32,15 +32,15 @@ module Sass::Script::Tree
         end
       end
 
-      "(" + pairs.map {|(k, v)| "#{to_sass[k]}: #{to_sass[v]}"}.join(', ') + ")"
+      '(' + pairs.map { |(k, v)| "#{to_sass[k]}: #{to_sass[v]}" }.join(', ') + ')'
     end
-    alias_method :inspect, :to_sass
+    alias inspect to_sass
 
     # @see Node#deep_copy
     def deep_copy
       node = dup
       node.instance_variable_set('@pairs',
-        pairs.map {|(k, v)| [k.deep_copy, v.deep_copy]})
+                                 pairs.map { |(k, v)| [k.deep_copy, v.deep_copy] })
       node
     end
 
@@ -50,10 +50,9 @@ module Sass::Script::Tree
     def _perform(environment)
       keys = Set.new
       map = Sass::Script::Value::Map.new(Hash[pairs.map do |(k, v)|
-        k, v = k.perform(environment), v.perform(environment)
-        if keys.include?(k)
-          raise Sass::SyntaxError.new("Duplicate key #{k.inspect} in map #{to_sass}.")
-        end
+        k = k.perform(environment)
+        v = v.perform(environment)
+        raise Sass::SyntaxError, "Duplicate key #{k.inspect} in map #{to_sass}." if keys.include?(k)
         keys << k
         [k, v]
       end])

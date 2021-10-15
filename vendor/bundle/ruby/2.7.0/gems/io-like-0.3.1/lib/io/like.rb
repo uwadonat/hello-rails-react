@@ -118,10 +118,8 @@ class IO # :nodoc:
     # if #writable? returns +true+.
     def close_read
       raise IOError, 'closed stream' if closed?
-      if __io_like__closed_read? || ! duplexed? && writable? then
-        raise IOError, 'closing non-duplex IO for reading'
-      end
-      if duplexed? then
+      raise IOError, 'closing non-duplex IO for reading' if __io_like__closed_read? || !duplexed? && writable?
+      if duplexed?
         __io_like__close_read
       else
         close
@@ -140,10 +138,8 @@ class IO # :nodoc:
     # if #readable? returns +true+.
     def close_write
       raise IOError, 'closed stream' if closed?
-      if __io_like__closed_write? || ! duplexed? && readable? then
-        raise IOError, 'closing non-duplex IO for reading'
-      end
-      if duplexed? then
+      raise IOError, 'closing non-duplex IO for reading' if __io_like__closed_write? || !duplexed? && readable?
+      if duplexed?
         flush
         __io_like__close_write
       else
@@ -158,8 +154,8 @@ class IO # :nodoc:
     # Returns +true+ if this object is closed or otherwise unusable for read and
     # write operations.
     def closed?
-      (__io_like__closed_read? || ! readable?) &&
-      (__io_like__closed_write? || ! writable?)
+      (__io_like__closed_read? || !readable?) &&
+        (__io_like__closed_write? || !writable?)
     end
 
     # call-seq:
@@ -183,7 +179,7 @@ class IO # :nodoc:
     # method will also raise the same errors and block at the same times as
     # #unbuffered_read.
     def each_byte
-      while (byte = getc) do
+      while (byte = getc)
         yield(byte)
       end
       self
@@ -201,13 +197,13 @@ class IO # :nodoc:
     # this method always blocks.  Aside from that exception and the conversion
     # of EOFError results into +nil+ results, this method will also raise the
     # same errors and block at the same times as #unbuffered_read.
-    def each_line(sep_string = $/)
-      while (line = gets(sep_string)) do
+    def each_line(sep_string = $INPUT_RECORD_SEPARATOR)
+      while (line = gets(sep_string))
         yield(line)
       end
       self
     end
-    alias :each :each_line
+    alias each each_line
 
     # call-seq:
     #   ios.eof?             -> true or false
@@ -225,19 +221,19 @@ class IO # :nodoc:
     # method will also raise the same errors and block at the same times as
     # #unbuffered_read.
     def eof?
-      if (char = getc) then
+      if (char = getc)
         ungetc(char)
         return false
       end
       true
     end
-    alias :eof :eof?
+    alias eof eof?
 
     # call-seq:
     #   ios.fcntl
     #
     # Raises NotImplementedError.
-    def fcntl(*args)
+    def fcntl(*_args)
       raise NotImplementedError, 'not implemented'
     end
 
@@ -278,9 +274,7 @@ class IO # :nodoc:
       raise IOError, 'closed stream' if closed?
       raise IOError, 'not opened for reading' unless readable?
 
-      unless fill_size >= 0 then
-        raise ArgumentError, "non-positive fill_size #{fill_size} given"
-      end
+      raise ArgumentError, "non-positive fill_size #{fill_size} given" unless fill_size >= 0
       @__io_like__fill_size = fill_size
     end
 
@@ -339,9 +333,7 @@ class IO # :nodoc:
       raise IOError, 'closed stream' if closed?
       raise IOError, 'not opened for writing' unless writable?
 
-      unless flush_size >= 0 then
-        raise ArgumentError, "non-positive flush_size #{flush_size} given"
-      end
+      raise ArgumentError, "non-positive flush_size #{flush_size} given" unless flush_size >= 0
       @__io_like__flush_size = flush_size
     end
 
@@ -386,13 +378,13 @@ class IO # :nodoc:
     # this method will always block in that case.  Aside from that exception,
     # this method will raise the same errors and block at the same times as
     # #unbuffered_read.
-    def gets(sep_string = $/)
+    def gets(sep_string = $INPUT_RECORD_SEPARATOR)
       # Set the last read line in the global.
       $_ = readline(sep_string)
       # Set the last line number in the global.
       $. = lineno
       # Return the last read line.
-      $_
+      $LAST_READ_LINE
     rescue EOFError
       nil
     end
@@ -407,7 +399,7 @@ class IO # :nodoc:
       raise IOError, 'closed stream' if closed?
       false
     end
-    alias :tty? :isatty
+    alias tty? isatty
 
     # call-seq:
     #   ios.lineno           -> integer
@@ -437,9 +429,9 @@ class IO # :nodoc:
     def lineno=(integer)
       raise IOError, 'closed stream' if closed?
       raise IOError, 'not opened for reading' unless readable?
-      if integer.nil? then
+      if integer.nil?
         raise TypeError, 'no implicit conversion from nil to integer'
-      elsif ! integer.respond_to?(:to_int) then
+      elsif !integer.respond_to?(:to_int)
         raise TypeError, "can't convert #{integer.class} into Integer"
       end
       @__io_like__lineno = integer.to_int
@@ -488,10 +480,10 @@ class IO # :nodoc:
     # also raise the same errors and block at the same times as those functions.
     def pos
       # Flush the internal write buffer for writable, non-duplexed objects.
-      __io_like__buffered_flush if writable? && ! duplexed?
+      __io_like__buffered_flush if writable? && !duplexed?
       __io_like__buffered_seek(0, IO::SEEK_CUR)
     end
-    alias :tell :pos
+    alias tell pos
 
     # call-seq:
     #   ios.print([obj, ...]) -> nil
@@ -512,20 +504,20 @@ class IO # :nodoc:
     # this method will also raise the same errors and block at the same times as
     # #unbuffered_write.
     def print(*args)
-      args << $_ if args.empty?
+      args << $LAST_READ_LINE if args.empty?
       first_arg = true
       args.each do |arg|
         # Write a field separator before writing each argument after the first
         # one unless no field separator is specified.
-        if first_arg then
+        if first_arg
           first_arg = false
-        elsif ! $,.nil? then
-          write($,)
+        elsif !$OUTPUT_FIELD_SEPARATOR.nil?
+          write($OUTPUT_FIELD_SEPARATOR)
         end
 
         # If the argument is nil, write 'nil'; otherwise, write the stringified
         # form of the argument.
-        if arg.nil? then
+        if arg.nil?
           write('nil')
         else
           write(arg)
@@ -533,7 +525,7 @@ class IO # :nodoc:
       end
 
       # Write the output record separator if one is specified.
-      write($\) unless $\.nil?
+      write($OUTPUT_RECORD_SEPARATOR) unless $OUTPUT_RECORD_SEPARATOR.nil?
       nil
     end
 
@@ -609,7 +601,7 @@ class IO # :nodoc:
       ors = "\n"
 
       # Write only the record separator if no arguments are given.
-      if args.length == 0 then
+      if args.empty?
         write(ors)
         return
       end
@@ -619,7 +611,7 @@ class IO # :nodoc:
       args.each do |arg|
         line = arg.nil? ?
                  'nil' :
-                 arg.kind_of?(Array) ?
+                 arg.is_a?(Array) ?
                    __io_like__array_join(arg, ors) :
                    arg.to_s
         line += ors if line.index(ors, -ors.length).nil?
@@ -653,13 +645,11 @@ class IO # :nodoc:
     # raise the same errors and block at the same times as that function.
     def read(length = nil, buffer = nil)
       # Check the validity of the method arguments.
-      unless length.nil? || length >= 0 then
-        raise ArgumentError, "negative length #{length} given"
-      end
+      raise ArgumentError, "negative length #{length} given" unless length.nil? || length >= 0
       buffer = buffer.nil? ? '' : buffer.to_str
       buffer.slice!(0..-1) unless buffer.empty?
 
-      if length.nil? then
+      if length.nil?
         # Read and return everything.
         begin
           loop do
@@ -715,7 +705,7 @@ class IO # :nodoc:
     # provides the #unbuffered_read method but may not always be open in a
     # readable mode.
     def readable?
-      ! __io_like__closed_read? && respond_to?(:unbuffered_read, true)
+      !__io_like__closed_read? && respond_to?(:unbuffered_read, true)
     end
 
     # call-seq:
@@ -737,12 +727,8 @@ class IO # :nodoc:
     # raise the same errors and block at the same times as that function.
     def readbytes(length)
       buffer = read(length)
-      if buffer.nil? then
-        raise EOFError, "end of file reached"
-      end
-      if buffer.length < length then
-        raise TruncatedDataError.new("data truncated", buffer)
-      end
+      raise EOFError, 'end of file reached' if buffer.nil?
+      raise TruncatedDataError.new('data truncated', buffer) if buffer.length < length
       buffer
     end
 
@@ -802,15 +788,13 @@ class IO # :nodoc:
     # this method will always block in that case.  Aside from that exception,
     # this method will raise the same errors and block at the same times as
     # #unbuffered_read.
-    def readline(sep_string = $/)
+    def readline(sep_string = $INPUT_RECORD_SEPARATOR)
       # Ensure that sep_string is either nil or a String.
-      unless sep_string.nil? || sep_string.kind_of?(String) then
-        sep_string = sep_string.to_str
-      end
+      sep_string = sep_string.to_str unless sep_string.nil? || sep_string.is_a?(String)
 
       buffer = ''
       begin
-        if sep_string.nil? then
+        if sep_string.nil?
           # A nil line separator means that the user wants to capture all the
           # remaining input.
           loop do
@@ -828,15 +812,15 @@ class IO # :nodoc:
             # Add each character from the input to the buffer until either the
             # buffer has the right ending or the end of the input is reached.
             while buffer.index(sep_string, -sep_string.length).nil? &&
-                  (char = __io_like__buffered_read(1)) do
+                  (char = __io_like__buffered_read(1))
               buffer << char
             end
 
-            if paragraph_requested then
+            if paragraph_requested
               # If the user requested paragraphs instead of lines, we need to
               # consume and discard all newlines remaining at the front of the
               # input.
-              while char == "\n" && (char = __io_like__buffered_read(1)) do
+              while char == "\n" && (char = __io_like__buffered_read(1))
                 nil
               end
               # Put back the last character.
@@ -878,7 +862,7 @@ class IO # :nodoc:
     # this method always blocks.  Aside from that exception, this method will
     # also raise the same errors and block at the same times as
     # #unbuffered_read.
-    def readlines(sep_string = $/)
+    def readlines(sep_string = $INPUT_RECORD_SEPARATOR)
       lines = []
       each_line(sep_string) { |line| lines << line }
       lines
@@ -904,15 +888,13 @@ class IO # :nodoc:
     # #unbuffered_read.
     def readpartial(length, buffer = nil)
       # Check the validity of the method arguments.
-      unless length >= 0 then
-        raise ArgumentError, "negative length #{length} given"
-      end
+      raise ArgumentError, "negative length #{length} given" unless length >= 0
       buffer = '' if buffer.nil?
       # Flush the buffer.
       buffer.slice!(0..-1)
 
       # Read and return up to length bytes.
-      if __io_like__internal_read_buffer.empty? then
+      if __io_like__internal_read_buffer.empty?
         begin
           buffer << __io_like__buffered_read(length)
         rescue Errno::EAGAIN, Errno::EINTR
@@ -982,7 +964,7 @@ class IO # :nodoc:
     # determination otherwise.  Override this if the implementing class always
     # provides the #unbuffered_seek method but may not always be seekable.
     def seekable?
-      ! duplexed? && respond_to?(:unbuffered_seek, true)
+      !duplexed? && respond_to?(:unbuffered_seek, true)
     end
 
     # call-seq:
@@ -1033,12 +1015,10 @@ class IO # :nodoc:
 
       raise IOError, 'closed stream' if closed?
       raise IOError, 'not opened for reading' unless readable?
-      unless __io_like__internal_read_buffer.empty? then
-        raise IOError, 'sysread on buffered IO'
-      end
+      raise IOError, 'sysread on buffered IO' unless __io_like__internal_read_buffer.empty?
 
       # Flush the internal write buffer for writable, non-duplexed objects.
-      __io_like__buffered_flush if writable? && ! duplexed?
+      __io_like__buffered_flush if writable? && !duplexed?
 
       buffer << unbuffered_read(length)
     end
@@ -1061,12 +1041,8 @@ class IO # :nodoc:
     def sysseek(offset, whence = IO::SEEK_SET)
       raise IOError, 'closed stream' if closed?
       raise Errno::ESPIPE unless seekable?
-      unless __io_like__internal_read_buffer.empty? then
-        raise IOError, 'sysseek on buffered IO'
-      end
-      unless __io_like__internal_write_buffer.empty? then
-        warn('warning: sysseek on buffered IO')
-      end
+      raise IOError, 'sysseek on buffered IO' unless __io_like__internal_read_buffer.empty?
+      warn('warning: sysseek on buffered IO') unless __io_like__internal_write_buffer.empty?
 
       unbuffered_seek(offset, whence)
     end
@@ -1088,13 +1064,11 @@ class IO # :nodoc:
     def syswrite(string)
       raise IOError, 'closed stream' if closed?
       raise IOError, 'not opened for writing' unless writable?
-      unless __io_like__internal_write_buffer.empty? then
-        warn('warning: syswrite on buffered IO')
-      end
+      warn('warning: syswrite on buffered IO') unless __io_like__internal_write_buffer.empty?
 
       # Flush the internal read buffer and set the unbuffered position to the
       # buffered position when dealing with non-duplexed objects.
-      unless duplexed? || __io_like__internal_read_buffer.empty? then
+      unless duplexed? || __io_like__internal_read_buffer.empty?
         unbuffered_seek(-__io_like__internal_read_buffer.length, IO::SEEK_CUR)
         __io_like__internal_read_buffer.slice!(0..-1)
       end
@@ -1168,7 +1142,7 @@ class IO # :nodoc:
     # provides the #unbuffered_write method but may not always be open in a
     # writable mode.
     def writable?
-      ! __io_like__closed_write? && respond_to?(:unbuffered_write, true)
+      !__io_like__closed_write? && respond_to?(:unbuffered_write, true)
     end
 
     # call-seq:
@@ -1192,7 +1166,7 @@ class IO # :nodoc:
       return 0 if string.empty?
 
       bytes_written = 0
-      while bytes_written < string.length do
+      while bytes_written < string.length
         begin
           bytes_written +=
             __io_like__buffered_write(string.to_s.slice(bytes_written..-1))
@@ -1219,7 +1193,7 @@ class IO # :nodoc:
       raise IOError, 'closed stream' if closed?
       raise IOError, 'not opened for writing' unless writable?
 
-      until __io_like__internal_write_buffer.empty? do
+      until __io_like__internal_write_buffer.empty?
         __io_like__internal_write_buffer.slice!(
           0, unbuffered_write(__io_like__internal_write_buffer)
         )
@@ -1247,11 +1221,11 @@ class IO # :nodoc:
       raise IOError, 'not opened for reading' unless readable?
 
       # Flush the internal write buffer for writable, non-duplexed objects.
-      __io_like__buffered_flush if writable? && ! duplexed?
+      __io_like__buffered_flush if writable? && !duplexed?
 
       # Ensure that the internal read buffer has at least enough data to satisfy
       # the request.
-      if __io_like__internal_read_buffer.length < length then
+      if __io_like__internal_read_buffer.length < length
         unbuffered_length = length - __io_like__internal_read_buffer.length
         unbuffered_length = fill_size if unbuffered_length < fill_size
 
@@ -1293,7 +1267,7 @@ class IO # :nodoc:
       raise IOError, 'closed stream' if closed?
       raise Errno::ESPIPE unless seekable?
 
-      if whence == IO::SEEK_CUR && offset == 0 then
+      if whence == IO::SEEK_CUR && offset == 0
         # The seek is only determining the current position, so return the
         # buffered position based on the read buffer if it's not empty and the
         # write buffer otherwise.
@@ -1304,7 +1278,7 @@ class IO # :nodoc:
             __io_like__internal_read_buffer.length
       elsif whence == IO::SEEK_CUR && offset > 0 &&
             __io_like__internal_write_buffer.empty? &&
-            offset <= __io_like__internal_read_buffer.length then
+            offset <= __io_like__internal_read_buffer.length
         # The seek is within the read buffer, so just discard a sufficient
         # amount of the buffer and report the new buffered position.
         __io_like__internal_read_buffer.slice!(0, offset)
@@ -1313,7 +1287,7 @@ class IO # :nodoc:
       else
         # The seek target is outside of the buffers, so flush the buffers and
         # jump to the new position.
-        if whence == IO::SEEK_CUR then
+        if whence == IO::SEEK_CUR
           # Adjust relative offsets based on the current buffered offset.
           offset += __io_like__internal_read_buffer.empty? ?
             __io_like__internal_write_buffer.length :
@@ -1349,19 +1323,19 @@ class IO # :nodoc:
 
       # Flush the internal read buffer and set the unbuffered position to the
       # buffered position when dealing with non-duplexed objects.
-      unless duplexed? || __io_like__internal_read_buffer.empty? then
+      unless duplexed? || __io_like__internal_read_buffer.empty?
         unbuffered_seek(-__io_like__internal_read_buffer.length, IO::SEEK_CUR)
         __io_like__internal_read_buffer.slice!(0..-1)
       end
 
       bytes_written = 0
-      if sync then
+      if sync
         # Flush the internal write buffer and then bypass it when in synchronous
         # mode.
         __io_like__buffered_flush
         bytes_written = unbuffered_write(string)
       else
-        if __io_like__internal_write_buffer.length + string.length >= flush_size then
+        if __io_like__internal_write_buffer.length + string.length >= flush_size
           # The tipping point for the write buffer would be surpassed by this
           # request, so flush everything.
           __io_like__buffered_flush
@@ -1372,7 +1346,7 @@ class IO # :nodoc:
           bytes_written = string.length
         end
       end
-      return bytes_written
+      bytes_written
     end
 
     # Returns a reference to the internal read buffer.
@@ -1435,8 +1409,8 @@ class IO # :nodoc:
         memo << separator if need_separator
         need_separator = true
 
-        memo << if item.kind_of?(Array) then
-                  if seen.include?(item.object_id) then
+        memo << if item.is_a?(Array)
+                  if seen.include?(item.object_id)
                     '[...]'
                   else
                     __io_like__array_join(item, separator, seen)

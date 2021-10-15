@@ -8,7 +8,7 @@ module Sprockets
   #   https://github.com/sstephenson/ruby-ejs
   #
   module EjsProcessor
-    VERSION = '1'
+    VERSION = '1'.freeze
 
     def self.cache_key
       @cache_key ||= "#{name}:#{VERSION}".freeze

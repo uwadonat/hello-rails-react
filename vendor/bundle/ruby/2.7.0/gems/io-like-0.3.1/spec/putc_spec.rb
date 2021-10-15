@@ -1,7 +1,7 @@
 require File.dirname(__FILE__) + '/../spec_helper'
 require File.dirname(__FILE__) + '/fixtures/classes'
 
-describe "IO::Like#putc" do
+describe 'IO::Like#putc' do
   before :each do
     @filename = tmp('IO_Like__putc_test')
     @file = File.open(@filename, 'w')
@@ -16,13 +16,13 @@ describe "IO::Like#putc" do
     File.unlink @filename
   end
 
-  it "returns a reference to the object" do
+  it 'returns a reference to the object' do
     @iowrapper.putc('a').should == 'a'
     @iowrapper.putc(128).should == 128
   end
 
-  it "writes the first byte of a String" do
-    @iowrapper.putc("foo")
+  it 'writes the first byte of a String' do
+    @iowrapper.putc('foo')
     File.read(@filename).should == 'f'
   end
 
@@ -32,7 +32,7 @@ describe "IO::Like#putc" do
     File.read(@filename).should == "\005"
   end
 
-  it "writes Numerics that fit in a C char" do
+  it 'writes Numerics that fit in a C char' do
     @iowrapper.putc(-128)
     @iowrapper.putc(0)
     @iowrapper.putc(255)
@@ -47,11 +47,11 @@ describe "IO::Like#putc" do
     File.read(@filename).should == "\177\000"
   end
 
-  it "checks if the stream is writable" do
-    lambda { IOSpecs.readable_iowrapper.putc('a') }.should raise_error(IOError)
+  it 'checks if the stream is writable' do
+    -> { IOSpecs.readable_iowrapper.putc('a') }.should raise_error(IOError)
   end
 
-  it "raises IOError on closed stream" do
-    lambda { IOSpecs.closed_file.putc('a') }.should raise_error(IOError)
+  it 'raises IOError on closed stream' do
+    -> { IOSpecs.closed_file.putc('a') }.should raise_error(IOError)
   end
 end

@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 module ActiveJob
   module QueueAdapters
     # == Test adapter for Active Job
@@ -40,28 +38,29 @@ module ActiveJob
       end
 
       private
-        def job_to_hash(job, extras = {})
-          { job: job.class, args: job.serialize.fetch("arguments"), queue: job.queue_name }.merge!(extras)
-        end
 
-        def enqueue_or_perform(perform, job, job_data)
-          if perform
-            performed_jobs << job_data
-            Base.execute job.serialize
-          else
-            enqueued_jobs << job_data
-          end
-        end
+      def job_to_hash(job, extras = {})
+        { job: job.class, args: job.serialize.fetch('arguments'), queue: job.queue_name }.merge!(extras)
+      end
 
-        def filtered?(job)
-          if filter
-            !Array(filter).include?(job.class)
-          elsif reject
-            Array(reject).include?(job.class)
-          else
-            false
-          end
+      def enqueue_or_perform(perform, job, job_data)
+        if perform
+          performed_jobs << job_data
+          Base.execute job.serialize
+        else
+          enqueued_jobs << job_data
         end
+      end
+
+      def filtered?(job)
+        if filter
+          !Array(filter).include?(job.class)
+        elsif reject
+          Array(reject).include?(job.class)
+        else
+          false
+        end
+      end
     end
   end
 end

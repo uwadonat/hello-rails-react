@@ -3,11 +3,11 @@ module Spring
     attr_reader :pid, :child, :app_env, :spring_env, :status
 
     def initialize(app_env, spring_env)
-      @app_env    = app_env
+      @app_env = app_env
       @spring_env = spring_env
-      @mutex      = Mutex.new
-      @state      = :running
-      @pid        = nil
+      @mutex = Mutex.new
+      @state = :running
+      @pid = nil
     end
 
     def log(message)
@@ -44,12 +44,12 @@ module Spring
           rescue Errno::ECONNRESET, Errno::EPIPE
             # The child has died but has not been collected by the wait thread yet,
             # so start a new child and try again.
-            log "child dead; starting"
+            log 'child dead; starting'
             start
             yield
           end
         else
-          log "child not running; starting"
+          log 'child not running; starting'
           start
           yield
         end
@@ -77,7 +77,7 @@ module Spring
     end
 
     def stop
-      log "stopping"
+      log 'stopping'
       @state = :stopping
 
       if pid
@@ -94,20 +94,20 @@ module Spring
       @child, child_socket = UNIXSocket.pair
 
       Bundler.with_original_env do
-        bundler_dir = File.expand_path("../..", $LOADED_FEATURES.grep(/bundler\/setup\.rb$/).first)
+        bundler_dir = File.expand_path('../..', $LOADED_FEATURES.grep(/bundler\/setup\.rb$/).first)
         @pid = Process.spawn(
           {
-            "RAILS_ENV"           => app_env,
-            "RACK_ENV"            => app_env,
-            "SPRING_ORIGINAL_ENV" => JSON.dump(Spring::ORIGINAL_ENV),
-            "SPRING_PRELOAD"      => preload ? "1" : "0"
+            'RAILS_ENV'           => app_env,
+            'RACK_ENV'            => app_env,
+            'SPRING_ORIGINAL_ENV' => JSON.dump(Spring::ORIGINAL_ENV),
+            'SPRING_PRELOAD'      => preload ? '1' : '0'
           },
-          "ruby",
-          *(bundler_dir != RbConfig::CONFIG["rubylibdir"] ? ["-I", bundler_dir] : []),
-          "-I", File.expand_path("../..", __FILE__),
-          "-e", "require 'spring/application/boot'",
+          'ruby',
+          *(bundler_dir != RbConfig::CONFIG['rubylibdir'] ? ['-I', bundler_dir] : []),
+          '-I', File.expand_path('../..', __FILE__),
+          '-e', "require 'spring/application/boot'",
           3 => child_socket,
-          4 => spring_env.log_file,
+          4 => spring_env.log_file
         )
       end
 
@@ -118,7 +118,7 @@ module Spring
     def start_wait_thread(pid, child)
       Process.detach(pid)
 
-      Spring.failsafe_thread {
+      Spring.failsafe_thread do
         # The recv can raise an ECONNRESET, killing the thread, but that's ok
         # as if it does we're no longer interested in the child
         loop do
@@ -129,13 +129,13 @@ module Spring
 
         log "child #{pid} shutdown"
 
-        synchronize {
+        synchronize do
           if @pid == pid
             @pid = nil
             restart
           end
-        }
-      }
+        end
+      end
     end
   end
 end

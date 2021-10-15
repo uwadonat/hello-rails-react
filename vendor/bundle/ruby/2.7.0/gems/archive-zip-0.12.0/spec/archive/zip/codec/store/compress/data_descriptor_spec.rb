@@ -1,5 +1,3 @@
-# encoding: UTF-8
-
 require 'minitest/autorun'
 
 require File.expand_path('../../fixtures/classes', __FILE__)
@@ -8,8 +6,8 @@ require 'archive/support/zlib'
 require 'archive/zip/codec/store'
 require 'archive/support/binary_stringio'
 
-describe "Archive::Zip::Codec::Store::Compress#data_descriptor" do
-  it "is an instance of Archive::Zip::DataDescriptor" do
+describe 'Archive::Zip::Codec::Store::Compress#data_descriptor' do
+  it 'is an instance of Archive::Zip::DataDescriptor' do
     test_data = StoreSpecs.test_data
     compressed_data = BinaryStringIO.new
     closed_compressor = Archive::Zip::Codec::Store::Compress.open(
@@ -27,7 +25,7 @@ describe "Archive::Zip::Codec::Store::Compress#data_descriptor" do
     )
   end
 
-  it "has a crc32 attribute containing the CRC32 checksum" do
+  it 'has a crc32 attribute containing the CRC32 checksum' do
     test_data = StoreSpecs.test_data
     compressed_data = BinaryStringIO.new
     closed_compressor = Archive::Zip::Codec::Store::Compress.open(
@@ -41,7 +39,7 @@ describe "Archive::Zip::Codec::Store::Compress#data_descriptor" do
     closed_compressor.data_descriptor.crc32.must_equal(Zlib.crc32(test_data))
   end
 
-  it "has a compressed_size attribute containing the size of the compressed data" do
+  it 'has a compressed_size attribute containing the size of the compressed data' do
     test_data = StoreSpecs.test_data
     compressed_data = BinaryStringIO.new
     closed_compressor = Archive::Zip::Codec::Store::Compress.open(
@@ -59,7 +57,7 @@ describe "Archive::Zip::Codec::Store::Compress#data_descriptor" do
     )
   end
 
-  it "has an uncompressed_size attribute containing the size of the input data" do
+  it 'has an uncompressed_size attribute containing the size of the input data' do
     test_data = StoreSpecs.test_data
     compressed_data = BinaryStringIO.new
     closed_compressor = Archive::Zip::Codec::Store::Compress.open(

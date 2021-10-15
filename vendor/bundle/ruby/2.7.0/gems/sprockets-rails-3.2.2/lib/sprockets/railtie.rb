@@ -13,7 +13,7 @@ require 'set'
 
 module Rails
   class Application
-    # Hack: We need to remove Rails' built in config.assets so we can
+    # HACK: We need to remove Rails' built in config.assets so we can
     # do our own thing.
     class Configuration
       remove_possible_method :assets
@@ -54,10 +54,10 @@ module Rails
   class Engine < Railtie
     # Skip defining append_assets_path on Rails <= 4.2
     unless initializers.find { |init| init.name == :append_assets_path }
-      initializer :append_assets_path, :group => :all do |app|
-        app.config.assets.paths.unshift(*paths["vendor/assets"].existent_directories)
-        app.config.assets.paths.unshift(*paths["lib/assets"].existent_directories)
-        app.config.assets.paths.unshift(*paths["app/assets"].existent_directories)
+      initializer :append_assets_path, group: :all do |app|
+        app.config.assets.paths.unshift(*paths['vendor/assets'].existent_directories)
+        app.config.assets.paths.unshift(*paths['lib/assets'].existent_directories)
+        app.config.assets.paths.unshift(*paths['app/assets'].existent_directories)
       end
     end
   end
@@ -69,61 +69,59 @@ module Sprockets
 
     class ManifestNeededError < StandardError
       def initialize
-        msg = "Expected to find a manifest file in `app/assets/config/manifest.js`\n" +
-        "But did not, please create this file and use it to link any assets that need\n" +
-        "to be rendered by your app:\n\n" +
-        "Example:\n" +
-        "  //= link_tree ../images\n"  +
-        "  //= link_directory ../javascripts .js\n" +
-        "  //= link_directory ../stylesheets .css\n"  +
-        "and restart your server\n\n" +
-        "For more information see: https://github.com/rails/sprockets/blob/070fc01947c111d35bb4c836e9bb71962a8e0595/UPGRADING.md#manifestjs"
+        msg = "Expected to find a manifest file in `app/assets/config/manifest.js`\n" \
+              "But did not, please create this file and use it to link any assets that need\n" \
+              "to be rendered by your app:\n\n" \
+              "Example:\n" \
+              "  //= link_tree ../images\n" \
+              "  //= link_directory ../javascripts .js\n" \
+              "  //= link_directory ../stylesheets .css\n" \
+              "and restart your server\n\n" \
+              'For more information see: https://github.com/rails/sprockets/blob/070fc01947c111d35bb4c836e9bb71962a8e0595/UPGRADING.md#manifestjs'
         super msg
       end
     end
 
     LOOSE_APP_ASSETS = lambda do |logical_path, filename|
-      filename.start_with?(::Rails.root.join("app/assets").to_s) &&
-      !['.js', '.css', ''].include?(File.extname(logical_path))
+      filename.start_with?(::Rails.root.join('app/assets').to_s) &&
+        !['.js', '.css', ''].include?(File.extname(logical_path))
     end
 
     class OrderedOptions < ActiveSupport::OrderedOptions
       def configure(&block)
-        self._blocks << block
+        _blocks << block
       end
     end
 
     config.assets = OrderedOptions.new
-    config.assets._blocks     = []
-    config.assets.paths       = []
-    config.assets.precompile  = []
-    config.assets.prefix      = "/assets"
-    config.assets.manifest    = nil
-    config.assets.quiet       = false
+    config.assets._blocks = []
+    config.assets.paths = []
+    config.assets.precompile = []
+    config.assets.prefix = '/assets'
+    config.assets.manifest = nil
+    config.assets.quiet = false
 
     initializer :set_default_precompile do |app|
       if using_sprockets4?
-        raise ManifestNeededError unless ::Rails.root.join("app/assets/config/manifest.js").exist?
-        app.config.assets.precompile += %w( manifest.js )
+        raise ManifestNeededError unless ::Rails.root.join('app/assets/config/manifest.js').exist?
+        app.config.assets.precompile += %w[manifest.js]
       else
         app.config.assets.precompile += [LOOSE_APP_ASSETS, /(?:\/|\\|\A)application\.(css|js)$/]
       end
     end
 
     initializer :quiet_assets do |app|
-      if app.config.assets.quiet
-        app.middleware.insert_before ::Rails::Rack::Logger, ::Sprockets::Rails::QuietAssets
-      end
+      app.middleware.insert_before ::Rails::Rack::Logger, ::Sprockets::Rails::QuietAssets if app.config.assets.quiet
     end
 
-    config.assets.version     = ""
-    config.assets.debug       = false
-    config.assets.compile     = true
-    config.assets.digest      = true
+    config.assets.version = ''
+    config.assets.debug = false
+    config.assets.compile = true
+    config.assets.digest = true
     config.assets.cache_limit = 50.megabytes
-    config.assets.gzip        = true
+    config.assets.gzip = true
     config.assets.check_precompiled_asset = true
-    config.assets.unknown_asset_fallback  = true
+    config.assets.unknown_asset_fallback = true
 
     config.assets.configure do |env|
       config.assets.paths.each { |path| env.append_path(path) }
@@ -133,7 +131,7 @@ module Sprockets
       env.context_class.send :include, ::Sprockets::Rails::Context
       env.context_class.assets_prefix = config.assets.prefix
       env.context_class.digest_assets = config.assets.digest
-      env.context_class.config        = config.action_controller
+      env.context_class.config = config.action_controller
     end
 
     config.assets.configure do |env|
@@ -167,9 +165,7 @@ module Sprockets
 
     def build_environment(app, initialized = nil)
       initialized = app.initialized? if initialized.nil?
-      unless initialized
-        ::Rails.logger.warn "Application uninitialized: Try calling YourApp::Application.initialize!"
-      end
+      ::Rails.logger.warn 'Application uninitialized: Try calling YourApp::Application.initialize!' unless initialized
 
       env = Sprockets::Environment.new(app.root.to_s)
 
@@ -182,16 +178,14 @@ module Sprockets
 
       # Set compressors after the configure blocks since they can
       # define new compressors and we only accept existent compressors.
-      env.js_compressor  = config.assets.js_compressor
+      env.js_compressor = config.assets.js_compressor
       env.css_compressor = config.assets.css_compressor
 
       # No more configuration changes at this point.
       # With cache classes on, Sprockets won't check the FS when files
       # change. Preferable in production when the FS only changes on
       # deploys when the app restarts.
-      if config.cache_classes
-        env = env.cached
-      end
+      env = env.cached if config.cache_classes
 
       env
     end
@@ -206,7 +200,7 @@ module Sprockets
       config = app.config
 
       if config.assets.compile
-        app.assets = self.build_environment(app, true)
+        app.assets = build_environment(app, true)
         app.routes.prepend do
           mount app.assets => config.assets.prefix
         end
@@ -236,9 +230,9 @@ module Sprockets
         include Sprockets::Rails::Helper
 
         # Copy relevant config to AV context
-        self.debug_assets      = config.assets.debug
-        self.digest_assets     = config.assets.digest
-        self.assets_prefix     = config.assets.prefix
+        self.debug_assets = config.assets.debug
+        self.digest_assets = config.assets.digest
+        self.assets_prefix = config.assets.prefix
         self.assets_precompile = config.assets.precompile
 
         self.assets_environment = app.assets
@@ -247,9 +241,9 @@ module Sprockets
         self.resolve_assets_with = config.assets.resolve_with
 
         self.check_precompiled_asset = config.assets.check_precompiled_asset
-        self.unknown_asset_fallback  = config.assets.unknown_asset_fallback
+        self.unknown_asset_fallback = config.assets.unknown_asset_fallback
         # Expose the app precompiled asset check to the view
-        self.precompiled_asset_checker = -> logical_path { app.asset_precompiled? logical_path }
+        self.precompiled_asset_checker = ->(logical_path) { app.asset_precompiled? logical_path }
       end
     end
   end

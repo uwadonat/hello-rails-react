@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 require 'set'
 
 module Sass
@@ -39,7 +38,7 @@ module Sass
       def parse
         init_scanner!
         root = stylesheet
-        expected("selector or at-rule") unless root && @scanner.eos?
+        expected('selector or at-rule') unless root && @scanner.eos?
         root
       end
 
@@ -71,7 +70,7 @@ module Sass
       def parse_media_query_list
         init_scanner!
         ql = media_query_list
-        expected("media query list") unless ql && @scanner.eos?
+        expected('media query list') unless ql && @scanner.eos?
         ql
       end
 
@@ -83,7 +82,7 @@ module Sass
       def parse_at_root_query
         init_scanner!
         query = at_root_query
-        expected("@at-root query list") unless query && @scanner.eos?
+        expected('@at-root query list') unless query && @scanner.eos?
         query
       end
 
@@ -95,7 +94,7 @@ module Sass
       def parse_supports_condition
         init_scanner!
         condition = supports_condition
-        expected("supports condition") unless condition && @scanner.eos?
+        expected('supports condition') unless condition && @scanner.eos?
         condition
       end
 
@@ -128,13 +127,13 @@ module Sass
           if @template.is_a?(StringScanner)
             @template
           else
-            Sass::Util::MultibyteStringScanner.new(@template.tr("\r", ""))
+            Sass::Util::MultibyteStringScanner.new(@template.tr("\r", ''))
           end
       end
 
       def stylesheet
         node = node(Sass::Tree::RootNode.new(@scanner.string), source_position)
-        block_contents(node, :stylesheet) {s(node)}
+        block_contents(node, :stylesheet) { s(node) }
       end
 
       def s(node)
@@ -177,7 +176,7 @@ module Sass
         if silent
           value = [text.sub(%r{\A\s*//}, '/*').gsub(%r{^\s*//}, ' *') + ' */']
         else
-          value = Sass::Engine.parse_interp(text, line, offset, :filename => @filename)
+          value = Sass::Engine.parse_interp(text, line, offset, filename: @filename)
           line_before_comment = @scanner.string[index_before_line + 1...comment_start]
           value.unshift(line_before_comment.gsub(/[^\s]/, ' '))
         end
@@ -195,8 +194,8 @@ module Sass
       end
 
       DIRECTIVES = Set[:mixin, :include, :function, :return, :debug, :warn, :for,
-        :each, :while, :if, :else, :extend, :import, :media, :charset, :content,
-        :_moz_document, :at_root, :error]
+                       :each, :while, :if, :else, :extend, :import, :media, :charset, :content,
+                       :_moz_document, :at_root, :error]
 
       PREFIXED_DIRECTIVES = Set[:supports]
 
@@ -251,7 +250,8 @@ module Sass
         args, keywords, splat, kwarg_splat = sass_script(:parse_mixin_include_arglist)
         ss
         include_node = node(
-          Sass::Tree::MixinNode.new(name, args, keywords, splat, kwarg_splat), start_pos)
+          Sass::Tree::MixinNode.new(name, args, keywords, splat, kwarg_splat), start_pos
+        )
         if tok?(/\{/)
           include_node.has_children = true
           block(include_node, :directive)
@@ -290,7 +290,7 @@ module Sass
         ss
 
         tok!(/from/)
-        from = sass_script(:parse_until, Set["to", "through"])
+        from = sass_script(:parse_until, Set['to', 'through'])
         ss
 
         @expected = '"to" or "through"'
@@ -348,7 +348,8 @@ module Sass
         ss
         else_node = block(
           node(Sass::Tree::IfNode.new((sass_script(:parse) if tok(/if/))), start_pos),
-          :directive)
+          :directive
+        )
         node.add_else(else_node)
         pos = @scanner.pos
         line = @line
@@ -363,20 +364,20 @@ module Sass
           end
       end
 
-      def else_directive(start_pos)
-        err("Invalid CSS: @else must come after @if")
+      def else_directive(_start_pos)
+        err('Invalid CSS: @else must come after @if')
       end
 
       def extend_directive(start_pos)
         selector_start_pos = source_position
-        @expected = "selector"
+        @expected = 'selector'
         selector = Sass::Util.strip_string_array(expr!(:almost_any_value))
         optional = tok(OPTIONAL)
         ss
         node(Sass::Tree::ExtendNode.new(selector, !!optional, range(selector_start_pos)), start_pos)
       end
 
-      def import_directive(start_pos)
+      def import_directive(_start_pos)
         values = []
 
         loop do
@@ -409,13 +410,17 @@ module Sass
         if str =~ %r{^(https?:)?//} || media || supports || use_css_import?
           return node(
             Sass::Tree::CssImportNode.new(
-              Sass::Script::Value::String.quote(str), media.to_a, supports), start_pos)
+              Sass::Script::Value::String.quote(str), media.to_a, supports
+            ), start_pos
+          )
         end
 
         node(Sass::Tree::ImportNode.new(str.strip), start_pos)
       end
 
-      def use_css_import?; false; end
+      def use_css_import?
+        false
+      end
 
       def media_directive(start_pos)
         block(node(Sass::Tree::MediaNode.new(expr!(:media_query_list).to_a), start_pos), :directive)
@@ -441,14 +446,14 @@ module Sass
           ss
           ident2 = interp_ident
           ss
-          if ident2 && ident2.length == 1 && ident2[0].is_a?(String) && ident2[0].downcase == 'and'
+          if ident2 && ident2.length == 1 && ident2[0].is_a?(String) && ident2[0].casecmp('and').zero?
             query = Sass::Media::Query.new([], ident1, [])
           else
-            if ident2
-              query = Sass::Media::Query.new(ident1, ident2, [])
-            else
-              query = Sass::Media::Query.new([], ident1, [])
-            end
+            query = if ident2
+                      Sass::Media::Query.new(ident1, ident2, [])
+                    else
+                      Sass::Media::Query.new([], ident1, [])
+                    end
             return query unless tok(/and/i)
             ss
           end
@@ -488,8 +493,8 @@ module Sass
           res << ' ' << comparison1 << ' '
           ss
           res << sass_script(:parse_until, stop_at)
-          if ((comparison1 == ">" || comparison1 == ">=") && comparison2 = tok(/>=?/)) ||
-             ((comparison1 == "<" || comparison1 == "<=") && comparison2 = tok(/<=?/))
+          if ((comparison1 == '>' || comparison1 == '>=') && comparison2 = tok(/>=?/)) ||
+             ((comparison1 == '<' || comparison1 == '<=') && comparison2 = tok(/<=?/))
             res << ' ' << comparison2 << ' '
             ss
             res << sass_script(:parse_until, stop_at)
@@ -502,8 +507,8 @@ module Sass
 
       # Aliases allow us to use different descriptions if the same
       # expression fails in different contexts.
-      alias_method :media_expr, :query_expr
-      alias_method :at_root_query, :query_expr
+      alias media_expr query_expr
+      alias at_root_query query_expr
 
       def charset_directive(start_pos)
         name = expr!(:string)
@@ -520,9 +525,9 @@ module Sass
       # but if someone's using e.g. @-webkit-document we don't want them to
       # think WebKit works sans quotes.
       def _moz_document_directive(start_pos)
-        res = ["@-moz-document "]
+        res = ['@-moz-document ']
         loop do
-          res << str {ss} << expr!(:moz_document_function)
+          res << str { ss } << expr!(:moz_document_function)
           if (c = tok(/,/))
             res << c
           else
@@ -534,7 +539,7 @@ module Sass
 
       def moz_document_function
         val = interp_uri || _interp_string(:url_prefix) ||
-          _interp_string(:domain) || function(false) || interpolation
+              _interp_string(:domain) || function(false) || interpolation
         return unless val
         ss
         val
@@ -611,16 +616,17 @@ module Sass
           re = /#{op}/i
           ss
           cond = Sass::Supports::Operator.new(
-            cond, expr!(:supports_condition_in_parens), op)
+            cond, expr!(:supports_condition_in_parens), op
+          )
         end
         cond
       end
 
       def supports_declaration
-          name = sass_script(:parse)
-          tok!(/:/); ss
-          value = sass_script(:parse)
-          Sass::Supports::Declaration.new(name, value)
+        name = sass_script(:parse)
+        tok!(/:/); ss
+        value = sass_script(:parse)
+        Sass::Supports::Declaration.new(name, value)
       end
 
       def supports_condition_in_parens
@@ -658,7 +664,7 @@ module Sass
           elsif flag_name == 'global'
             global ||= true
           else
-            raise Sass::SyntaxError.new("Invalid flag \"!#{flag_name}\".", :line => @line)
+            raise Sass::SyntaxError.new("Invalid flag \"!#{flag_name}\".", line: @line)
           end
           ss
         end
@@ -672,7 +678,7 @@ module Sass
         # are disallowed by the CSS spec,
         # but they're included here for compatibility
         # with some proprietary MS properties
-        str {ss if tok(%r{[/,:.=]})}
+        str { ss if tok(%r{[/,:.=]}) }
       end
 
       def ruleset
@@ -680,7 +686,9 @@ module Sass
         return unless (rules = almost_any_value)
         block(
           node(
-            Sass::Tree::RuleNode.new(rules, range(start_pos)), start_pos), :ruleset)
+            Sass::Tree::RuleNode.new(rules, range(start_pos)), start_pos
+          ), :ruleset
+        )
       end
 
       def block(node, context)
@@ -757,7 +765,9 @@ module Sass
 
         block(
           node(
-            Sass::Tree::RuleNode.new(merge(selector), range(start_pos)), start_pos), :ruleset)
+            Sass::Tree::RuleNode.new(merge(selector), range(start_pos)), start_pos
+          ), :ruleset
+        )
       end
 
       # Tries to parse a declaration, and returns the value parsed so far if it
@@ -774,7 +784,7 @@ module Sass
         # val" hacks.
         name_start_pos = source_position
         if (s = tok(/[:\*\.]|\#(?!\{)/))
-          name = [s, str {ss}]
+          name = [s, str { ss }]
           return name unless (ident = interp_ident)
           name << ident
         else
@@ -787,17 +797,17 @@ module Sass
         end
         name_end_pos = source_position
 
-        mid = [str {ss}]
+        mid = [str { ss }]
         return name + mid unless tok(/:/)
         mid << ':'
 
         # If this is a CSS variable, parse it as a property no matter what.
-        if name.first.is_a?(String) && name.first.start_with?("--")
+        if name.first.is_a?(String) && name.first.start_with?('--')
           return css_variable_declaration(name, name_start_pos, name_end_pos)
         end
 
         return name + mid + [':'] if tok(/:/)
-        mid << str {ss}
+        mid << str { ss }
         post_colon_whitespace = !mid.last.empty?
         could_be_selector = !post_colon_whitespace && (tok?(IDENT_START) || tok?(INTERP_START))
 
@@ -885,7 +895,7 @@ module Sass
             !(?![a-z]) # TODO: never consume "!" when issue 1126 is fixed.
           )+
         }xi) || tok(COMMENT) || tok(SINGLE_LINE_COMMENT) || interp_string || interp_uri ||
-                interpolation(:warn_for_color)
+          interpolation(:warn_for_color)
       end
 
       def declaration_value(top_level: true)
@@ -947,7 +957,7 @@ module Sass
         # val" hacks.
         name_start_pos = source_position
         if (s = tok(/[:\*\.]|\#(?!\{)/))
-          name = [s, str {ss}, *expr!(:interp_ident)]
+          name = [s, str { ss }, *expr!(:interp_ident)]
         else
           return unless (name = interp_ident)
           name = Array(name)
@@ -978,7 +988,7 @@ module Sass
 
       def value!
         if tok?(/\{/)
-          str = Sass::Script::Tree::Literal.new(Sass::Script::Value::String.new(""))
+          str = Sass::Script::Tree::Literal.new(Sass::Script::Value::String.new(''))
           str.line = source_position.line
           str.source_range = range(source_position)
           return str
@@ -994,7 +1004,9 @@ module Sass
           # If val ends with escaped whitespace, leave it be.
           str = Sass::Script::Tree::Literal.new(
             Sass::Script::Value::String.new(
-              Sass::Util.strip_except_escapes(val)))
+              Sass::Util.strip_except_escapes(val)
+            )
+          )
           str.line = start_pos.line
           str.source_range = range(start_pos)
           return str
@@ -1010,10 +1022,10 @@ module Sass
       def expr(allow_var = true)
         t = term(allow_var)
         return unless t
-        res = [t, str {ss}]
+        res = [t, str { ss }]
 
         while (o = operator) && (t = term(allow_var))
-          res << o << t << str {ss}
+          res << o << t << str { ss }
         end
 
         res.flatten
@@ -1032,7 +1044,7 @@ module Sass
 
         op = tok(/[+-]/)
         return unless op
-        @expected = "number or function"
+        @expected = 'number or function'
         [op,
          tok(NUMBER) || function(allow_var) || (allow_var && var_expr) || expr!(:interpolation)]
       end
@@ -1040,11 +1052,11 @@ module Sass
       def function(allow_var)
         name = tok(FUNCTION)
         return unless name
-        if name == "expression(" || name == "calc("
-          str, _ = Sass::Shared.balance(@scanner, ?(, ?), 1)
+        if name == 'expression(' || name == 'calc('
+          str, = Sass::Shared.balance(@scanner, '(', ')', 1)
           [name, str]
         else
-          [name, str {ss}, expr(allow_var), tok!(/\)/)]
+          [name, str { ss }, expr(allow_var), tok!(/\)/)]
         end
       end
 
@@ -1123,7 +1135,7 @@ module Sass
       end
 
       def str
-        @strs.push String.new("")
+        @strs.push String.new('')
         yield
         @strs.last
       ensure
@@ -1134,8 +1146,8 @@ module Sass
         pos = @scanner.pos
         line = @line
         offset = @offset
-        @strs.push ""
-        throw_error {yield} && @strs.last
+        @strs.push ''
+        throw_error { yield } && @strs.last
       rescue Sass::SyntaxError
         @scanner.pos = pos
         @line = line
@@ -1160,12 +1172,12 @@ module Sass
 
       def sass_script(*args)
         parser = self.class.sass_script_parser.new(@scanner, @line, @offset,
-          :filename => @filename, :importer => @importer, :allow_extra_text => true)
+                                                   filename: @filename, importer: @importer, allow_extra_text: true)
         result = parser.send(*args)
         unless @strs.empty?
           # Convert to CSS manually so that comments are ignored.
           src = result.to_sass
-          @strs.each {|s| s << src}
+          @strs.each { |s| s << src }
         end
         @line = parser.line
         @offset = parser.offset
@@ -1180,30 +1192,30 @@ module Sass
       end
 
       EXPR_NAMES = {
-        :media_query => "media query (e.g. print, screen, print and screen)",
-        :media_query_list => "media query (e.g. print, screen, print and screen)",
-        :media_expr => "media expression (e.g. (min-device-width: 800px))",
-        :at_root_query => "@at-root query (e.g. (without: media))",
-        :at_root_directive_list => '* or identifier',
-        :declaration_value => "expression (e.g. fr, 2n+1)",
-        :interp_ident => "identifier",
-        :qualified_name => "identifier",
-        :expr => "expression (e.g. 1px, bold)",
-        :selector_comma_sequence => "selector",
-        :string => "string",
-        :import_arg => "file to import (string or url())",
-        :moz_document_function => "matching function (e.g. url-prefix(), domain())",
-        :supports_condition => "@supports condition (e.g. (display: flexbox))",
-        :supports_condition_in_parens => "@supports condition (e.g. (display: flexbox))",
-        :a_n_plus_b => "An+B expression",
-        :keyframes_selector_component => "from, to, or a percentage",
-        :keyframes_selector => "keyframes selector (e.g. 10%)"
-      }
+        media_query: 'media query (e.g. print, screen, print and screen)',
+        media_query_list: 'media query (e.g. print, screen, print and screen)',
+        media_expr: 'media expression (e.g. (min-device-width: 800px))',
+        at_root_query: '@at-root query (e.g. (without: media))',
+        at_root_directive_list: '* or identifier',
+        declaration_value: 'expression (e.g. fr, 2n+1)',
+        interp_ident: 'identifier',
+        qualified_name: 'identifier',
+        expr: 'expression (e.g. 1px, bold)',
+        selector_comma_sequence: 'selector',
+        string: 'string',
+        import_arg: 'file to import (string or url())',
+        moz_document_function: 'matching function (e.g. url-prefix(), domain())',
+        supports_condition: '@supports condition (e.g. (display: flexbox))',
+        supports_condition_in_parens: '@supports condition (e.g. (display: flexbox))',
+        a_n_plus_b: 'An+B expression',
+        keyframes_selector_component: 'from, to, or a percentage',
+        keyframes_selector: 'keyframes selector (e.g. 10%)'
+      }.freeze
 
       TOK_NAMES = Hash[Sass::SCSS::RX.constants.map do |c|
         [Sass::SCSS::RX.const_get(c), c.downcase]
       end].merge(
-        IDENT => "identifier",
+        IDENT => 'identifier',
         /[;{}]/ => '";"',
         /\b(without|with)\b/ => '"with" or "without"'
       )
@@ -1240,30 +1252,32 @@ module Sass
 
       def err(msg)
         throw(:_sass_parser_error, true) if @throw_error
-        raise Sass::SyntaxError.new(msg, :line => @line)
+        raise Sass::SyntaxError.new(msg, line: @line)
       end
 
       def throw_error
-        old_throw_error, @throw_error = @throw_error, false
+        old_throw_error = @throw_error
+        @throw_error = false
         yield
       ensure
         @throw_error = old_throw_error
       end
 
       def catch_error(&block)
-        old_throw_error, @throw_error = @throw_error, true
+        old_throw_error = @throw_error
+        @throw_error = true
         pos = @scanner.pos
         line = @line
         offset = @offset
         expected = @expected
 
         logger = Sass::Logger::Delayed.install!
-        if catch(:_sass_parser_error) {yield; false}
+        if catch(:_sass_parser_error) { yield; false }
           @scanner.pos = pos
           @line = line
           @offset = offset
           @expected = expected
-          {:pos => pos, :line => line, :expected => @expected, :block => block}
+          { pos: pos, line: line, expected: @expected, block: block }
         else
           logger.flush
           nil
@@ -1295,7 +1309,7 @@ module Sass
         after.gsub!(/\s*\n\s*$/, '')
         # Also get rid of stuff before the last newline
         after.gsub!(/.*\n/, '')
-        after = "..." + after[-15..-1] if after.size > 18
+        after = '...' + after[-15..-1] if after.size > 18
 
         was = scanner.rest.dup
         # Get rid of whitespace between pos and the next token,
@@ -1303,16 +1317,17 @@ module Sass
         was.gsub!(/^\s*\n\s*/, '')
         # Also get rid of stuff after the next newline
         was.gsub!(/\n.*/, '')
-        was = was[0...15] + "..." if was.size > 18
+        was = was[0...15] + '...' if was.size > 18
 
         raise Sass::SyntaxError.new(
           "Invalid CSS after \"#{after}\": expected #{expected}, was \"#{was}\"",
-          :line => line)
+          line: line
+        )
       end
 
       # Avoid allocating lots of new strings for `#tok`.
       # This is important because `#tok` is called all the time.
-      NEWLINE = "\n"
+      NEWLINE = "\n".freeze
 
       def tok(rx)
         res = @scanner.scan(rx)
@@ -1328,9 +1343,7 @@ module Sass
         end
 
         @expected = nil
-        if !@strs.empty? && rx != COMMENT && rx != SINGLE_LINE_COMMENT
-          @strs.each {|s| s << res}
-        end
+        @strs.each { |s| s << res } if !@strs.empty? && rx != COMMENT && rx != SINGLE_LINE_COMMENT
         res
       end
 

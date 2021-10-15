@@ -11,9 +11,7 @@
 #++
 
 module Racc
-
   class LogFileGenerator
-
     def initialize(states, debug_flags = DebugFlags.new)
       @states = states
       @grammar = states.grammar
@@ -22,10 +20,10 @@ module Racc
 
     def output(out)
       output_conflict out; out.puts
-      output_useless  out; out.puts
-      output_rule     out; out.puts
-      output_token    out; out.puts
-      output_state    out
+      output_useless out; out.puts
+      output_rule out; out.puts
+      output_token out; out.puts
+      output_state out
     end
 
     #
@@ -53,9 +51,7 @@ module Racc
         end
       end
       @grammar.each_nonterminal do |t|
-        if t.useless?
-          out.printf "useless nonterminal %s\n", t.to_s
-        end
+        out.printf "useless nonterminal %s\n", t.to_s if t.useless?
       end
     end
 
@@ -80,7 +76,7 @@ module Racc
     end
 
     def pointer_out(out, ptr)
-      buf = sprintf("%4d) %s :", ptr.rule.ident, ptr.rule.target.to_s)
+      buf = format('%4d) %s :', ptr.rule.ident, ptr.rule.target.to_s)
       ptr.rule.symbols.each_with_index do |tok, idx|
         buf << ' _' if idx == ptr.index
         buf << ' ' << tok.to_s
@@ -94,12 +90,12 @@ module Racc
       rr = state.rrconf && state.rrconf.dup
       acts = state.action
       keys = acts.keys
-      keys.sort! {|a,b| a.ident <=> b.ident }
+      keys.sort! { |a, b| a.ident <=> b.ident }
 
-      [ Shift, Reduce, Error, Accept ].each do |klass|
+      [Shift, Reduce, Error, Accept].each do |klass|
         keys.delete_if do |tok|
           act = acts[tok]
-          if act.kind_of?(klass)
+          if act.is_a?(klass)
             outact f, tok, act
             if sr and c = sr.delete(tok)
               outsrconf f, c
@@ -114,19 +110,15 @@ module Racc
           end
         end
       end
-      sr.each {|tok, c| outsrconf f, c } if sr
-      rr.each {|tok, c| outrrconf f, c } if rr
+      sr.each { |_tok, c| outsrconf f, c } if sr
+      rr.each { |_tok, c| outrrconf f, c } if rr
 
       act = state.defact
-      if not act.kind_of?(Error) or @debug_flags.any?
-        outact f, '$default', act
-      end
+      outact f, '$default', act if !act.is_a?(Error) or @debug_flags.any?
 
       f.puts
       state.goto_table.each do |t, st|
-        if t.nonterminal?
-          f.printf "  %-12s  go to state %d\n", t.to_s, st.ident
-        end
+        f.printf "  %-12s  go to state %d\n", t.to_s, st.ident if t.nonterminal?
       end
     end
 
@@ -204,9 +196,7 @@ SRC
     end
 
     def symbol_locations(locs)
-      locs.map {|loc| loc.rule.ident }.reject {|n| n == 0 }.uniq
+      locs.map { |loc| loc.rule.ident }.reject { |n| n == 0 }.uniq
     end
-
   end
-
-end   # module Racc
+end # module Racc

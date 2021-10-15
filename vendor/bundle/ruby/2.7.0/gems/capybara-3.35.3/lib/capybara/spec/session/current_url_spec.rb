@@ -1,13 +1,11 @@
-# frozen_string_literal: true
-
 require 'capybara/spec/test_app'
 
 Capybara::SpecHelper.spec '#current_url, #current_path, #current_host' do
-  before :all do # rubocop:disable RSpec/BeforeAfterAll
+  before :all do
     @servers = Array.new(2) { Capybara::Server.new(TestApp.new).boot }
     # sanity check
-    expect(@servers[0].port).not_to eq(@servers[1].port) # rubocop:disable RSpec/ExpectInHook
-    expect(@servers.map(&:port)).not_to include 80 # rubocop:disable RSpec/ExpectInHook
+    expect(@servers[0].port).not_to eq(@servers[1].port)
+    expect(@servers.map(&:port)).not_to include 80
   end
 
   def bases

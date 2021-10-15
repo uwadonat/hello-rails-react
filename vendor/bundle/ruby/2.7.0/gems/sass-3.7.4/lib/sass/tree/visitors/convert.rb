@@ -17,7 +17,7 @@ class Sass::Tree::Visitors::Convert < Sass::Tree::Visitors::Base
     @format = format
     @tabs = 0
     # 2 spaces by default
-    @tab_chars = @options[:indent] || "  "
+    @tab_chars = @options[:indent] || '  '
     @is_else = false
   end
 
@@ -60,7 +60,7 @@ class Sass::Tree::Visitors::Convert < Sass::Tree::Visitors::Base
 
       if content.include?("\n")
         content.gsub!(/\n \*/, "\n  ")
-        spaces = content.scan(/\n( *)/).map {|s| s.first.size}.min
+        spaces = content.scan(/\n( *)/).map { |s| s.first.size }.min
         sep = node.type == :silent ? "\n//" : "\n *"
         if spaces >= 2
           content.gsub!(/\n  /, sep)
@@ -99,27 +99,27 @@ class Sass::Tree::Visitors::Convert < Sass::Tree::Visitors::Base
   end
 
   def visit_each(node)
-    vars = node.vars.map {|var| "$#{dasherize(var)}"}.join(", ")
+    vars = node.vars.map { |var| "$#{dasherize(var)}" }.join(', ')
     "#{tab_str}@each #{vars} in #{node.list.to_sass(@options)}#{yield}"
   end
 
   def visit_extend(node)
-    "#{tab_str}@extend #{selector_to_src(node.selector).lstrip}" +
+    "#{tab_str}@extend #{selector_to_src(node.selector).lstrip}" \
       "#{' !optional' if node.optional?}#{semi}\n"
   end
 
   def visit_for(node)
-    "#{tab_str}@for $#{dasherize(node.var)} from #{node.from.to_sass(@options)} " +
+    "#{tab_str}@for $#{dasherize(node.var)} from #{node.from.to_sass(@options)} " \
       "#{node.exclusive ? 'to' : 'through'} #{node.to.to_sass(@options)}#{yield}"
   end
 
   def visit_function(node)
     args = node.args.map do |v, d|
       d ? "#{v.to_sass(@options)}: #{d.to_sass(@options)}" : v.to_sass(@options)
-    end.join(", ")
+    end.join(', ')
     if node.splat
-      args << ", " unless node.args.empty?
-      args << node.splat.to_sass(@options) << "..."
+      args << ', ' unless node.args.empty?
+      args << node.splat.to_sass(@options) << '...'
     end
 
     "#{tab_str}@function #{dasherize(node.name)}(#{args})#{yield}"
@@ -128,11 +128,11 @@ class Sass::Tree::Visitors::Convert < Sass::Tree::Visitors::Base
   def visit_if(node)
     name =
       if !@is_else
-        "if"
+        'if'
       elsif node.expr
-        "else if"
+        'else if'
       else
-        "else"
+        'else'
       end
     @is_else = false
     str = "#{tab_str}@#{name}"
@@ -159,11 +159,11 @@ class Sass::Tree::Visitors::Convert < Sass::Tree::Visitors::Base
   end
 
   def visit_cssimport(node)
-    if node.uri.is_a?(Sass::Script::Tree::Node)
-      str = "#{tab_str}@import #{node.uri.to_sass(@options)}"
-    else
-      str = "#{tab_str}@import #{node.uri}"
-    end
+    str = if node.uri.is_a?(Sass::Script::Tree::Node)
+            "#{tab_str}@import #{node.uri.to_sass(@options)}"
+          else
+            "#{tab_str}@import #{node.uri}"
+          end
     str << " supports(#{node.supports_condition.to_src(@options)})" if node.supports_condition
     str << " #{interp_to_src(node.query)}" unless node.query.empty?
     "#{str}#{semi}\n"
@@ -172,7 +172,7 @@ class Sass::Tree::Visitors::Convert < Sass::Tree::Visitors::Base
   def visit_mixindef(node)
     args =
       if node.args.empty? && node.splat.nil?
-        ""
+        ''
       else
         str = '('
         str << node.args.map do |v, d|
@@ -181,10 +181,10 @@ class Sass::Tree::Visitors::Convert < Sass::Tree::Visitors::Base
           else
             v.to_sass(@options)
           end
-        end.join(", ")
+        end.join(', ')
 
         if node.splat
-          str << ", " unless node.args.empty?
+          str << ', ' unless node.args.empty?
           str << node.splat.to_sass(@options) << '...'
         end
 
@@ -203,7 +203,7 @@ class Sass::Tree::Visitors::Convert < Sass::Tree::Visitors::Base
 
     unless node.args.empty? && node.keywords.empty? && node.splat.nil?
       args = node.args.map(&arg_to_sass)
-      keywords = node.keywords.as_stored.to_a.map {|k, v| "$#{dasherize(k)}: #{arg_to_sass[v]}"}
+      keywords = node.keywords.as_stored.to_a.map { |k, v| "$#{dasherize(k)}: #{arg_to_sass[v]}" }
 
       if node.splat
         splat = "#{arg_to_sass[node.splat]}..."
@@ -212,11 +212,11 @@ class Sass::Tree::Visitors::Convert < Sass::Tree::Visitors::Base
 
       arglist = "(#{[args, splat, keywords, kwarg_splat].flatten.compact.join(', ')})"
     end
-    "#{tab_str}#{@format == :sass ? '+' : '@include '}" +
+    "#{tab_str}#{@format == :sass ? '+' : '@include '}" \
       "#{dasherize(node.name)}#{arglist}#{node.has_children ? yield : semi}\n"
   end
 
-  def visit_content(node)
+  def visit_content(_node)
     "#{tab_str}@content#{semi}\n"
   end
 
@@ -234,7 +234,7 @@ class Sass::Tree::Visitors::Convert < Sass::Tree::Visitors::Base
     rule = node.parsed_rules ? [node.parsed_rules.to_s] : node.rule
     if @format == :sass
       name = selector_to_sass(rule)
-      name = "\\" + name if name[0] == ?:
+      name = '\\' + name if name[0] == ':'
       name.gsub(/^/, tab_str) + yield
     elsif @format == :scss
       name = selector_to_scss(rule)
@@ -248,7 +248,7 @@ class Sass::Tree::Visitors::Convert < Sass::Tree::Visitors::Base
   end
 
   def visit_variable(node)
-    "#{tab_str}$#{dasherize(node.name)}: #{node.expr.to_sass(@options)}" +
+    "#{tab_str}$#{dasherize(node.name)}: #{node.expr.to_sass(@options)}" \
       "#{' !global' if node.global}#{' !default' if node.guarded}#{semi}\n"
   end
 
@@ -283,15 +283,15 @@ class Sass::Tree::Visitors::Convert < Sass::Tree::Visitors::Base
     (nodes + [nil]).each_cons(2).map do |child, nxt|
       visit(child) +
         if nxt &&
-            (child.is_a?(Sass::Tree::CommentNode) && child.line + child.lines + 1 == nxt.line) ||
-            (child.is_a?(Sass::Tree::ImportNode) && nxt.is_a?(Sass::Tree::ImportNode) &&
-              child.line + 1 == nxt.line) ||
-            (child.is_a?(Sass::Tree::VariableNode) && nxt.is_a?(Sass::Tree::VariableNode) &&
-              child.line + 1 == nxt.line) ||
-            (child.is_a?(Sass::Tree::PropNode) && nxt.is_a?(Sass::Tree::PropNode)) ||
-            (child.is_a?(Sass::Tree::MixinNode) && nxt.is_a?(Sass::Tree::MixinNode) &&
-              child.line + 1 == nxt.line)
-          ""
+           (child.is_a?(Sass::Tree::CommentNode) && child.line + child.lines + 1 == nxt.line) ||
+           (child.is_a?(Sass::Tree::ImportNode) && nxt.is_a?(Sass::Tree::ImportNode) &&
+             child.line + 1 == nxt.line) ||
+           (child.is_a?(Sass::Tree::VariableNode) && nxt.is_a?(Sass::Tree::VariableNode) &&
+             child.line + 1 == nxt.line) ||
+           (child.is_a?(Sass::Tree::PropNode) && nxt.is_a?(Sass::Tree::PropNode)) ||
+           (child.is_a?(Sass::Tree::MixinNode) && nxt.is_a?(Sass::Tree::MixinNode) &&
+             child.line + 1 == nxt.line)
+          ''
         else
           "\n"
         end
@@ -299,7 +299,7 @@ class Sass::Tree::Visitors::Convert < Sass::Tree::Visitors::Base
   end
 
   def interp_to_src(interp)
-    interp.map {|r| r.is_a?(String) ? r : r.to_sass(@options)}.join
+    interp.map { |r| r.is_a?(String) ? r : r.to_sass(@options) }.join
   end
 
   # Like interp_to_src, but removes the unnecessary `#{}` around the keys and
@@ -321,7 +321,7 @@ class Sass::Tree::Visitors::Convert < Sass::Tree::Visitors::Base
   def selector_to_sass(sel)
     sel.map do |r|
       if r.is_a?(String)
-        r.gsub(/(,)?([ \t]*)\n\s*/) {$1 ? "#{$1}#{$2}\n" : " "}
+        r.gsub(/(,)?([ \t]*)\n\s*/) { Regexp.last_match(1) ? "#{Regexp.last_match(1)}#{Regexp.last_match(2)}\n" : ' ' }
       else
         r.to_sass(@options)
       end
@@ -333,7 +333,7 @@ class Sass::Tree::Visitors::Convert < Sass::Tree::Visitors::Base
   end
 
   def semi
-    @format == :sass ? "" : ";"
+    @format == :sass ? '' : ';'
   end
 
   def tab_str

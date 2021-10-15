@@ -37,9 +37,7 @@ require 'concurrent/synchronization'
 #     *coordinated*, *synchronous*, change of *many* stated. Used when multiple
 #     value must change together, in an all-or-nothing transaction.
 
-
 module Concurrent
-
   # Atoms provide a way to manage shared, synchronous, independent state.
   #
   # An atom is initialized with an initial value and an optional validation
@@ -99,7 +97,7 @@ module Concurrent
     attr_atomic(:value)
     private :value=, :swap_value, :compare_and_set_value, :update_value
     public :value
-    alias_method :deref, :value
+    alias deref value
 
     # @!method value
     #   The current value of the atom.
@@ -120,9 +118,9 @@ module Concurrent
     # @raise [ArgumentError] if the validator is not a `Proc` (when given)
     def initialize(value, opts = {})
       super()
-      @Validator     = opts.fetch(:validator, -> v { true })
+      @Validator = opts.fetch(:validator, ->(_v) { true })
       self.observers = Collection::CopyOnNotifyObserverSet.new
-      self.value     = value
+      self.value = value
     end
 
     # Atomically swaps the value of atom using the given block. The current
@@ -155,7 +153,7 @@ module Concurrent
     #
     # @raise [ArgumentError] When no block is given.
     def swap(*args)
-      raise ArgumentError.new('no block given') unless block_given?
+      raise ArgumentError, 'no block given' unless block_given?
 
       loop do
         old_value = value
@@ -163,7 +161,7 @@ module Concurrent
         begin
           break old_value unless valid?(new_value)
           break new_value if compare_and_set(old_value, new_value)
-        rescue
+        rescue StandardError
           break old_value
         end
       end
@@ -215,7 +213,7 @@ module Concurrent
     #   an exception else true
     def valid?(new_value)
       @Validator.call(new_value)
-    rescue
+    rescue StandardError
       false
     end
   end

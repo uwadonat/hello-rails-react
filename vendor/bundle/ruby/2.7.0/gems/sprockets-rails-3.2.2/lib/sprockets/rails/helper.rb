@@ -13,17 +13,17 @@ module Sprockets
         include Sprockets::Rails::Utils
         def initialize(source)
           msg =
-          if using_sprockets4?
-            "Asset `#{ source }` was not declared to be precompiled in production.\n" +
-            "Declare links to your assets in `app/assets/config/manifest.js`.\n\n" +
-            "  //= link #{ source }\n\n" +
-            "and restart your server"
-          else
-            "Asset was not declared to be precompiled in production.\n" +
-            "Add `Rails.application.config.assets.precompile += " +
-            "%w( #{source} )` to `config/initializers/assets.rb` and " +
-            "restart your server"
-          end
+            if using_sprockets4?
+              "Asset `#{source}` was not declared to be precompiled in production.\n" \
+                "Declare links to your assets in `app/assets/config/manifest.js`.\n\n" \
+                "  //= link #{source}\n\n" \
+                'and restart your server'
+            else
+              "Asset was not declared to be precompiled in production.\n" \
+                'Add `Rails.application.config.assets.precompile += ' \
+                "%w( #{source} )` to `config/initializers/assets.rb` and " \
+                'restart your server'
+            end
           super(msg)
         end
       end
@@ -32,13 +32,13 @@ module Sprockets
       include ActionView::Helpers::AssetTagHelper
       include Sprockets::Rails::Utils
 
-      VIEW_ACCESSORS = [
-        :assets_environment, :assets_manifest,
-        :assets_precompile, :precompiled_asset_checker,
-        :assets_prefix, :digest_assets, :debug_assets,
-        :resolve_assets_with, :check_precompiled_asset,
-        :unknown_asset_fallback
-      ]
+      VIEW_ACCESSORS = %i[
+        assets_environment assets_manifest
+        assets_precompile precompiled_asset_checker
+        assets_prefix digest_assets debug_assets
+        resolve_assets_with check_precompiled_asset
+        unknown_asset_fallback
+      ].freeze
 
       def self.included(klass)
         klass.class_attribute(*VIEW_ACCESSORS)
@@ -50,8 +50,6 @@ module Sprockets
               @assets_environment = @assets_environment.cached
             elsif env = self.class.assets_environment
               @assets_environment = env.cached
-            else
-              nil
             end
           end
         end
@@ -65,8 +63,6 @@ module Sprockets
           def assets_environment
             if env = @assets_environment
               @assets_environment = env.cached
-            else
-              nil
             end
           end
         end
@@ -78,9 +74,9 @@ module Sprockets
         debug = options[:debug]
 
         if asset_path = resolve_asset_path(path, debug)
-          File.join(assets_prefix || "/", legacy_debug_path(asset_path, debug))
+          File.join(assets_prefix || '/', legacy_debug_path(asset_path, debug))
         else
-          message =  "The asset #{ path.inspect } is not present in the asset pipeline.\n"
+          message = "The asset #{path.inspect} is not present in the asset pipeline.\n"
           raise AssetNotFound, message unless unknown_asset_fallback
 
           if respond_to?(:public_compute_asset_path)
@@ -137,8 +133,8 @@ module Sprockets
         options = sources.extract_options!.stringify_keys
         integrity = compute_integrity?(options)
 
-        if options["debug"] != false && request_debug_assets?
-          sources.map { |source|
+        if options['debug'] != false && request_debug_assets?
+          sources.map do |source|
             if asset = lookup_debug_asset(source, type: :javascript)
               if asset.respond_to?(:to_a)
                 asset.to_a.map do |a|
@@ -150,12 +146,12 @@ module Sprockets
             else
               super(source, options)
             end
-          }.flatten.uniq.join("\n").html_safe
+          end.flatten.uniq.join("\n").html_safe
         else
-          sources.map { |source|
+          sources.map do |source|
             options = options.merge('integrity' => asset_integrity(source, type: :javascript)) if integrity
             super source, options
-          }.join("\n").html_safe
+          end.join("\n").html_safe
         end
       end
 
@@ -166,8 +162,8 @@ module Sprockets
         options = sources.extract_options!.stringify_keys
         integrity = compute_integrity?(options)
 
-        if options["debug"] != false && request_debug_assets?
-          sources.map { |source|
+        if options['debug'] != false && request_debug_assets?
+          sources.map do |source|
             if asset = lookup_debug_asset(source, type: :stylesheet)
               if asset.respond_to?(:to_a)
                 asset.to_a.map do |a|
@@ -179,89 +175,90 @@ module Sprockets
             else
               super(source, options)
             end
-          }.flatten.uniq.join("\n").html_safe
+          end.flatten.uniq.join("\n").html_safe
         else
-          sources.map { |source|
+          sources.map do |source|
             options = options.merge('integrity' => asset_integrity(source, type: :stylesheet)) if integrity
             super source, options
-          }.join("\n").html_safe
+          end.join("\n").html_safe
         end
       end
 
       protected
-        # This is awkward: `integrity` is a boolean option indicating whether
-        # we want to include or omit the subresource integrity hash, but the
-        # options hash is also passed through as literal tag attributes.
-        # That means we have to delete the shortcut boolean option so it
-        # doesn't bleed into the tag attributes, but also check its value if
-        # it's boolean-ish.
-        def compute_integrity?(options)
-          if secure_subresource_integrity_context?
-            case options['integrity']
-            when nil, false, true
-              options.delete('integrity') == true
-            end
-          else
-            options.delete 'integrity'
-            false
+
+      # This is awkward: `integrity` is a boolean option indicating whether
+      # we want to include or omit the subresource integrity hash, but the
+      # options hash is also passed through as literal tag attributes.
+      # That means we have to delete the shortcut boolean option so it
+      # doesn't bleed into the tag attributes, but also check its value if
+      # it's boolean-ish.
+      def compute_integrity?(options)
+        if secure_subresource_integrity_context?
+          case options['integrity']
+          when nil, false, true
+            options.delete('integrity') == true
           end
-        end
-
-        # Only serve integrity metadata for HTTPS requests:
-        #   http://www.w3.org/TR/SRI/#non-secure-contexts-remain-non-secure
-        def secure_subresource_integrity_context?
-          respond_to?(:request) && self.request && (self.request.local? || self.request.ssl?)
-        end
-
-        # Enable split asset debugging. Eventually will be deprecated
-        # and replaced by source maps in Sprockets 3.x.
-        def request_debug_assets?
-          debug_assets || (defined?(controller) && controller && params[:debug_assets])
-        rescue # FIXME: what exactly are we rescuing?
+        else
+          options.delete 'integrity'
           false
         end
+      end
 
-        # Internal method to support multifile debugging. Will
-        # eventually be removed w/ Sprockets 3.x.
-        def lookup_debug_asset(path, options = {})
-          path = path_with_extname(path, options)
+      # Only serve integrity metadata for HTTPS requests:
+      #   http://www.w3.org/TR/SRI/#non-secure-contexts-remain-non-secure
+      def secure_subresource_integrity_context?
+        respond_to?(:request) && request && (request.local? || request.ssl?)
+      end
 
-          resolve_asset do |resolver|
-            resolver.find_debug_asset path
+      # Enable split asset debugging. Eventually will be deprecated
+      # and replaced by source maps in Sprockets 3.x.
+      def request_debug_assets?
+        debug_assets || (defined?(controller) && controller && params[:debug_assets])
+      rescue StandardError # FIXME: what exactly are we rescuing?
+        false
+      end
+
+      # Internal method to support multifile debugging. Will
+      # eventually be removed w/ Sprockets 3.x.
+      def lookup_debug_asset(path, options = {})
+        path = path_with_extname(path, options)
+
+        resolve_asset do |resolver|
+          resolver.find_debug_asset path
+        end
+      end
+
+      # compute_asset_extname is in AV::Helpers::AssetUrlHelper
+      def path_with_extname(path, options)
+        path = path.to_s
+        "#{path}#{compute_asset_extname(path, options)}"
+      end
+
+      # Try each asset resolver and return the first non-nil result.
+      def resolve_asset
+        asset_resolver_strategies.detect do |resolver|
+          if result = yield(resolver)
+            break result
           end
         end
+      end
 
-        # compute_asset_extname is in AV::Helpers::AssetUrlHelper
-        def path_with_extname(path, options)
-          path = path.to_s
-          "#{path}#{compute_asset_extname(path, options)}"
-        end
-
-        # Try each asset resolver and return the first non-nil result.
-        def resolve_asset
-          asset_resolver_strategies.detect do |resolver|
-            if result = yield(resolver)
-              break result
-            end
+      # List of resolvers in `config.assets.resolve_with` order.
+      def asset_resolver_strategies
+        @asset_resolver_strategies ||=
+          Array(resolve_assets_with).map do |name|
+            HelperAssetResolvers[name].new(self)
           end
-        end
+      end
 
-        # List of resolvers in `config.assets.resolve_with` order.
-        def asset_resolver_strategies
-          @asset_resolver_strategies ||=
-            Array(resolve_assets_with).map do |name|
-              HelperAssetResolvers[name].new(self)
-            end
+      # Append ?body=1 if debug is on and we're on old Sprockets.
+      def legacy_debug_path(path, debug)
+        if debug && !using_sprockets4?
+          "#{path}?body=1"
+        else
+          path
         end
-
-        # Append ?body=1 if debug is on and we're on old Sprockets.
-        def legacy_debug_path(path, debug)
-          if debug && !using_sprockets4?
-            "#{path}?body=1"
-          else
-            path
-          end
-        end
+      end
     end
 
     # Use a separate module since Helper is mixed in and we needn't pollute
@@ -285,31 +282,30 @@ module Sprockets
         end
 
         def asset_path(path, digest, allow_non_precompiled = false)
-          if digest
-            digest_path path, allow_non_precompiled
-          end
+          digest_path path, allow_non_precompiled if digest
         end
 
-        def digest_path(path, allow_non_precompiled = false)
+        def digest_path(path, _allow_non_precompiled = false)
           @manifest.assets[path]
         end
 
         def integrity(path)
           if meta = metadata(path)
-            meta["integrity"]
+            meta['integrity']
           end
         end
 
-        def find_debug_asset(path)
+        def find_debug_asset(_path)
           nil
         end
 
         private
-          def metadata(path)
-            if digest_path = digest_path(path)
-              @manifest.files[digest_path]
-            end
+
+        def metadata(path)
+          if digest_path = digest_path(path)
+            @manifest.files[digest_path]
           end
+        end
       end
 
       class Environment #:nodoc:
@@ -352,25 +348,26 @@ module Sprockets
         end
 
         private
-          if RUBY_VERSION >= "2.7"
-            class_eval <<-RUBY, __FILE__, __LINE__ + 1
+
+        if RUBY_VERSION >= '2.7'
+          class_eval <<-RUBY, __FILE__, __LINE__ + 1
               def find_asset(path, options = {})
                 @env[path, **options]
               end
             RUBY
-          else
-            def find_asset(path, options = {})
-              @env[path, options]
-            end
+        else
+          def find_asset(path, options = {})
+            @env[path, options]
           end
+        end
 
-          def precompiled?(path)
-            @precompiled_asset_checker.call path
-          end
+        def precompiled?(path)
+          @precompiled_asset_checker.call path
+        end
 
-          def raise_unless_precompiled_asset(path)
-            raise Helper::AssetNotPrecompiled.new(path) if @check_precompiled_asset && !precompiled?(path)
-          end
+        def raise_unless_precompiled_asset(path)
+          raise Helper::AssetNotPrecompiled, path if @check_precompiled_asset && !precompiled?(path)
+        end
       end
     end
   end

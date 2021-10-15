@@ -249,7 +249,7 @@ module Sass::Plugin
       end
 
       template_location_array.each do |template_location, css_location|
-        Sass::Util.glob(File.join(template_location, "**", "[^_]*.s[ca]ss")).sort.each do |file|
+        Sass::Util.glob(File.join(template_location, '**', '[^_]*.s[ca]ss')).sort.each do |file|
           # Get the relative path to the file
           name = Sass::Util.relative_path_from(file, template_location).to_s
           css = css_filename(name, css_location)
@@ -290,7 +290,10 @@ module Sass::Plugin
     #   Don't do an initial update when starting the watcher when true
     def watch(individual_files = [], options = {})
       @inferred_directories = []
-      options, individual_files = individual_files, [] if individual_files.is_a?(Hash)
+      if individual_files.is_a?(Hash)
+        options = individual_files
+        individual_files = []
+      end
       update_stylesheets(individual_files) unless options[:skip_initial_update]
 
       directories = watched_paths
@@ -310,10 +313,10 @@ module Sass::Plugin
       directories += Array(options[:additional_watch_paths])
 
       options = {
-        :relative_paths => false,
+        relative_paths: false,
         # The native windows listener is much slower than the polling option, according to
         # https://github.com/nex3/sass/commit/a3031856b22bc834a5417dedecb038b7be9b9e3e
-        :force_polling => @options[:poll] || Sass::Util.windows?
+        force_polling: @options[:poll] || Sass::Util.windows?
       }
 
       listener = create_listener(*directories, options) do |modified, added, removed|
@@ -415,7 +418,7 @@ module Sass::Plugin
       removed.uniq.each do |f|
         next unless watched_file?(f)
         run_template_deleted(relative_to_pwd(f))
-        if (files = individual_files.find {|(source, _, _)| File.expand_path(source) == f})
+        if (files = individual_files.find { |(source, _, _)| File.expand_path(source) == f })
           recompile_required = true
           # This was a file we were watching explicitly and compiling to a particular location.
           # Delete the corresponding file.
@@ -439,7 +442,7 @@ module Sass::Plugin
 
       # In case a file we're watching is removed and then recreated we
       # prune out the non-existant files here.
-      watched_files_remaining = individual_files.select {|(source, _, _)| File.exist?(source)}
+      watched_files_remaining = individual_files.select { |(source, _, _)| File.exist?(source) }
       update_stylesheets(watched_files_remaining)
     end
 
@@ -452,9 +455,9 @@ module Sass::Plugin
 
       begin
         File.read(filename) unless File.readable?(filename) # triggers an error for handling
-        engine_opts = engine_options(:css_filename => css,
-                                     :filename => filename,
-                                     :sourcemap_filename => sourcemap)
+        engine_opts = engine_options(css_filename: css,
+                                     filename: filename,
+                                     sourcemap_filename: sourcemap)
         mapping = nil
         run_compilation_starting(filename, css, sourcemap)
         engine = Sass::Engine.for_file(filename, engine_opts)
@@ -475,7 +478,9 @@ module Sass::Plugin
         write_file(
           sourcemap,
           mapping.to_json(
-            :css_path => css, :sourcemap_path => sourcemap, :type => options[:sourcemap]))
+            css_path: css, sourcemap_path: sourcemap, type: options[:sourcemap]
+          )
+        )
       end
       run_updated_stylesheet(filename, css, sourcemap) unless compilation_error_occurred
     end
@@ -504,8 +509,8 @@ module Sass::Plugin
 
     def watched_file?(file)
       @watched_files.include?(file) ||
-        normalized_load_paths.any? {|lp| lp.watched_file?(file)} ||
-        @inferred_directories.any? {|d| sass_file_in_directory?(d, file)}
+        normalized_load_paths.any? { |lp| lp.watched_file?(file) } ||
+        @inferred_directories.any? { |d| sass_file_in_directory?(d, file) }
     end
 
     def sass_file_in_directory?(directory, filename)
@@ -513,12 +518,12 @@ module Sass::Plugin
     end
 
     def watched_paths
-      @watched_paths ||= normalized_load_paths.map {|lp| lp.directories_to_watch}.compact.flatten
+      @watched_paths ||= normalized_load_paths.map(&:directories_to_watch).compact.flatten
     end
 
     def normalized_load_paths
       @normalized_load_paths ||=
-        Sass::Engine.normalize_options(:load_paths => load_paths)[:load_paths]
+        Sass::Engine.normalize_options(load_paths: load_paths)[:load_paths]
     end
 
     def load_paths(opts = options)
@@ -526,16 +531,16 @@ module Sass::Plugin
     end
 
     def template_locations
-      template_location_array.to_a.map {|l| l.first}
+      template_location_array.to_a.map(&:first)
     end
 
     def css_locations
-      template_location_array.to_a.map {|l| l.last}
+      template_location_array.to_a.map(&:last)
     end
 
     def css_filename(name, path)
-      "#{path}#{File::SEPARATOR unless path.end_with?(File::SEPARATOR)}#{name}".
-        gsub(/\.s[ac]ss$/, '.css')
+      "#{path}#{File::SEPARATOR unless path.end_with?(File::SEPARATOR)}#{name}"
+        .gsub(/\.s[ac]ss$/, '.css')
     end
 
     def relative_to_pwd(f)

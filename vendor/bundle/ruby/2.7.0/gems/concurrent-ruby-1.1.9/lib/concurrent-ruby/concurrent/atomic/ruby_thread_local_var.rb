@@ -2,11 +2,9 @@ require 'thread'
 require 'concurrent/atomic/abstract_thread_local_var'
 
 module Concurrent
-
   # @!visibility private
   # @!macro internal_implementation_note
   class RubyThreadLocalVar < AbstractThreadLocalVar
-
     # Each thread has a (lazily initialized) array of thread-local variable values
     # Each time a new thread-local var is created, we allocate an "index" for it
     # For example, if the allocated index is 1, that means slot #1 in EVERY
@@ -28,9 +26,9 @@ module Concurrent
     # But when a Thread is GC'd, we need to drop the reference to its thread-local
     #   array, so we don't leak memory
 
-    FREE                = []
-    LOCK                = Mutex.new
-    THREAD_LOCAL_ARRAYS = {} # used as a hash set
+    FREE = [].freeze
+    LOCK = Mutex.new
+    THREAD_LOCAL_ARRAYS = {}.freeze # used as a hash set
 
     # synchronize when not on MRI
     # on MRI using lock in finalizer leads to "can't be called from trap context" error
@@ -172,7 +170,7 @@ module Concurrent
     # @!visibility private
     def get_default
       if @default_block
-        raise "Cannot use default_for with default block"
+        raise 'Cannot use default_for with default block'
       else
         @default
       end

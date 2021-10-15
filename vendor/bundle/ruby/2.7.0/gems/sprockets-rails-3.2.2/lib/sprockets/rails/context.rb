@@ -27,7 +27,7 @@ module Sprockets
           asset = link_asset(path)
           digest_path = asset.digest_path
           path = digest_path if digest_assets
-          File.join(assets_prefix || "/", path)
+          File.join(assets_prefix || '/', path)
         else
           super
         end
@@ -38,11 +38,9 @@ module Sprockets
   register_dependency_resolver 'actioncontroller-asset-url-config' do |env|
     config = env.context_class.config
     [config.relative_url_root,
-    (config.asset_host unless config.asset_host.respond_to?(:call))]
+     (config.asset_host unless config.asset_host.respond_to?(:call))]
   end
 
   # fallback to the default pipeline when using Sprockets 3.x
-  unless config[:pipelines].include? :debug
-    register_pipeline :debug, config[:pipelines][:default]
-  end
+  register_pipeline :debug, config[:pipelines][:default] unless config[:pipelines].include? :debug
 end

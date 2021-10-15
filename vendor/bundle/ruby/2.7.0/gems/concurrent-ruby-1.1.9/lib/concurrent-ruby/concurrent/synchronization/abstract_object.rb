@@ -1,10 +1,8 @@
 module Concurrent
   module Synchronization
-
     # @!visibility private
     # @!macro internal_implementation_note
     class AbstractObject
-
       # @abstract has to be implemented based on Ruby runtime
       def initialize
         raise NotImplementedError
@@ -16,7 +14,7 @@ module Concurrent
         raise NotImplementedError
       end
 
-      def self.attr_volatile(*names)
+      def self.attr_volatile(*_names)
         raise NotImplementedError
       end
     end

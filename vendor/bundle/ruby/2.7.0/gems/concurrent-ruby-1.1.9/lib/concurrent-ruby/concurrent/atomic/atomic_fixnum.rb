@@ -2,7 +2,6 @@ require 'concurrent/atomic/mutex_atomic_fixnum'
 require 'concurrent/synchronization'
 
 module Concurrent
-
   ###################################################################
 
   # @!macro atomic_fixnum_method_initialize
@@ -95,10 +94,9 @@ module Concurrent
 
   # @!visibility private
   # @!macro internal_implementation_note
-  AtomicFixnumImplementation = case
-                               when defined?(JavaAtomicFixnum)
+  AtomicFixnumImplementation = if defined?(JavaAtomicFixnum)
                                  JavaAtomicFixnum
-                               when defined?(CAtomicFixnum)
+                               elsif defined?(CAtomicFixnum)
                                  CAtomicFixnum
                                else
                                  MutexAtomicFixnum
@@ -138,6 +136,6 @@ module Concurrent
       format '%s value:%s>', super[0..-2], value
     end
 
-    alias_method :inspect, :to_s
+    alias inspect to_s
   end
 end

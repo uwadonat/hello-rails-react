@@ -855,7 +855,7 @@ module Capybara
         true
       end
 
-      def _verify_text(type = nil, expected_text, **query_options) # rubocop:disable Style/OptionalArguments
+      def _verify_text(type = nil, expected_text, **query_options)
         query_options[:session_options] = session_options
         query = Capybara::Queries::TextQuery.new(type, expected_text, **query_options)
         synchronize(query.wait) do

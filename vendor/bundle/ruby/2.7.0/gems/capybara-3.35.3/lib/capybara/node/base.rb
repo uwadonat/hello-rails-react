@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 module Capybara
   module Node
     ##
@@ -128,7 +126,7 @@ module Capybara
         self
       end
 
-    protected
+      protected
 
       def catch_error?(error, errors = nil)
         errors ||= (driver.invalid_element_errors + [Capybara::ElementNotFound])

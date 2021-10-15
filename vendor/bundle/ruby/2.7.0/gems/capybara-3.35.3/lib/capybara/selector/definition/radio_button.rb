@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 Capybara.add_selector(:radio_button, locator_type: [String, Symbol]) do
   label 'radio button'
   xpath do |locator, allow_self: nil, **options|

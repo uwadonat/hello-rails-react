@@ -6,7 +6,9 @@ module Sprockets
   # `Dependencies` is an internal mixin whose public methods are exposed on the
   # `Environment` and `CachedEnvironment` classes.
   module Dependencies
-    include DigestUtils, PathDigestUtils, URIUtils
+    include URIUtils
+    include PathDigestUtils
+    include DigestUtils
 
     # Public: Mapping dependency schemes to resolver functions.
     #
@@ -49,7 +51,7 @@ module Sprockets
         set + Set.new([uri])
       end
     end
-    alias_method :depend_on, :add_dependency
+    alias depend_on add_dependency
 
     # Internal: Resolve dependency URIs.
     #
@@ -58,15 +60,13 @@ module Sprockets
       # Optimize for the most common scheme to
       # save 22k allocations on an average Spree app.
       scheme = if str.start_with?('file-digest:'.freeze)
-        'file-digest'.freeze
-      else
-        str[/([^:]+)/, 1]
+                 'file-digest'.freeze
+               else
+                 str[/([^:]+)/, 1]
       end
 
       if resolver = config[:dependency_resolvers][scheme]
         resolver.call(self, str)
-      else
-        nil
       end
     end
   end

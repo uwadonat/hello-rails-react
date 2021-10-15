@@ -1,23 +1,23 @@
-require "pathname"
-require "fileutils"
-require "digest/md5"
-require "tmpdir"
+require 'pathname'
+require 'fileutils'
+require 'digest/md5'
+require 'tmpdir'
 
-require "spring/version"
-require "spring/sid"
-require "spring/configuration"
+require 'spring/version'
+require 'spring/sid'
+require 'spring/configuration'
 
 module Spring
-  IGNORE_SIGNALS = %w(INT QUIT)
+  IGNORE_SIGNALS = %w[INT QUIT].freeze
   STOP_TIMEOUT = 2 # seconds
 
   class Env
     attr_reader :log_file
 
     def initialize(options = {})
-      @root         = options[:root]
+      @root = options[:root]
       @project_root = options[:root]
-      @log_file     = options[:log_file] || File.open(ENV["SPRING_LOG"] || File::NULL, "a")
+      @log_file = options[:log_file] || File.open(ENV['SPRING_LOG'] || File::NULL, 'a')
     end
 
     def root
@@ -34,7 +34,7 @@ module Spring
 
     def tmp_path
       path = Pathname.new(
-        ENV["SPRING_TMP_PATH"] ||
+        ENV['SPRING_TMP_PATH'] ||
           File.join(ENV['XDG_RUNTIME_DIR'] || Dir.tmpdir, "spring-#{Process.uid}")
       )
       FileUtils.mkdir_p(path) unless path.exist?
@@ -42,11 +42,11 @@ module Spring
     end
 
     def application_id
-      ENV["SPRING_APPLICATION_ID"] || Digest::MD5.hexdigest(RUBY_VERSION + project_root.to_s)
+      ENV['SPRING_APPLICATION_ID'] || Digest::MD5.hexdigest(RUBY_VERSION + project_root.to_s)
     end
 
     def socket_path
-      Pathname.new(ENV["SPRING_SOCKET"] || tmp_path.join(application_id))
+      Pathname.new(ENV['SPRING_SOCKET'] || tmp_path.join(application_id))
     end
 
     def socket_name
@@ -54,7 +54,7 @@ module Spring
     end
 
     def pidfile_path
-      Pathname.new(ENV["SPRING_PIDFILE"] || socket_path.dirname.join("#{socket_path.basename(".*")}.pid"))
+      Pathname.new(ENV['SPRING_PIDFILE'] || socket_path.dirname.join("#{socket_path.basename('.*')}.pid"))
     end
 
     def pid
@@ -110,7 +110,7 @@ module Spring
     end
 
     def server_command
-      ENV["SPRING_SERVER_COMMAND"] || "#{File.expand_path("../../../bin/spring", __FILE__)} server --background"
+      ENV['SPRING_SERVER_COMMAND'] || "#{File.expand_path('../../../bin/spring', __FILE__)} server --background"
     end
   end
 end

@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 Capybara.add_selector(:datalist_input, locator_type: [String, Symbol]) do
   label 'input box with datalist completion'
 

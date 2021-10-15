@@ -7,7 +7,7 @@ class Sass::Tree::Visitors::DeepCopy < Sass::Tree::Visitors::Base
   end
 
   def visit_children(parent)
-    parent.children = parent.children.map {|c| visit(c)}
+    parent.children = parent.children.map { |c| visit(c) }
     parent
   end
 
@@ -27,7 +27,7 @@ class Sass::Tree::Visitors::DeepCopy < Sass::Tree::Visitors::Base
   end
 
   def visit_extend(node)
-    node.selector = node.selector.map {|c| c.is_a?(Sass::Script::Tree::Node) ? c.deep_copy : c}
+    node.selector = node.selector.map { |c| c.is_a?(Sass::Script::Tree::Node) ? c.deep_copy : c }
     yield
   end
 
@@ -38,7 +38,7 @@ class Sass::Tree::Visitors::DeepCopy < Sass::Tree::Visitors::Base
   end
 
   def visit_function(node)
-    node.args = node.args.map {|k, v| [k.deep_copy, v && v.deep_copy]}
+    node.args = node.args.map { |k, v| [k.deep_copy, v && v.deep_copy] }
     yield
   end
 
@@ -49,19 +49,19 @@ class Sass::Tree::Visitors::DeepCopy < Sass::Tree::Visitors::Base
   end
 
   def visit_mixindef(node)
-    node.args = node.args.map {|k, v| [k.deep_copy, v && v.deep_copy]}
+    node.args = node.args.map { |k, v| [k.deep_copy, v && v.deep_copy] }
     yield
   end
 
   def visit_mixin(node)
-    node.args = node.args.map {|a| a.deep_copy}
-    node.keywords = Sass::Util::NormalizedMap.new(Hash[node.keywords.map {|k, v| [k, v.deep_copy]}])
+    node.args = node.args.map(&:deep_copy)
+    node.keywords = Sass::Util::NormalizedMap.new(Hash[node.keywords.map { |k, v| [k, v.deep_copy] }])
     yield
   end
 
   def visit_prop(node)
-    node.name = node.name.map {|c| c.is_a?(Sass::Script::Tree::Node) ? c.deep_copy : c}
-    node.value = node.value.map {|c| c.is_a?(Sass::Script::Tree::Node) ? c.deep_copy : c}
+    node.name = node.name.map { |c| c.is_a?(Sass::Script::Tree::Node) ? c.deep_copy : c }
+    node.value = node.value.map { |c| c.is_a?(Sass::Script::Tree::Node) ? c.deep_copy : c }
     yield
   end
 
@@ -71,7 +71,7 @@ class Sass::Tree::Visitors::DeepCopy < Sass::Tree::Visitors::Base
   end
 
   def visit_rule(node)
-    node.rule = node.rule.map {|c| c.is_a?(Sass::Script::Tree::Node) ? c.deep_copy : c}
+    node.rule = node.rule.map { |c| c.is_a?(Sass::Script::Tree::Node) ? c.deep_copy : c }
     yield
   end
 
@@ -91,12 +91,12 @@ class Sass::Tree::Visitors::DeepCopy < Sass::Tree::Visitors::Base
   end
 
   def visit_directive(node)
-    node.value = node.value.map {|c| c.is_a?(Sass::Script::Tree::Node) ? c.deep_copy : c}
+    node.value = node.value.map { |c| c.is_a?(Sass::Script::Tree::Node) ? c.deep_copy : c }
     yield
   end
 
   def visit_media(node)
-    node.query = node.query.map {|c| c.is_a?(Sass::Script::Tree::Node) ? c.deep_copy : c}
+    node.query = node.query.map { |c| c.is_a?(Sass::Script::Tree::Node) ? c.deep_copy : c }
     yield
   end
 

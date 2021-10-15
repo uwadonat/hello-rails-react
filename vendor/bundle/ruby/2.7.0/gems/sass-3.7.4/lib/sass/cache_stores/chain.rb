@@ -16,7 +16,7 @@ module Sass
 
       # @see Base#store
       def store(key, sha, obj)
-        @caches.each {|c| c.store(key, sha, obj)}
+        @caches.each { |c| c.store(key, sha, obj) }
       end
 
       # @see Base#retrieve
@@ -24,7 +24,7 @@ module Sass
         @caches.each_with_index do |c, i|
           obj = c.retrieve(key, sha)
           next unless obj
-          @caches[0...i].each {|prev| prev.store(key, sha, obj)}
+          @caches[0...i].each { |prev| prev.store(key, sha, obj) }
           return obj
         end
         nil

@@ -28,8 +28,7 @@ module Sass
       def resolve_parent_refs(super_cseq, implicit_parent = true)
         if super_cseq.nil?
           if contains_parent_ref?
-            raise Sass::SyntaxError.new(
-              "Base-level rules cannot contain the parent-selector-referencing character '&'.")
+            raise Sass::SyntaxError, "Base-level rules cannot contain the parent-selector-referencing character '&'."
           end
           return self
         end
@@ -43,7 +42,7 @@ module Sass
       #
       # @return [Boolean]
       def contains_parent_ref?
-        @members.any? {|sel| sel.contains_parent_ref?}
+        @members.any?(&:contains_parent_ref?)
       end
 
       # Non-destrucively extends this selector with the extensions specified in a hash
@@ -68,7 +67,7 @@ module Sass
       # @return [CommaSequence] A copy of this selector,
       #   with extensions made according to `extends`
       def do_extend(extends, parent_directives = [], replace = false, seen = Set.new,
-          original = true)
+                    original = true)
         CommaSequence.new(members.map do |seq|
           seq.do_extend(extends, parent_directives, replace, seen, original)
         end.flatten)
@@ -83,7 +82,7 @@ module Sass
       # @param cseq [CommaSequence]
       # @return [Boolean]
       def superselector?(cseq)
-        cseq.members.all? {|seq1| members.any? {|seq2| seq2.superselector?(seq1)}}
+        cseq.members.all? { |seq1| members.any? { |seq2| seq2.superselector?(seq1) } }
       end
 
       # Populates a subset map that can then be used to extend
@@ -102,17 +101,15 @@ module Sass
       #   Whether `extendee` is allowed to contain compound selectors.
       # @raise [Sass::SyntaxError] if this extension is invalid.
       def populate_extends(extends, extendee, extend_node = nil, parent_directives = [],
-          allow_compound_target = false)
+                           allow_compound_target = false)
         extendee.members.each do |seq|
-          if seq.members.size > 1
-            raise Sass::SyntaxError.new("Can't extend #{seq}: can't extend nested selectors")
-          end
+          raise Sass::SyntaxError, "Can't extend #{seq}: can't extend nested selectors" if seq.members.size > 1
 
           sseq = seq.members.first
           if !sseq.is_a?(Sass::Selector::SimpleSequence)
-            raise Sass::SyntaxError.new("Can't extend #{seq}: invalid selector")
-          elsif sseq.members.any? {|ss| ss.is_a?(Sass::Selector::Parent)}
-            raise Sass::SyntaxError.new("Can't extend #{seq}: can't extend parent selectors")
+            raise Sass::SyntaxError, "Can't extend #{seq}: invalid selector"
+          elsif sseq.members.any? { |ss| ss.is_a?(Sass::Selector::Parent) }
+            raise Sass::SyntaxError, "Can't extend #{seq}: can't extend parent selectors"
           end
 
           sel = sseq.members
@@ -126,11 +123,12 @@ WARNING
 
           members.each do |member|
             unless member.members.last.is_a?(Sass::Selector::SimpleSequence)
-              raise Sass::SyntaxError.new("#{member} can't extend: invalid selector")
+              raise Sass::SyntaxError, "#{member} can't extend: invalid selector"
             end
 
             extends[sel] = Sass::Tree::Visitors::Cssize::Extend.new(
-              member, sel, extend_node, parent_directives, false)
+              member, sel, extend_node, parent_directives, false
+            )
           end
         end
       end
@@ -147,8 +145,8 @@ WARNING
       #   by the time extension and unification happen,
       #   this exception will only ever be raised as a result of programmer error
       def unify(other)
-        results = members.map {|seq1| other.members.map {|seq2| seq1.unify(seq2)}}.flatten.compact
-        results.empty? ? nil : CommaSequence.new(results.map {|cseq| cseq.members}.flatten)
+        results = members.map { |seq1| other.members.map { |seq2| seq1.unify(seq2) } }.flatten.compact
+        results.empty? ? nil : CommaSequence.new(results.map(&:members).flatten)
       end
 
       # Returns a SassScript representation of this selector.
@@ -168,7 +166,7 @@ WARNING
       #
       # @return [String]
       def inspect
-        members.map {|m| m.inspect}.join(", ")
+        members.map(&:inspect).join(', ')
       end
 
       # @see AbstractSequence#to_s
@@ -176,9 +174,9 @@ WARNING
         @members.map do |m|
           next if opts[:placeholder] == false && m.invisible?
           m.to_s(opts)
-        end.compact.
-          join(opts[:style] == :compressed ? "," : ", ").
-          gsub(", \n", ",\n")
+        end.compact
+          .join(opts[:style] == :compressed ? ',' : ', ')
+          .gsub(", \n", ",\n")
       end
 
       private

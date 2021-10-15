@@ -55,7 +55,7 @@ module Capybara
       def name; selector.name; end
       def label; selector.label || selector.name; end
 
-      def description(only_applied = false) # rubocop:disable Style/OptionalBooleanParameter
+      def description(only_applied = false)
         desc = +''
         show_for = show_for_stage(only_applied)
 
@@ -86,7 +86,7 @@ module Capybara
 
         %i[above below left_of right_of near].each do |spatial_filter|
           if options[spatial_filter] && show_for[:spatial]
-            desc << " #{spatial_filter} #{options[spatial_filter] rescue '<ERROR>'}" # rubocop:disable Style/RescueModifier
+            desc << " #{spatial_filter} #{options[spatial_filter] rescue '<ERROR>'}"
           end
         end
 
@@ -598,7 +598,6 @@ module Capybara
         attr_reader :top, :bottom, :left, :right
 
         def initialize(position)
-          # rubocop:disable Style/RescueModifier
           @top = position['top'] rescue position['y']
           @bottom = position['bottom'] rescue (@top + position['height'])
           @left = position['left'] rescue position['x']
@@ -656,7 +655,6 @@ module Capybara
 
         def distance_segment_segment(l1p1, l1p2, l2p1, l2p2)
           # See http://geomalgorithms.com/a07-_distance.html
-          # rubocop:disable Naming/VariableName
           u = l1p2 - l1p1
           v = l2p2 - l2p1
           w = l1p1 - l2p1

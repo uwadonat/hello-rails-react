@@ -369,11 +369,9 @@ RSpec.shared_examples 'Capybara::Session' do |session, mode|
         end.to raise_error(ArgumentError, 'Not allowed to close the primary window')
       end
     end
-
-    # rubocop:disable RSpec/InstanceVariable
     describe 'Capybara#disable_animation' do
       context 'when set to `true`' do
-        before(:context) do # rubocop:disable RSpec/BeforeAfterAll
+        before(:context) do
           skip "Safari doesn't support multiple sessions" if safari?(session)
           # NOTE: Although Capybara.SpecHelper.reset! sets Capybara.disable_animation to false,
           # it doesn't affect any of these tests because the settings are applied per-session
@@ -421,7 +419,7 @@ RSpec.shared_examples 'Capybara::Session' do |session, mode|
       end
 
       context 'when set to `false`' do
-        before(:context) do # rubocop:disable RSpec/BeforeAfterAll
+        before(:context) do
           skip "Safari doesn't support multiple sessions" if safari?(session)
           # NOTE: Although Capybara.SpecHelper.reset! sets Capybara.disable_animation to false,
           # it doesn't affect any of these tests because the settings are applied per-session
@@ -450,7 +448,7 @@ RSpec.shared_examples 'Capybara::Session' do |session, mode|
       end
 
       context 'if we pass in css that matches elements' do
-        before(:context) do # rubocop:disable RSpec/BeforeAfterAll
+        before(:context) do
           skip "safaridriver doesn't support multiple sessions" if safari?(session)
           # NOTE: Although Capybara.SpecHelper.reset! sets Capybara.disable_animation to false,
           # it doesn't affect any of these tests because the settings are applied per-session
@@ -474,7 +472,7 @@ RSpec.shared_examples 'Capybara::Session' do |session, mode|
       end
 
       context 'if we pass in css that does not match elements' do
-        before(:context) do # rubocop:disable RSpec/BeforeAfterAll
+        before(:context) do
           skip "Safari doesn't support multiple sessions" if safari?(session)
           # NOTE: Although Capybara.SpecHelper.reset! sets Capybara.disable_animation to false,
           # it doesn't affect any of these tests because the settings are applied per-session

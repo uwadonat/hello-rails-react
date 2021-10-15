@@ -67,7 +67,7 @@ module Sass::Script::Tree
     def to_sass(opts = {})
       return to_quoted_equivalent.to_sass if deprecation == :immediate
 
-      res = ""
+      res = ''
       res << @before.to_sass(opts) if @before
       res << ' ' if @before && @whitespace_before
       res << '#{' unless @originally_text
@@ -84,11 +84,12 @@ module Sass::Script::Tree
     # @return [Sass::Script::Tree::Node]
     def to_quoted_equivalent
       Funcall.new(
-        "unquote",
+        'unquote',
         [to_string_interpolation(self)],
         Sass::Util::NormalizedMap.new,
         nil,
-        nil)
+        nil
+      )
     end
 
     # Returns the three components of the interpolation, `before`, `mid`, and `after`.
@@ -123,7 +124,7 @@ module Sass::Script::Tree
         if node.is_a?(StringInterpolation)
           return concat(string_literal(node.quote), concat(node, string_literal(node.quote)))
         end
-        return StringInterpolation.new(string_literal(""), node, string_literal(""))
+        return StringInterpolation.new(string_literal(''), node, string_literal(''))
       end
 
       interp = node_or_interp
@@ -131,7 +132,7 @@ module Sass::Script::Tree
         if interp.after
           to_string_interpolation(interp.after)
         else
-          string_literal("")
+          string_literal('')
         end
       if interp.after && interp.whitespace_after
         after_string_or_interp = concat(string_literal(' '), after_string_or_interp)
@@ -143,7 +144,7 @@ module Sass::Script::Tree
         if interp.before
           to_string_interpolation(interp.before)
         else
-          string_literal("")
+          string_literal('')
         end
       if interp.before && interp.whitespace_before
         before_string_or_interp = concat(before_string_or_interp, string_literal(' '))
@@ -160,13 +161,13 @@ module Sass::Script::Tree
     # @return [Sass::Script::Value::String]
     #   The SassScript string that is the value of the interpolation
     def _perform(environment)
-      res = ""
+      res = ''
       res << @before.perform(environment).to_s if @before
-      res << " " if @before && @whitespace_before
+      res << ' ' if @before && @whitespace_before
 
       val = @mid.perform(environment)
       if @warn_for_color && val.is_a?(Sass::Script::Value::Color) && val.name
-        alternative = Operation.new(Sass::Script::Value::String.new("", :string), @mid, :plus)
+        alternative = Operation.new(Sass::Script::Value::String.new('', :string), @mid, :plus)
         Sass::Util.sass_warn <<MESSAGE
 WARNING on line #{line}, column #{source_range.start_pos.offset}#{" of #{filename}" if filename}:
 You probably don't mean to use the color value `#{val}' in interpolation here.
@@ -176,12 +177,13 @@ If you really want to use the color value here, use `#{alternative.to_sass}'.
 MESSAGE
       end
 
-      res << val.to_s(:quote => :none)
-      res << " " if @after && @whitespace_after
+      res << val.to_s(quote: :none)
+      res << ' ' if @after && @whitespace_after
       res << @after.perform(environment).to_s if @after
       str = Sass::Script::Value::String.new(
         res, :identifier,
-        (to_quoted_equivalent.to_sass if deprecation == :potential))
+        (to_quoted_equivalent.to_sass if deprecation == :potential)
+      )
       str.source_range = source_range
       opts(str)
     end
@@ -206,7 +208,8 @@ MESSAGE
       StringInterpolation.new(
         string_or_interp1.before,
         string_or_interp1.mid,
-        concat(string_or_interp1.after, string_or_interp2))
+        concat(string_or_interp1.after, string_or_interp2)
+      )
     end
 
     # Returns a string literal with the given contents.

@@ -7,7 +7,7 @@ module Sass::Script::Tree
       []
     end
 
-    def to_sass(opts = {})
+    def to_sass(_opts = {})
       '&'
     end
 

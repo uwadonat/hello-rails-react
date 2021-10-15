@@ -1,13 +1,11 @@
-# encoding: UTF-8
-
 require 'minitest/autorun'
 
 require File.expand_path('../../fixtures/classes', __FILE__)
 
 require 'archive/zip/codec/traditional_encryption'
 
-describe "Archive::Zip::Codec::TraditionalEncryption::Decrypt#tell" do
-  it "returns the current position of the stream" do
+describe 'Archive::Zip::Codec::TraditionalEncryption::Decrypt#tell' do
+  it 'returns the current position of the stream' do
     TraditionalEncryptionSpecs.encrypted_data do |ed|
       Archive::Zip::Codec::TraditionalEncryption::Decrypt.open(
         ed,

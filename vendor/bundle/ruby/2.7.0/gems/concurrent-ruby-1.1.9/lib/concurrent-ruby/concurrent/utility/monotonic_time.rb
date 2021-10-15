@@ -1,7 +1,6 @@
 require 'concurrent/synchronization'
 
 module Concurrent
-
   class_definition = Class.new(Synchronization::LockableObject) do
     def initialize
       @last_time = Time.now.to_f
@@ -16,7 +15,7 @@ module Concurrent
     elsif Concurrent.on_jruby?
       # @!visibility private
       def get_time
-        java.lang.System.nanoTime() / 1_000_000_000.0
+        java.lang.System.nanoTime / 1_000_000_000.0
       end
     else
 

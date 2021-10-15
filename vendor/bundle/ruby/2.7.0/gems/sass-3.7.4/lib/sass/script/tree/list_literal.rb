@@ -30,11 +30,13 @@ module Sass::Script::Tree
     end
 
     # @see Node#children
-    def children; elements; end
+    def children
+      elements
+    end
 
     # @see Value#to_sass
     def to_sass(opts = {})
-      return bracketed ? "[]" : "()" if elements.empty?
+      return bracketed ? '[]' : '()' if elements.empty?
       members = elements.map do |v|
         if element_needs_parens?(v)
           "(#{v.to_sass(opts)})"
@@ -54,13 +56,13 @@ module Sass::Script::Tree
     # @see Node#deep_copy
     def deep_copy
       node = dup
-      node.instance_variable_set('@elements', elements.map {|e| e.deep_copy})
+      node.instance_variable_set('@elements', elements.map(&:deep_copy))
       node
     end
 
     def inspect
       (bracketed ? '[' : '(') +
-        elements.map {|e| e.inspect}.join(separator == :space ? ' ' : ', ') +
+        elements.map(&:inspect).join(separator == :space ? ' ' : ', ') +
         (bracketed ? ']' : ')')
     end
 
@@ -72,9 +74,10 @@ module Sass::Script::Tree
 
     def _perform(environment)
       list = Sass::Script::Value::List.new(
-        elements.map {|e| e.perform(environment)},
+        elements.map { |e| e.perform(environment) },
         separator: separator,
-        bracketed: bracketed)
+        bracketed: bracketed
+      )
       list.source_range = source_range
       list.options = options
       list
@@ -94,9 +97,7 @@ module Sass::Script::Tree
 
       return false unless separator == :space
 
-      if element.is_a?(UnaryOperation)
-        return element.operator == :minus || element.operator == :plus
-      end
+      return element.operator == :minus || element.operator == :plus if element.is_a?(UnaryOperation)
 
       return false unless element.is_a?(Operation)
       return true unless element.operator == :div
@@ -106,7 +107,7 @@ module Sass::Script::Tree
     # Returns whether a value is a number literal that shouldn't be divided.
     def is_literal_number?(value)
       value.is_a?(Literal) &&
-        value.value.is_a?((Sass::Script::Value::Number)) &&
+        value.value.is_a?(Sass::Script::Value::Number) &&
         !value.value.original.nil?
     end
 

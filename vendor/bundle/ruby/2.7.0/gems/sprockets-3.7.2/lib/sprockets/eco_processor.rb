@@ -9,7 +9,7 @@ module Sprockets
   #   https://github.com/sstephenson/eco
   #
   module EcoProcessor
-    VERSION = '1'
+    VERSION = '1'.freeze
 
     def self.cache_key
       @cache_key ||= "#{name}:#{Autoload::Eco::Source::VERSION}:#{VERSION}".freeze

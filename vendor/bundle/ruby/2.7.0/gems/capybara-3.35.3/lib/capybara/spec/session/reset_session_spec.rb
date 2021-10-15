@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 Capybara::SpecHelper.spec '#reset_session!' do
   it 'removes cookies from current domain' do
     @session.visit('/set_cookie')

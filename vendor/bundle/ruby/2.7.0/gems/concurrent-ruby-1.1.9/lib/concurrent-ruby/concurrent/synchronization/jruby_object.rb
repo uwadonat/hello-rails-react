@@ -1,6 +1,5 @@
 module Concurrent
   module Synchronization
-
     if Concurrent.on_jruby? && Concurrent.java_extensions_loaded?
 
       # @!visibility private
@@ -12,7 +11,6 @@ module Concurrent
         module ClassMethods
           def attr_volatile(*names)
             names.each do |name|
-
               ivar = :"@volatile_#{name}"
 
               class_eval <<-RUBY, __FILE__, __LINE__ + 1
@@ -24,7 +22,6 @@ module Concurrent
                   instance_variable_set_volatile(:#{ivar}, value)
                 end
               RUBY
-
             end
             names.map { |n| [n, :"#{n}="] }.flatten
           end

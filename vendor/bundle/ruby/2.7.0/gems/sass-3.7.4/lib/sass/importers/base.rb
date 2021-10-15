@@ -39,7 +39,7 @@ module Sass
       #   containing the `@import` that's currently being resolved.
       # @return [Sass::Engine, nil] An Engine containing the imported file,
       #   or nil if it couldn't be found or was in the wrong format.
-      def find_relative(uri, base, options)
+      def find_relative(_uri, _base, _options)
         Sass::Util.abstract(self)
       end
 
@@ -79,7 +79,7 @@ module Sass
       #   Callers should only pass in a value they don't mind being destructively modified.
       # @return [Sass::Engine, nil] An Engine containing the imported file,
       #   or nil if it couldn't be found or was in the wrong format.
-      def find(uri, options)
+      def find(_uri, _options)
         Sass::Util.abstract(self)
       end
 
@@ -93,7 +93,7 @@ module Sass
       # @param options [{Symbol => Object}] Options for the Sass file
       #   containing the `@import` currently being checked.
       # @return [Time, nil]
-      def mtime(uri, options)
+      def mtime(_uri, _options)
         Sass::Util.abstract(self)
       end
 
@@ -114,7 +114,7 @@ module Sass
       #   containing the `@import` currently being checked.
       # @return [(String, String)] The key pair which uniquely identifies
       #   the file at the given URI.
-      def key(uri, options)
+      def key(_uri, _options)
         Sass::Util.abstract(self)
       end
 
@@ -137,7 +137,7 @@ module Sass
       # @return [String?] The publicly-visible URL for this file, or `nil`
       #   indicating that no publicly-visible URL exists. This should be
       #   appropriately URL-escaped.
-      def public_url(uri, sourcemap_directory)
+      def public_url(_uri, _sourcemap_directory)
         return if @public_url_warning_issued
         @public_url_warning_issued = true
         Sass::Util.sass_warn <<WARNING
@@ -174,7 +174,7 @@ WARNING
       #
       # @param filename [String] The absolute filename for a file that has changed.
       # @return [Boolean] When the file changed should cause a recompile.
-      def watched_file?(filename)
+      def watched_file?(_filename)
         false
       end
     end

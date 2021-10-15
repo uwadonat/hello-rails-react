@@ -9,6 +9,5 @@ module WebSocket
         end
       end
     end
-
   end
 end

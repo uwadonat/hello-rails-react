@@ -1,69 +1,68 @@
 module WebSocket
   class Driver
-
     class Hybi < Driver
       root = File.expand_path('../hybi', __FILE__)
 
-      autoload :Frame,   root + '/frame'
+      autoload :Frame, root + '/frame'
       autoload :Message, root + '/message'
 
       def self.generate_accept(key)
         Base64.strict_encode64(Digest::SHA1.digest(key + GUID))
       end
 
-      VERSION = '13'
-      GUID    = '258EAFA5-E914-47DA-95CA-C5AB0DC85B11'
+      VERSION = '13'.freeze
+      GUID = '258EAFA5-E914-47DA-95CA-C5AB0DC85B11'.freeze
 
-      BYTE       = 0b11111111
+      BYTE = 0b11111111
       FIN = MASK = 0b10000000
-      RSV1       = 0b01000000
-      RSV2       = 0b00100000
-      RSV3       = 0b00010000
-      OPCODE     = 0b00001111
-      LENGTH     = 0b01111111
+      RSV1 = 0b01000000
+      RSV2 = 0b00100000
+      RSV3 = 0b00010000
+      OPCODE = 0b00001111
+      LENGTH = 0b01111111
 
       OPCODES = {
-        :continuation => 0,
-        :text         => 1,
-        :binary       => 2,
-        :close        => 8,
-        :ping         => 9,
-        :pong         => 10
-      }
+        continuation: 0,
+        text: 1,
+        binary: 2,
+        close: 8,
+        ping: 9,
+        pong: 10
+      }.freeze
 
-      OPCODE_CODES    = OPCODES.values
+      OPCODE_CODES = OPCODES.values
       MESSAGE_OPCODES = OPCODES.values_at(:continuation, :text, :binary)
       OPENING_OPCODES = OPCODES.values_at(:text, :binary)
 
       ERRORS = {
-        :normal_closure       => 1000,
-        :going_away           => 1001,
-        :protocol_error       => 1002,
-        :unacceptable         => 1003,
-        :encoding_error       => 1007,
-        :policy_violation     => 1008,
-        :too_large            => 1009,
-        :extension_error      => 1010,
-        :unexpected_condition => 1011
-      }
+        normal_closure: 1000,
+        going_away: 1001,
+        protocol_error: 1002,
+        unacceptable: 1003,
+        encoding_error: 1007,
+        policy_violation: 1008,
+        too_large: 1009,
+        extension_error: 1010,
+        unexpected_condition: 1011
+      }.freeze
 
-      ERROR_CODES        = ERRORS.values
+      ERROR_CODES = ERRORS.values
       DEFAULT_ERROR_CODE = 1000
       MIN_RESERVED_ERROR = 3000
       MAX_RESERVED_ERROR = 4999
 
-      PACK_FORMATS = { 2 => 'S>', 8 => 'Q>' }
+      PACK_FORMATS = { 2 => 'S>', 8 => 'Q>' }.freeze
 
       def initialize(socket, options = {})
         super
 
-        @extensions      = ::WebSocket::Extensions.new
-        @stage           = 0
-        @masking         = options[:masking]
-        @protocols       = options[:protocols] || []
-        @protocols       = @protocols.strip.split(/ *, */) if String === @protocols
+        @extensions = ::WebSocket::Extensions.new
+        @stage = 0
+        @masking = options[:masking]
+        @protocols = options[:protocols] || []
+        @protocols = @protocols.strip.split(/ *, */) if String === @protocols
         @require_masking = options[:require_masking]
-        @ping_callbacks  = {}
+        @ping_callbacks = {}
 
         @frame = @message = nil
 
@@ -78,7 +77,7 @@ module WebSocket
       end
 
       def version
-        "hybi-#{ VERSION }"
+        "hybi-#{VERSION}"
       end
 
       def add_extension(extension)
@@ -91,35 +90,35 @@ module WebSocket
         buffer = true
         while buffer
           case @stage
-            when 0 then
-              buffer = @reader.read(1)
-              parse_opcode(buffer.getbyte(0)) if buffer
+          when 0 then
+            buffer = @reader.read(1)
+            parse_opcode(buffer.getbyte(0)) if buffer
 
-            when 1 then
-              buffer = @reader.read(1)
-              parse_length(buffer.getbyte(0)) if buffer
+          when 1 then
+            buffer = @reader.read(1)
+            parse_length(buffer.getbyte(0)) if buffer
 
-            when 2 then
-              buffer = @reader.read(@frame.length_bytes)
-              parse_extended_length(buffer) if buffer
+          when 2 then
+            buffer = @reader.read(@frame.length_bytes)
+            parse_extended_length(buffer) if buffer
 
-            when 3 then
-              buffer = @reader.read(4)
-              if buffer
-                @stage = 4
-                @frame.masking_key = buffer
-              end
+          when 3 then
+            buffer = @reader.read(4)
+            if buffer
+              @stage = 4
+              @frame.masking_key = buffer
+            end
 
-            when 4 then
-              buffer = @reader.read(@frame.length)
+          when 4 then
+            buffer = @reader.read(@frame.length)
 
-              if buffer
-                @stage = 0
-                emit_frame(buffer)
-              end
+            if buffer
+              @stage = 0
+              emit_frame(buffer)
+            end
 
-            else
-              buffer = nil
+          else
+            buffer = nil
           end
         end
       end
@@ -139,7 +138,7 @@ module WebSocket
 
       def close(reason = nil, code = nil)
         reason ||= ''
-        code   ||= ERRORS[:normal_closure]
+        code ||= ERRORS[:normal_closure]
 
         if @ready_state <= 0
           @ready_state = 3
@@ -159,37 +158,34 @@ module WebSocket
         return false unless @ready_state == 1
 
         message = Message.new
-        frame   = Frame.new
+        frame = Frame.new
 
-        message.rsv1   = message.rsv2 = message.rsv3 = false
+        message.rsv1 = message.rsv2 = message.rsv3 = false
         message.opcode = OPCODES[type || (String === buffer ? :text : :binary)]
 
         payload = Driver.encode(buffer)
         payload = [code, payload].pack('S>a*') if code
         message.data = payload
 
-        if MESSAGE_OPCODES.include?(message.opcode)
-          message = @extensions.process_outgoing_message(message)
-        end
+        message = @extensions.process_outgoing_message(message) if MESSAGE_OPCODES.include?(message.opcode)
 
-        frame.final       = true
-        frame.rsv1        = message.rsv1
-        frame.rsv2        = message.rsv2
-        frame.rsv3        = message.rsv3
-        frame.opcode      = message.opcode
-        frame.masked      = !!@masking
+        frame.final = true
+        frame.rsv1 = message.rsv1
+        frame.rsv2 = message.rsv2
+        frame.rsv3 = message.rsv3
+        frame.opcode = message.opcode
+        frame.masked = !!@masking
         frame.masking_key = SecureRandom.random_bytes(4) if frame.masked
-        frame.length      = message.data.bytesize
-        frame.payload     = message.data
+        frame.length = message.data.bytesize
+        frame.payload = message.data
 
         send_frame(frame)
         true
-
       rescue ::WebSocket::Extensions::ExtensionError => error
         fail(:extension_error, error.message)
       end
 
-    private
+      private
 
       def send_frame(frame)
         length = frame.length
@@ -205,7 +201,7 @@ module WebSocket
 
         if length <= 125
           values[1] = masked | length
-        elsif length <= 65535
+        elsif length <= 65_535
           values[1] = masked | 126
           values[2] = length
           format << 'S>'
@@ -231,16 +227,12 @@ module WebSocket
         sec_key = @socket.env['HTTP_SEC_WEBSOCKET_KEY']
         version = @socket.env['HTTP_SEC_WEBSOCKET_VERSION']
 
-        unless version == VERSION
-          raise ProtocolError.new("Unsupported WebSocket version: #{ VERSION }")
-        end
+        raise ProtocolError, "Unsupported WebSocket version: #{VERSION}" unless version == VERSION
 
-        unless sec_key
-          raise ProtocolError.new('Missing handshake request header: Sec-WebSocket-Key')
-        end
+        raise ProtocolError, 'Missing handshake request header: Sec-WebSocket-Key' unless sec_key
 
-        @headers['Upgrade']              = 'websocket'
-        @headers['Connection']           = 'Upgrade'
+        @headers['Upgrade'] = 'websocket'
+        @headers['Connection'] = 'Upgrade'
         @headers['Sec-WebSocket-Accept'] = Hybi.generate_accept(sec_key)
 
         @headers['Sec-WebSocket-Protocol'] = @protocol if @protocol
@@ -248,7 +240,7 @@ module WebSocket
         extensions = @extensions.generate_response(@socket.env['HTTP_SEC_WEBSOCKET_EXTENSIONS'])
         @headers['Sec-WebSocket-Extensions'] = extensions if extensions
 
-        start   = 'HTTP/1.1 101 Switching Protocols'
+        start = 'HTTP/1.1 101 Switching Protocols'
         headers = [start, @headers.to_s, '']
         headers.join("\r\n")
       end
@@ -275,27 +267,27 @@ module WebSocket
 
         @frame = Frame.new
 
-        @frame.final  = (octet & FIN) == FIN
-        @frame.rsv1   = rsvs[0]
-        @frame.rsv2   = rsvs[1]
-        @frame.rsv3   = rsvs[2]
+        @frame.final = (octet & FIN) == FIN
+        @frame.rsv1 = rsvs[0]
+        @frame.rsv2 = rsvs[1]
+        @frame.rsv3 = rsvs[2]
         @frame.opcode = (octet & OPCODE)
 
         @stage = 1
 
         unless @extensions.valid_frame_rsv?(@frame)
           return fail(:protocol_error,
-              "One or more reserved bits are on: reserved1 = #{ @frame.rsv1 ? 1 : 0 }" +
-              ", reserved2 = #{ @frame.rsv2 ? 1 : 0 }" +
-              ", reserved3 = #{ @frame.rsv3 ? 1 : 0 }")
+                      "One or more reserved bits are on: reserved1 = #{@frame.rsv1 ? 1 : 0}" \
+                      ", reserved2 = #{@frame.rsv2 ? 1 : 0}" \
+                      ", reserved3 = #{@frame.rsv3 ? 1 : 0}")
         end
 
         unless OPCODES.values.include?(@frame.opcode)
-          return fail(:protocol_error, "Unrecognized frame opcode: #{ @frame.opcode }")
+          return fail(:protocol_error, "Unrecognized frame opcode: #{@frame.opcode}")
         end
 
         unless MESSAGE_OPCODES.include?(@frame.opcode) or @frame.final
-          return fail(:protocol_error, "Received fragmented control frame: opcode = #{ @frame.opcode }")
+          return fail(:protocol_error, "Received fragmented control frame: opcode = #{@frame.opcode}")
         end
 
         if @message and OPENING_OPCODES.include?(@frame.opcode)
@@ -312,10 +304,10 @@ module WebSocket
           return unless check_frame_length
         else
           @stage = 2
-          @frame.length_bytes = (@frame.length == 126) ? 2 : 8
+          @frame.length_bytes = @frame.length == 126 ? 2 : 8
         end
 
-        if @require_masking and not @frame.masked
+        if @require_masking and !@frame.masked
           return fail(:unacceptable, 'Received unmasked frame but masking is required')
         end
       end
@@ -325,7 +317,7 @@ module WebSocket
         @stage = @frame.masked ? 3 : 4
 
         unless MESSAGE_OPCODES.include?(@frame.opcode) or @frame.length <= 125
-          return fail(:protocol_error, "Received control frame having too long payload: #{ @frame.length }")
+          return fail(:protocol_error, "Received control frame having too long payload: #{@frame.length}")
         end
 
         return unless check_frame_length
@@ -343,65 +335,63 @@ module WebSocket
       end
 
       def emit_frame(buffer)
-        frame    = @frame
-        opcode   = frame.opcode
-        payload  = frame.payload = Mask.mask(buffer, @frame.masking_key)
+        frame = @frame
+        opcode = frame.opcode
+        payload = frame.payload = Mask.mask(buffer, @frame.masking_key)
         bytesize = payload.bytesize
 
         @frame = nil
 
         case opcode
-          when OPCODES[:continuation] then
-            return fail(:protocol_error, 'Received unexpected continuation frame') unless @message
-            @message << frame
+        when OPCODES[:continuation] then
+          return fail(:protocol_error, 'Received unexpected continuation frame') unless @message
+          @message << frame
 
-          when OPCODES[:text], OPCODES[:binary] then
-            @message = Message.new
-            @message << frame
+        when OPCODES[:text], OPCODES[:binary] then
+          @message = Message.new
+          @message << frame
 
-          when OPCODES[:close] then
-            code, reason = payload.unpack('S>a*') if bytesize >= 2
-            reason = Driver.encode(reason || '', Encoding::UTF_8)
+        when OPCODES[:close] then
+          code, reason = payload.unpack('S>a*') if bytesize >= 2
+          reason = Driver.encode(reason || '', Encoding::UTF_8)
 
-            unless (bytesize == 0) or
-                   (code && code >= MIN_RESERVED_ERROR && code <= MAX_RESERVED_ERROR) or
-                   ERROR_CODES.include?(code)
-              code = ERRORS[:protocol_error]
-            end
+          unless (bytesize == 0) or
+                 (code && code >= MIN_RESERVED_ERROR && code <= MAX_RESERVED_ERROR) or
+                 ERROR_CODES.include?(code)
+            code = ERRORS[:protocol_error]
+          end
 
-            if bytesize > 125 or !reason.valid_encoding?
-              code = ERRORS[:protocol_error]
-            end
+          code = ERRORS[:protocol_error] if bytesize > 125 or !reason.valid_encoding?
 
-            shutdown(code || DEFAULT_ERROR_CODE, reason || '')
+          shutdown(code || DEFAULT_ERROR_CODE, reason || '')
 
-          when OPCODES[:ping] then
-            frame(payload, :pong)
-            emit(:ping, PingEvent.new(payload))
+        when OPCODES[:ping] then
+          frame(payload, :pong)
+          emit(:ping, PingEvent.new(payload))
 
-          when OPCODES[:pong] then
-            message = Driver.encode(payload, Encoding::UTF_8)
-            callback = @ping_callbacks[message]
-            @ping_callbacks.delete(message)
-            callback.call if callback
-            emit(:pong, PongEvent.new(payload))
+        when OPCODES[:pong] then
+          message = Driver.encode(payload, Encoding::UTF_8)
+          callback = @ping_callbacks[message]
+          @ping_callbacks.delete(message)
+          callback.call if callback
+          emit(:pong, PongEvent.new(payload))
         end
 
         emit_message if frame.final and MESSAGE_OPCODES.include?(opcode)
       end
 
       def emit_message
-        message  = @extensions.process_incoming_message(@message)
+        message = @extensions.process_incoming_message(@message)
         @message = nil
 
         payload = message.data
 
         case message.opcode
-          when OPCODES[:text] then
-            payload = Driver.encode(payload, Encoding::UTF_8)
-            payload = nil unless payload.valid_encoding?
-          when OPCODES[:binary]
-            payload = payload.bytes.to_a
+        when OPCODES[:text] then
+          payload = Driver.encode(payload, Encoding::UTF_8)
+          payload = nil unless payload.valid_encoding?
+        when OPCODES[:binary]
+          payload = payload.bytes.to_a
         end
 
         if payload
@@ -413,6 +403,5 @@ module WebSocket
         fail(:extension_error, error.message)
       end
     end
-
   end
 end

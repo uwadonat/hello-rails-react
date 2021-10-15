@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 Capybara.add_selector(:select, locator_type: [String, Symbol]) do
   label 'select box'
 
@@ -57,10 +55,7 @@ Capybara.add_selector(:select, locator_type: [String, Symbol]) do
     desc
   end
 
-  describe_node_filters do |
-    options: nil, disabled_options: nil, enabled_options: nil,
-    selected: nil, with_selected: nil,
-    disabled: nil, **|
+  describe_node_filters do |options: nil, disabled_options: nil, enabled_options: nil, selected: nil, with_selected: nil, disabled: nil, **|
     desc = +''
     desc << " with options #{options.inspect}" if options
     desc << " with disabled options #{disabled_options.inspect}}" if disabled_options

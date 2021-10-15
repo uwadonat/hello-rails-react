@@ -4,7 +4,6 @@ require 'concurrent/executor/executor_service'
 require 'concurrent/synchronization'
 
 module Concurrent
-
   # @!macro abstract_executor_service_public_api
   # @!visibility private
   class AbstractExecutorService < Synchronization::LockableObject
@@ -12,7 +11,7 @@ module Concurrent
     include Concern::Deprecation
 
     # The set of possible fallback policies that may be set at thread pool creation.
-    FALLBACK_POLICIES = [:abort, :discard, :caller_runs].freeze
+    FALLBACK_POLICIES = %i[abort discard caller_runs].freeze
 
     # @!macro executor_service_attr_reader_fallback_policy
     attr_reader :fallback_policy
@@ -44,7 +43,7 @@ module Concurrent
     end
 
     # @!macro executor_service_method_wait_for_termination
-    def wait_for_termination(timeout = nil)
+    def wait_for_termination(_timeout = nil)
       raise NotImplementedError
     end
 
@@ -69,8 +68,8 @@ module Concurrent
     end
 
     # @!macro executor_service_method_auto_terminate_setter
-    def auto_terminate=(value)
-      deprecated "Method #auto_terminate= has no effect. Set :auto_terminate option when executor is initialized."
+    def auto_terminate=(_value)
+      deprecated 'Method #auto_terminate= has no effect. Set :auto_terminate option when executor is initialized.'
     end
 
     private
@@ -90,17 +89,17 @@ module Concurrent
       when :caller_runs
         begin
           yield(*args)
-        rescue => ex
+        rescue StandardError => ex
           # let it fail
           log DEBUG, ex
         end
         true
       else
-        fail "Unknown fallback policy #{fallback_policy}"
+        raise "Unknown fallback policy #{fallback_policy}"
       end
     end
 
-    def ns_execute(*args, &task)
+    def ns_execute(*_args)
       raise NotImplementedError
     end
 
@@ -123,6 +122,5 @@ module Concurrent
     def ns_auto_terminate?
       @auto_terminate
     end
-
   end
 end

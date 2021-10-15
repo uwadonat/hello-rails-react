@@ -1,4 +1,4 @@
-require "spring/version"
+require 'spring/version'
 
 module Spring
   module Client
@@ -6,23 +6,23 @@ module Spring
       attr_reader :spring_commands, :application_commands
 
       def self.description
-        "Print available commands."
+        'Print available commands.'
       end
 
       def self.call(args)
-        require "spring/commands"
+        require 'spring/commands'
         super
       end
 
       def initialize(args, spring_commands = nil, application_commands = nil)
         super args
 
-        @spring_commands      = spring_commands      || Spring::Client::COMMANDS.dup
+        @spring_commands = spring_commands || Spring::Client::COMMANDS.dup
         @application_commands = application_commands || Spring.commands.dup
 
-        @spring_commands.delete_if { |k, v| k.start_with?("-") }
+        @spring_commands.delete_if { |k, _v| k.start_with?('-') }
 
-        @application_commands["rails"] = @spring_commands.delete("rails")
+        @application_commands['rails'] = @spring_commands.delete('rails')
       end
 
       def call
@@ -32,14 +32,14 @@ module Spring
       def formatted_help
         ["Version: #{env.version}\n",
          "Usage: spring COMMAND [ARGS]\n",
-         *command_help("Spring itself", spring_commands),
+         *command_help('Spring itself', spring_commands),
          '',
-         *command_help("your application", application_commands)].join("\n")
+         *command_help('your application', application_commands)].join("\n")
       end
 
       def command_help(subject, commands)
         ["Commands for #{subject}:\n",
-        *commands.sort_by(&:first).map { |name, command| display(name, command) }.compact]
+         *commands.sort_by(&:first).map { |name, command| display(name, command) }.compact]
       end
 
       private
@@ -49,9 +49,7 @@ module Spring
       end
 
       def display(name, command)
-        if command.description
-          "  #{name.ljust(max_name_width)}  #{command.description}"
-        end
+        "  #{name.ljust(max_name_width)}  #{command.description}" if command.description
       end
 
       def max_name_width

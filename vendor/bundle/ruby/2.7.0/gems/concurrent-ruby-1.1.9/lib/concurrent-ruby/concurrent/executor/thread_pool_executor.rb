@@ -2,13 +2,9 @@ require 'concurrent/utility/engine'
 require 'concurrent/executor/ruby_thread_pool_executor'
 
 module Concurrent
+  require 'concurrent/executor/java_thread_pool_executor' if Concurrent.on_jruby?
 
-  if Concurrent.on_jruby?
-    require 'concurrent/executor/java_thread_pool_executor'
-  end
-
-  ThreadPoolExecutorImplementation = case
-                                     when Concurrent.on_jruby?
+  ThreadPoolExecutorImplementation = if Concurrent.on_jruby?
                                        JavaThreadPoolExecutor
                                      else
                                        RubyThreadPoolExecutor
@@ -54,7 +50,6 @@ module Concurrent
   #
   # @!macro thread_pool_executor_public_api
   class ThreadPoolExecutor < ThreadPoolExecutorImplementation
-
     # @!macro thread_pool_executor_method_initialize
     #
     #   Create a new thread pool.

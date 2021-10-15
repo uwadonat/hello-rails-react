@@ -1,13 +1,11 @@
-# encoding: UTF-8
-
 require 'minitest/autorun'
 
 require File.expand_path('../../fixtures/classes', __FILE__)
 
 require 'archive/zip/codec/traditional_encryption'
 
-describe "Archive::Zip::Codec::TraditionalEncryption::Decrypt#read" do
-  it "calls the read method of the delegate" do
+describe 'Archive::Zip::Codec::TraditionalEncryption::Decrypt#read' do
+  it 'calls the read method of the delegate' do
     delegate = MiniTest::Mock.new
     delegate.expect(:read, "\000" * 12, [Integer])
     delegate.expect(:read, nil, [Integer])
@@ -15,13 +13,11 @@ describe "Archive::Zip::Codec::TraditionalEncryption::Decrypt#read" do
     Archive::Zip::Codec::TraditionalEncryption::Decrypt.open(
       delegate,
       TraditionalEncryptionSpecs.password,
-      TraditionalEncryptionSpecs.mtime
-    ) do |d|
-      d.read
-    end
+      TraditionalEncryptionSpecs.mtime, &:read
+    )
   end
 
-  it "decrypts data read from the delegate" do
+  it 'decrypts data read from the delegate' do
     TraditionalEncryptionSpecs.encrypted_data do |ed|
       Archive::Zip::Codec::TraditionalEncryption::Decrypt.open(
         ed,
@@ -33,12 +29,12 @@ describe "Archive::Zip::Codec::TraditionalEncryption::Decrypt#read" do
     end
   end
 
-  it "decrypts data read from a delegate that only returns 1 byte at a time" do
+  it 'decrypts data read from a delegate that only returns 1 byte at a time' do
     TraditionalEncryptionSpecs.encrypted_data do |ed|
       # Override ed.read to raise Errno::EAGAIN every other time it's called.
       class << ed
-        alias :read_orig :read
-        def read(length = nil, buffer = nil)
+        alias_method :read_orig, :read
+        def read(_length = nil, buffer = nil)
           read_orig(1, buffer)
         end
       end
@@ -59,14 +55,14 @@ describe "Archive::Zip::Codec::TraditionalEncryption::Decrypt#read" do
     end
   end
 
-  it "decrypts data read from a delegate that raises Errno::EAGAIN" do
+  it 'decrypts data read from a delegate that raises Errno::EAGAIN' do
     TraditionalEncryptionSpecs.encrypted_data do |ed|
       # Override ed.read to raise Errno::EAGAIN every other time it's called.
       class << ed
-        alias :read_orig :read
+        alias_method :read_orig, :read
         def read(length = nil, buffer = nil)
           @error_raised ||= false
-          if @error_raised then
+          if @error_raised
             @error_raised = false
             read_orig(length, buffer)
           else
@@ -92,14 +88,14 @@ describe "Archive::Zip::Codec::TraditionalEncryption::Decrypt#read" do
     end
   end
 
-  it "decrypts data read from a delegate that raises Errno::EINTR" do
+  it 'decrypts data read from a delegate that raises Errno::EINTR' do
     TraditionalEncryptionSpecs.encrypted_data do |ed|
       # Override ed.read to raise Errno::EINTR every other time it's called.
       class << ed
-        alias :read_orig :read
+        alias_method :read_orig, :read
         def read(length = nil, buffer = nil)
           @error_raised ||= false
-          if @error_raised then
+          if @error_raised
             @error_raised = false
             read_orig(length, buffer)
           else

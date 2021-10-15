@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 # NOTE: This file uses `sleep` to sync up parts of the tests. This is only implemented like this
 # because of the methods being tested. In tests using Capybara this type of behavior should be implemented
 # using Capybara provided assertions with builtin waiting behavior.
@@ -151,7 +149,8 @@ Capybara::SpecHelper.spec Capybara::Window, requires: [:windows] do
     end
 
     it 'should be able to maximize window', requires: %i[windows js] do
-      start_width, start_height = 400, 300
+      start_width = 400
+      start_height = 300
       @session.current_window.resize_to(start_width, start_height)
       sleep 0.5
 

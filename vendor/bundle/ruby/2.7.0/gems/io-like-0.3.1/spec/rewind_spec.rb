@@ -1,7 +1,7 @@
 require File.dirname(__FILE__) + '/../spec_helper'
 require File.dirname(__FILE__) + '/fixtures/classes'
 
-describe "IO::Like#rewind" do
+describe 'IO::Like#rewind' do
   before :each do
     @file = File.open(File.dirname(__FILE__) + '/fixtures/readlines.txt', 'r')
     @iowrapper = ReadableIOWrapper.open(@file)
@@ -12,32 +12,32 @@ describe "IO::Like#rewind" do
     @file.close unless @file.closed?
   end
 
-  it "should return 0" do
+  it 'should return 0' do
     @iowrapper.rewind.should == 0
   end
 
-  it "positions the instance to the beginning of input" do
+  it 'positions the instance to the beginning of input' do
     @iowrapper.readline.should == "Voici la ligne une.\n"
     @iowrapper.readline.should == "Qui è la linea due.\n"
     @iowrapper.rewind
     @iowrapper.readline.should == "Voici la ligne une.\n"
   end
 
-  it "positions the instance to the beginning of input and clears EOF" do
+  it 'positions the instance to the beginning of input and clears EOF' do
     value = @iowrapper.read
     @iowrapper.rewind
     @iowrapper.eof?.should == false
     value.should == @iowrapper.read
   end
 
-  it "sets lineno to 0" do
+  it 'sets lineno to 0' do
     @iowrapper.readline.should == "Voici la ligne une.\n"
     @iowrapper.lineno.should == 1
     @iowrapper.rewind
     @iowrapper.lineno.should == 0
   end
 
-  it "works on write-only streams" do
+  it 'works on write-only streams' do
     file = tmp('IO_Like__rewind.test')
     File.open(file, 'w') do |f|
       WritableIOWrapper.open(f) do |io|
@@ -50,7 +50,7 @@ describe "IO::Like#rewind" do
     File.delete(file)
   end
 
-  it "raises IOError on closed stream" do
-    lambda { IOSpecs.closed_file.rewind }.should raise_error(IOError)
+  it 'raises IOError on closed stream' do
+    -> { IOSpecs.closed_file.rewind }.should raise_error(IOError)
   end
 end

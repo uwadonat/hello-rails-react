@@ -11,14 +11,14 @@ module Sass
         @key_strings = {}
         @map = {}
 
-        map.each {|key, value| self[key] = value} if map
+        map.each { |key, value| self[key] = value } if map
       end
 
       # Specifies how to transform the key.
       #
       # This can be overridden to create other normalization behaviors.
       def normalize(key)
-        key.tr("-", "_")
+        key.tr('-', '_')
       end
 
       # Returns the version of `key` as it was stored before
@@ -45,7 +45,7 @@ module Sass
 
       # @private
       def has_key?(k)
-        @map.has_key?(normalize(k))
+        @map.key?(normalize(k))
       end
 
       # @private
@@ -57,7 +57,7 @@ module Sass
 
       # @return [Hash] Hash with the keys as they were stored (before normalization).
       def as_stored
-        Sass::Util.map_keys(@map) {|k| @key_strings[k]}
+        Sass::Util.map_keys(@map) { |k| @key_strings[k] }
       end
 
       def empty?
@@ -73,7 +73,7 @@ module Sass
       end
 
       def each
-        @map.each {|k, v| yield(k, v)}
+        @map.each { |k, v| yield(k, v) }
       end
 
       def size
@@ -89,28 +89,26 @@ module Sass
       end
 
       def map
-        @map.map {|k, v| yield(k, v)}
+        @map.map { |k, v| yield(k, v) }
       end
 
       def dup
         d = super
-        d.send(:instance_variable_set, "@map", @map.dup)
+        d.send(:instance_variable_set, '@map', @map.dup)
         d
       end
 
       def sort_by
-        @map.sort_by {|k, v| yield k, v}
+        @map.sort_by { |k, v| yield k, v }
       end
 
       def update(map)
         map = map.as_stored if map.is_a?(NormalizedMap)
-        map.each {|k, v| self[k] = v}
+        map.each { |k, v| self[k] = v }
       end
 
       def method_missing(method, *args, &block)
-        if Sass.tests_running
-          raise ArgumentError.new("The method #{method} must be implemented explicitly")
-        end
+        raise ArgumentError, "The method #{method} must be implemented explicitly" if Sass.tests_running
         @map.send(method, *args, &block)
       end
 

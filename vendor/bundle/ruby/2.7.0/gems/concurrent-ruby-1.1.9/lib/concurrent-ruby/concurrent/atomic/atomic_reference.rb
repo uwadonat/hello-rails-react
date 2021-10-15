@@ -11,13 +11,11 @@ if Concurrent.on_truffleruby? && !defined?(TruffleRuby::AtomicReference)
 end
 
 module Concurrent
-
   # Define update methods that use direct paths
   #
   # @!visibility private
   # @!macro internal_implementation_note
   module AtomicDirectUpdate
-
     # @!macro atomic_reference_method_update
     #
     #   Pass the current value to the given block, replacing it
@@ -74,9 +72,9 @@ module Concurrent
       new_value = yield old_value
       unless compare_and_set(old_value, new_value)
         if $VERBOSE
-          raise ConcurrentUpdateError, "Update failed"
+          raise ConcurrentUpdateError, 'Update failed'
         else
-          raise ConcurrentUpdateError, "Update failed", ConcurrentUpdateError::CONC_UP_ERR_BACKTRACE
+          raise ConcurrentUpdateError, 'Update failed', ConcurrentUpdateError::CONC_UP_ERR_BACKTRACE
         end
       end
       new_value
@@ -137,7 +135,6 @@ module Concurrent
   #   @!method try_update!
   #     @!macro atomic_reference_method_try_update!
 
-
   # @!macro internal_implementation_note
   class ConcurrentUpdateError < ThreadError
     # frozen pre-allocated backtrace to speed ConcurrentUpdateError
@@ -145,45 +142,44 @@ module Concurrent
   end
 
   # @!macro internal_implementation_note
-  AtomicReferenceImplementation = case
-                                  when Concurrent.on_cruby? && Concurrent.c_extensions_loaded?
+  AtomicReferenceImplementation = if Concurrent.on_cruby? && Concurrent.c_extensions_loaded?
                                     # @!visibility private
                                     # @!macro internal_implementation_note
                                     class CAtomicReference
                                       include AtomicDirectUpdate
                                       include AtomicNumericCompareAndSetWrapper
-                                      alias_method :compare_and_swap, :compare_and_set
+                                      alias compare_and_swap compare_and_set
                                     end
                                     CAtomicReference
-                                  when Concurrent.on_jruby?
+                                  elsif Concurrent.on_jruby?
                                     # @!visibility private
                                     # @!macro internal_implementation_note
                                     class JavaAtomicReference
                                       include AtomicDirectUpdate
                                     end
                                     JavaAtomicReference
-                                  when Concurrent.on_truffleruby?
+                                  elsif Concurrent.on_truffleruby?
                                     class TruffleRubyAtomicReference < TruffleRuby::AtomicReference
                                       include AtomicDirectUpdate
-                                      alias_method :value, :get
-                                      alias_method :value=, :set
-                                      alias_method :compare_and_swap, :compare_and_set
-                                      alias_method :swap, :get_and_set
+                                      alias value get
+                                      alias value= set
+                                      alias compare_and_swap compare_and_set
+                                      alias swap get_and_set
                                     end
-                                  when Concurrent.on_rbx?
+                                  elsif Concurrent.on_rbx?
                                     # @note Extends `Rubinius::AtomicReference` version adding aliases
                                     #   and numeric logic.
                                     #
                                     # @!visibility private
                                     # @!macro internal_implementation_note
                                     class RbxAtomicReference < Rubinius::AtomicReference
-                                      alias_method :_compare_and_set, :compare_and_set
+                                      alias _compare_and_set compare_and_set
                                       include AtomicDirectUpdate
                                       include AtomicNumericCompareAndSetWrapper
-                                      alias_method :value, :get
-                                      alias_method :value=, :set
-                                      alias_method :swap, :get_and_set
-                                      alias_method :compare_and_swap, :compare_and_set
+                                      alias value get
+                                      alias value= set
+                                      alias swap get_and_set
+                                      alias compare_and_swap compare_and_set
                                     end
                                     RbxAtomicReference
                                   else
@@ -193,12 +189,11 @@ module Concurrent
 
   # @!macro atomic_reference
   class AtomicReference < AtomicReferenceImplementation
-
     # @return [String] Short string representation.
     def to_s
       format '%s value:%s>', super[0..-2], get
     end
 
-    alias_method :inspect, :to_s
+    alias inspect to_s
   end
 end

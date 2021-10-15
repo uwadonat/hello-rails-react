@@ -76,7 +76,7 @@ module Sass
     # @param line [String] See \{Frame#line}.
     # @yield [] A block in which the new frame is on the stack.
     def with_base(filename, line)
-      with_frame(filename, line, :base) {yield}
+      with_frame(filename, line, :base) { yield }
     end
 
     # Pushes an import frame onto the stack.
@@ -85,7 +85,7 @@ module Sass
     # @param line [String] See \{Frame#line}.
     # @yield [] A block in which the new frame is on the stack.
     def with_import(filename, line)
-      with_frame(filename, line, :import) {yield}
+      with_frame(filename, line, :import) { yield }
     end
 
     # Pushes a mixin frame onto the stack.
@@ -95,7 +95,7 @@ module Sass
     # @param name [String] See \{Frame#name}.
     # @yield [] A block in which the new frame is on the stack.
     def with_mixin(filename, line, name)
-      with_frame(filename, line, :mixin, name) {yield}
+      with_frame(filename, line, :mixin, name) { yield }
     end
 
     # Pushes a function frame onto the stack.
@@ -105,7 +105,7 @@ module Sass
     # @param name [String] See \{Frame#name}.
     # @yield [] A block in which the new frame is on the stack.
     def with_function(filename, line, name)
-      with_frame(filename, line, :function, name) {yield}
+      with_frame(filename, line, :function, name) { yield }
     end
 
     # Pushes a function frame onto the stack.
@@ -115,15 +115,15 @@ module Sass
     # @param name [String] See \{Frame#name}.
     # @yield [] A block in which the new frame is on the stack.
     def with_directive(filename, line, name)
-      with_frame(filename, line, :directive, name) {yield}
+      with_frame(filename, line, :directive, name) { yield }
     end
 
     def to_s
-      (frames.reverse + [nil]).each_cons(2).each_with_index.
-          map do |(frame, caller), i|
-        "#{i == 0 ? 'on' : 'from'} line #{frame.line}" +
+      (frames.reverse + [nil]).each_cons(2).each_with_index
+        .map do |(frame, caller), i|
+        "#{i == 0 ? 'on' : 'from'} line #{frame.line}" \
           " of #{frame.filename || 'an unknown file'}" +
-          (caller && caller.name ? ", in `#{caller.name}'" : "")
+          (caller && caller.name ? ", in `#{caller.name}'" : '')
       end.join("\n")
     end
 

@@ -1,7 +1,3 @@
-# frozen_string_literal: true
-
-# rubocop:disable RSpec/MultipleDescribes
-
 require 'spec_helper'
 require 'capybara/rspec'
 
@@ -10,7 +6,7 @@ RSpec.configuration.before(:each, file_path: './spec/rspec/scenarios_spec.rb') d
 end
 
 feature 'if fscenario aliases focused tag then' do
-  fscenario 'scenario should have focused meta tag' do |example| # rubocop:disable RSpec/Focus
+  fscenario 'scenario should have focused meta tag' do |example|
     expect(example.metadata[:focus]).to eq true
   end
 end

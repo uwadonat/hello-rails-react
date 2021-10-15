@@ -1,29 +1,27 @@
 require File.dirname(__FILE__) + '/../spec_helper'
 require File.dirname(__FILE__) + '/fixtures/classes'
 
-describe "IO::Like#lineno" do
-  it "raises IOError on closed stream" do
-    lambda { IOSpecs.closed_file.lineno }.should raise_error(IOError)
+describe 'IO::Like#lineno' do
+  it 'raises IOError on closed stream' do
+    -> { IOSpecs.closed_file.lineno }.should raise_error(IOError)
   end
 
-  it "returns the current line number" do
+  it 'returns the current line number' do
     IOSpecs.readable_iowrapper do |f|
       f.lineno.should == 0
-      while (f.gets)
-        f.lineno.should > 0
-      end
+      f.lineno.should > 0 while f.gets
       f.rewind
       f.lineno.should == 0
     end
   end
 end
 
-describe "IO::Like#lineno=" do
-  it "raises IOError on closed stream" do
-    lambda { IOSpecs.closed_file.lineno = 5 }.should raise_error(IOError)
+describe 'IO::Like#lineno=' do
+  it 'raises IOError on closed stream' do
+    -> { IOSpecs.closed_file.lineno = 5 }.should raise_error(IOError)
   end
 
-  it "invokes to_int on non-numeric arguments" do
+  it 'invokes to_int on non-numeric arguments' do
     (obj = mock('123')).should_receive(:to_int).and_return(123)
     IOSpecs.readable_iowrapper do |f|
       f.lineno = obj
@@ -32,22 +30,22 @@ describe "IO::Like#lineno=" do
       f.lineno = 1.5
       f.lineno.should == 1
 
-      f.lineno = 92233.72036854775808
-      f.lineno.should == 92233
+      f.lineno = 92_233.72036854775808
+      f.lineno.should == 92_233
     end
   end
 
-  it "raises TypeError on nil argument" do
+  it 'raises TypeError on nil argument' do
     IOSpecs.readable_iowrapper do |f|
-      lambda { f.lineno = nil }.should raise_error(TypeError)
+      -> { f.lineno = nil }.should raise_error(TypeError)
     end
   end
 
-  it "sets the current line number to the given value" do
+  it 'sets the current line number to the given value' do
     IOSpecs.readable_iowrapper do |f|
       count = 500
       f.lineno = count - 1
-      while (f.gets)
+      while f.gets
         f.lineno.should == count
         count += 1
       end
@@ -56,27 +54,27 @@ describe "IO::Like#lineno=" do
     end
   end
 
-  it "does not change $." do
-    orig_value = $.
+  it 'does not change $.' do
+    orig_value = $INPUT_LINE_NUMBER
     IOSpecs.readable_iowrapper do |f|
       numbers = [-2**30, -2**16, -2**8, -100, -10, -1, 0, 1, 10, 2**8, 2**16, 2**30]
-      numbers.each { |num|
+      numbers.each do |num|
         f.lineno = num
         f.lineno.should == num
-        $..should == orig_value
-      }
+        $INPUT_LINE_NUMBER.should == orig_value
+      end
     end
   end
 
-  it "does not change $. until next read" do
+  it 'does not change $. until next read' do
     $. = 0
     IOSpecs.readable_iowrapper do |f|
-      $..should == 0
+      $INPUT_LINE_NUMBER.should == 0
       count = 500
       f.lineno = count - 1
-      $..should == 0
-      while (f.gets)
-        $..should == count
+      $INPUT_LINE_NUMBER.should == 0
+      while f.gets
+        $INPUT_LINE_NUMBER.should == count
         count += 1
       end
     end

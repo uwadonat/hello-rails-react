@@ -18,7 +18,9 @@ module Sass
         super(nil)
       end
 
-      def invisible?; to_s.empty?; end
+      def invisible?
+        to_s.empty?
+      end
 
       # Returns the imported file.
       #
@@ -46,7 +48,8 @@ module Sass
 
         if @options[:importer]
           f = @options[:importer].find_relative(
-            @imported_filename, @options[:filename], options_for_importer)
+            @imported_filename, @options[:filename], options_for_importer
+          )
           return f if f
         end
 
@@ -62,13 +65,13 @@ module Sass
         elsif !paths.empty?
           lines << "Load paths:\n  #{paths.join("\n  ")}"
         end
-        raise SyntaxError.new(lines.join("\n"))
+        raise SyntaxError, lines.join("\n")
       rescue SyntaxError => e
-        raise SyntaxError.new(e.message, :line => line, :filename => @filename)
+        raise SyntaxError.new(e.message, line: line, filename: @filename)
       end
 
       def options_for_importer
-        @options.merge(:_from_import_node => true)
+        @options.merge(_from_import_node: true)
       end
     end
   end

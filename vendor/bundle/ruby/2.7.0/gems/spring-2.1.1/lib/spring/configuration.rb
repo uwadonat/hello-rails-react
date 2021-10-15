@@ -1,12 +1,12 @@
-require "spring/errors"
+require 'spring/errors'
 
 module Spring
   class << self
     attr_accessor :application_root, :quiet
 
     def gemfile
-      if /\s1.9.[0-9]/ ===  Bundler.ruby_scope.gsub(/[\/\s]+/,'')
-        ENV["BUNDLE_GEMFILE"] || "Gemfile"
+      if /\s1.9.[0-9]/ === Bundler.ruby_scope.gsub(/[\/\s]+/, '')
+        ENV['BUNDLE_GEMFILE'] || 'Gemfile'
       else
         Bundler.default_gemfile
       end
@@ -26,13 +26,13 @@ module Spring
 
     def application_root_path
       @application_root_path ||= begin
-        if application_root
-          path = Pathname.new(File.expand_path(application_root))
-        else
-          path = project_root_path
-        end
+        path = if application_root
+                 Pathname.new(File.expand_path(application_root))
+               else
+                 project_root_path
+               end
 
-        raise MissingApplication.new(path) unless path.join("config/application.rb").exist?
+        raise MissingApplication, path unless path.join('config/application.rb').exist?
         path
       end
     end
@@ -47,7 +47,7 @@ module Spring
       if current_dir.join(gemfile).exist?
         current_dir
       elsif current_dir.root?
-        raise UnknownProject.new(Dir.pwd)
+        raise UnknownProject, Dir.pwd
       else
         find_project_root(current_dir.parent)
       end

@@ -4,7 +4,6 @@ import { displayMessages } from '../redux/Messages';
 
 const Greeting = () => {
     const messages = useSelector((state) => state.messageReducer);
-    
     const [message, setMessage] = useState({});
     
 
@@ -22,7 +21,7 @@ const Greeting = () => {
      
         displayBody(messages) 
    
-}, [messages]);
+   }, [messages]);
 
   
 
@@ -33,13 +32,11 @@ const Greeting = () => {
 
     return (
         
-          <div>
-              <h1>Display random messages from Redux </h1>
-              {messages && hello()}
-              
+          <div className="display">
+              <h2>Display random messages from Redux </h2>
+              <p>{messages && hello()}</p>
           </div>
-       
-      );
+    );
 };
 
 export default Greeting;

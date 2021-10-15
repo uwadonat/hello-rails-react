@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 module Capybara
   module Node
     ##
@@ -100,7 +98,7 @@ module Capybara
       # @param  [Boolean] check_ancestors  Whether to inherit visibility from ancestors
       # @return [Boolean]     Whether the element is visible
       #
-      def visible?(check_ancestors = true) # rubocop:disable Style/OptionalBooleanParameter
+      def visible?(check_ancestors = true)
         return false if (tag_name == 'input') && (native[:type] == 'hidden')
         return false if tag_name == 'template'
 
@@ -191,7 +189,7 @@ module Capybara
         {}
       end
 
-    private
+      private
 
       def option_value(option)
         return nil if option.nil?

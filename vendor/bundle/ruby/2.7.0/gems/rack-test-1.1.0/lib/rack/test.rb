@@ -39,9 +39,9 @@ module Rack
         @digest_password = nil
 
         @rack_mock_session = if mock_session.is_a?(MockSession)
-          mock_session
-        else
-          MockSession.new(mock_session)
+                               mock_session
+                             else
+                               MockSession.new(mock_session)
         end
 
         @default_host = @rack_mock_session.default_host
@@ -185,9 +185,7 @@ module Rack
       # on the new request) in the last response. If the last response was not
       # a redirect, an error will be raised.
       def follow_redirect!
-        unless last_response.redirect?
-          raise Error, 'Last response was not a redirect. Cannot follow_redirect!'
-        end
+        raise Error, 'Last response was not a redirect. Cannot follow_redirect!' unless last_response.redirect?
         request_method, params =
           if last_response.status == 307
             [last_request.request_method.downcase.to_sym, last_request.params]
@@ -230,7 +228,7 @@ module Rack
         # Stringifying and upcasing methods has be commit upstream
         env['REQUEST_METHOD'] ||= env[:method] ? env[:method].to_s.upcase : 'GET'
 
-        params = env.delete(:params) do {} end
+        params = env.delete(:params) { {} }
 
         if env['REQUEST_METHOD'] == 'GET'
           # merge :params with the query string
@@ -321,7 +319,7 @@ module Rack
       def params_to_string(params)
         case params
         when Hash then build_nested_query(params)
-        when nil  then ''
+        when nil then ''
         else params
         end
       end

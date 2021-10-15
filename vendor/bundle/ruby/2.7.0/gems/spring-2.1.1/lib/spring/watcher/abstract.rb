@@ -1,6 +1,6 @@
-require "set"
-require "pathname"
-require "mutex_m"
+require 'set'
+require 'pathname'
+require 'mutex_m'
 
 module Spring
   module Watcher
@@ -17,14 +17,14 @@ module Spring
       def initialize(root, latency)
         super()
 
-        @root        = File.realpath(root)
-        @latency     = latency
-        @files       = Set.new
+        @root = File.realpath(root)
+        @latency = latency
+        @files = Set.new
         @directories = Set.new
-        @stale       = false
-        @listeners   = []
+        @stale = false
+        @listeners = []
 
-        @on_debug    = nil
+        @on_debug = nil
       end
 
       def on_debug(&block)
@@ -51,16 +51,14 @@ module Spring
         items = items.select do |item|
           if item.symlink?
             item.readlink.exist?.tap do |exists|
-              if !exists
-                debug { "add: ignoring dangling symlink: #{item.inspect} -> #{item.readlink.inspect}" }
-              end
+              debug { "add: ignoring dangling symlink: #{item.inspect} -> #{item.readlink.inspect}" } unless exists
             end
           else
             item.exist?
           end
         end
 
-        synchronize {
+        synchronize do
           items.each do |item|
             if item.directory?
               directories << item.realpath.to_s
@@ -76,7 +74,7 @@ module Spring
           end
 
           subjects_changed
-        }
+        end
       end
 
       def stale?
@@ -96,7 +94,7 @@ module Spring
       end
 
       def restart
-        debug { "restarting" }
+        debug { 'restarting' }
         stop
         start
       end

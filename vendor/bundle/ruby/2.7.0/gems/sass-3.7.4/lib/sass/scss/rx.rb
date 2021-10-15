@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 module Sass
   module SCSS
     # A module containing regular expressions used
@@ -12,17 +11,17 @@ module Sass
       # @param str [String] The string to escape
       # @return [String] The escaped string
       def self.escape_ident(str)
-        return "" if str.empty?
+        return '' if str.empty?
         return "\\#{str}" if str == '-' || str == '_'
-        out = ""
+        out = ''
         value = str.dup
         out << value.slice!(0...1) if value =~ /^[-_]/
-        if value[0...1] =~ NMSTART
-          out << value.slice!(0...1)
-        else
-          out << escape_char(value.slice!(0...1))
-        end
-        out << value.gsub(/[^a-zA-Z0-9_-]/) {|c| escape_char c}
+        out << if value[0...1] =~ NMSTART
+                 value.slice!(0...1)
+               else
+                 escape_char(value.slice!(0...1))
+               end
+        out << value.gsub(/[^a-zA-Z0-9_-]/) { |c| escape_char c }
         out
       end
 
@@ -32,7 +31,7 @@ module Sass
       # @return [String] The escaped character
       # @private
       def self.escape_char(c)
-        return "\\%06x" % c.ord unless c =~ %r{[ -/:-~]}
+        return format('\\%06x', c.ord) unless c =~ %r{[ -/:-~]}
         "\\#{c}"
       end
 
@@ -47,28 +46,28 @@ module Sass
         Regexp.new(Regexp.quote(str), flags)
       end
 
-      H        = /[0-9a-fA-F]/
-      NL       = /\n|\r\n|\r|\f/
-      UNICODE  = /\\#{H}{1,6}[ \t\r\n\f]?/
+      H = /[0-9a-fA-F]/
+      NL = /\n|\r\n|\r|\f/
+      UNICODE = /\\#{H}{1,6}[ \t\r\n\f]?/
       s = '\u{80}-\u{D7FF}\u{E000}-\u{FFFD}\u{10000}-\u{10FFFF}'
       NONASCII = /[#{s}]/
-      ESCAPE   = /#{UNICODE}|\\[^0-9a-fA-F\r\n\f]/
-      NMSTART  = /[_a-zA-Z]|#{NONASCII}|#{ESCAPE}/
-      NMCHAR   = /[a-zA-Z0-9_-]|#{NONASCII}|#{ESCAPE}/
-      STRING1  = /\"((?:[^\n\r\f\\"]|\\#{NL}|#{ESCAPE})*)\"/
-      STRING2  = /\'((?:[^\n\r\f\\']|\\#{NL}|#{ESCAPE})*)\'/
+      ESCAPE = /#{UNICODE}|\\[^0-9a-fA-F\r\n\f]/
+      NMSTART = /[_a-zA-Z]|#{NONASCII}|#{ESCAPE}/
+      NMCHAR = /[a-zA-Z0-9_-]|#{NONASCII}|#{ESCAPE}/
+      STRING1 = /\"((?:[^\n\r\f\\"]|\\#{NL}|#{ESCAPE})*)\"/
+      STRING2 = /\'((?:[^\n\r\f\\']|\\#{NL}|#{ESCAPE})*)\'/
 
-      IDENT    = /-*#{NMSTART}#{NMCHAR}*/
-      NAME     = /#{NMCHAR}+/
-      STRING   = /#{STRING1}|#{STRING2}/
-      URLCHAR  = /[#%&*-~]|#{NONASCII}|#{ESCAPE}/
-      URL      = /(#{URLCHAR}*)/
-      W        = /[ \t\r\n\f]*/
+      IDENT = /-*#{NMSTART}#{NMCHAR}*/
+      NAME = /#{NMCHAR}+/
+      STRING = /#{STRING1}|#{STRING2}/
+      URLCHAR = /[#%&*-~]|#{NONASCII}|#{ESCAPE}/
+      URL = /(#{URLCHAR}*)/
+      W = /[ \t\r\n\f]*/
       VARIABLE = /(\$)(#{Sass::SCSS::RX::IDENT})/
 
       # This is more liberal than the spec's definition,
       # but that definition didn't work well with the greediness rules
-      RANGE    = /(?:#{H}|\?){1,6}/
+      RANGE = /(?:#{H}|\?){1,6}/
 
       ##
 
@@ -77,13 +76,13 @@ module Sass
       COMMENT = %r{/\*([^*]|\*+[^/*])*\**\*/}
       SINGLE_LINE_COMMENT = %r{//.*(\n[ \t]*//.*)*}
 
-      CDO            = quote("<!--")
-      CDC            = quote("-->")
-      INCLUDES       = quote("~=")
-      DASHMATCH      = quote("|=")
-      PREFIXMATCH    = quote("^=")
-      SUFFIXMATCH    = quote("$=")
-      SUBSTRINGMATCH = quote("*=")
+      CDO = quote('<!--')
+      CDC = quote('-->')
+      INCLUDES = quote('~=')
+      DASHMATCH = quote('|=')
+      PREFIXMATCH = quote('^=')
+      SUFFIXMATCH = quote('$=')
+      SUBSTRINGMATCH = quote('*=')
 
       HASH = /##{NAME}/
 
@@ -107,7 +106,7 @@ module Sass
       PLUS = /#{W}\+/
       GREATER = /#{W}>/
       TILDE = /#{W}~/
-      NOT = quote(":not(", Regexp::IGNORECASE)
+      NOT = quote(':not(', Regexp::IGNORECASE)
 
       # Defined in https://developer.mozilla.org/en/CSS/@-moz-document as a
       # non-standard version of http://www.w3.org/TR/css3-conditional/

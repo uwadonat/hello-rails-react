@@ -4,7 +4,7 @@ module Capybara
   class Selector < SimpleDelegator
     class << self
       def all
-        @definitions ||= {} # rubocop:disable Naming/MemoizedInstanceVariableName
+        @definitions ||= {}
       end
 
       def [](name)
@@ -115,7 +115,7 @@ module Capybara
       return true unless locator && locator_types
 
       locator_types&.any? do |type_or_method|
-        type_or_method.is_a?(Symbol) ? locator.respond_to?(type_or_method) : type_or_method === locator # rubocop:disable Style/CaseEquality
+        type_or_method.is_a?(Symbol) ? locator.respond_to?(type_or_method) : type_or_method === locator
       end
     end
 

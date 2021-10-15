@@ -16,10 +16,14 @@ require 'sprockets/uri_tar'
 module Sprockets
   # `Base` class for `Environment` and `Cached`.
   class Base
-    include PathUtils, PathDependencyUtils, PathDigestUtils, DigestUtils
+    include DigestUtils
+    include PathDigestUtils
+    include PathDependencyUtils
+    include PathUtils
     include Configuration
     include Server
-    include Resolve, Loader
+    include Loader
+    include Resolve
     include Bower
 
     # Get persistent cache store
@@ -38,7 +42,7 @@ module Sprockets
     def cached
       raise NotImplementedError
     end
-    alias_method :index, :cached
+    alias index cached
 
     # Internal: Compute digest for path.
     #
@@ -54,17 +58,15 @@ module Sprockets
         # also possible the file was updated more than once in a given second.
         key = UnloadedAsset.new(path, self).file_digest_key(stat.mtime.to_i)
         cache.fetch(key) do
-          self.stat_digest(path, stat)
+          stat_digest(path, stat)
         end
       end
     end
 
     # Find asset by logical path or expanded path.
     def find_asset(path, options = {})
-      uri, _ = resolve(path, options.merge(compat: false))
-      if uri
-        load(uri)
-      end
+      uri, = resolve(path, options.merge(compat: false))
+      load(uri) if uri
     end
 
     def find_all_linked_assets(path, options = {})
@@ -94,8 +96,8 @@ module Sprockets
 
     # Pretty inspect
     def inspect
-      "#<#{self.class}:0x#{object_id.to_s(16)} " +
-        "root=#{root.to_s.inspect}, " +
+      "#<#{self.class}:0x#{object_id.to_s(16)} " \
+        "root=#{root.to_s.inspect}, " \
         "paths=#{paths.inspect}>"
     end
 

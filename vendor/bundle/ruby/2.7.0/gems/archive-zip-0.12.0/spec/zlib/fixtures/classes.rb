@@ -1,5 +1,3 @@
-# encoding: UTF-8
-
 class ZlibSpecs
   def self.compressed_data
     File.open(
@@ -58,8 +56,6 @@ class ZlibSpecs
   end
 
   def self.test_data
-    File.open(File.join(File.dirname(__FILE__), 'raw_file.txt'), 'rb') do |f|
-      f.read
-    end
+    File.open(File.join(File.dirname(__FILE__), 'raw_file.txt'), 'rb', &:read)
   end
 end

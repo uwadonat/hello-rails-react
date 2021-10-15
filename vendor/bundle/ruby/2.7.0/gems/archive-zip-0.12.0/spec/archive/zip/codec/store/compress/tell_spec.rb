@@ -1,5 +1,3 @@
-# encoding: UTF-8
-
 require 'minitest/autorun'
 
 require File.expand_path('../../fixtures/classes', __FILE__)
@@ -7,8 +5,8 @@ require File.expand_path('../../fixtures/classes', __FILE__)
 require 'archive/zip/codec/store'
 require 'archive/support/binary_stringio'
 
-describe "Archive::Zip::Codec::Store::Compress#tell" do
-  it "returns the current position of the stream" do
+describe 'Archive::Zip::Codec::Store::Compress#tell' do
+  it 'returns the current position of the stream' do
     sio = BinaryStringIO.new
     Archive::Zip::Codec::Store::Compress.open(sio) do |c|
       c.tell.must_equal(0)
@@ -21,7 +19,7 @@ describe "Archive::Zip::Codec::Store::Compress#tell" do
     end
   end
 
-  it "raises IOError on closed stream" do
+  it 'raises IOError on closed stream' do
     delegate = MiniTest::Mock.new
     delegate.expect(:close, nil)
     lambda do

@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 Capybara.register_driver :rack_test do |app|
   Capybara::RackTest::Driver.new(app)
 end

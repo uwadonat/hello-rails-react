@@ -1,5 +1,3 @@
-# encoding: UTF-8
-
 require 'minitest/autorun'
 
 require File.expand_path('../../fixtures/classes', __FILE__)
@@ -7,8 +5,8 @@ require File.expand_path('../../fixtures/classes', __FILE__)
 require 'archive/zip/codec/traditional_encryption'
 require 'archive/support/binary_stringio'
 
-describe "Archive::Zip::Codec::TraditionalEncryption::Encrypt.open" do
-  it "returns a new instance when run without a block" do
+describe 'Archive::Zip::Codec::TraditionalEncryption::Encrypt.open' do
+  it 'returns a new instance when run without a block' do
     e = Archive::Zip::Codec::TraditionalEncryption::Encrypt.open(
       BinaryStringIO.new,
       TraditionalEncryptionSpecs.password,
@@ -18,7 +16,7 @@ describe "Archive::Zip::Codec::TraditionalEncryption::Encrypt.open" do
     e.close
   end
 
-  it "executes a block with a new instance as an argument" do
+  it 'executes a block with a new instance as an argument' do
     Archive::Zip::Codec::TraditionalEncryption::Encrypt.open(
       BinaryStringIO.new,
       TraditionalEncryptionSpecs.password,
@@ -28,7 +26,7 @@ describe "Archive::Zip::Codec::TraditionalEncryption::Encrypt.open" do
     end
   end
 
-  it "closes the object after executing a block" do
+  it 'closes the object after executing a block' do
     e = Archive::Zip::Codec::TraditionalEncryption::Encrypt.open(
       BinaryStringIO.new,
       TraditionalEncryptionSpecs.password,

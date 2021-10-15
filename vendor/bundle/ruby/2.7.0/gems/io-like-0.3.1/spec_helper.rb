@@ -1,6 +1,6 @@
 unless ENV['MSPEC_RUNNER']
   begin
-    require "pp"
+    require 'pp'
     require 'mspec/version'
     require 'mspec/helpers'
     require 'mspec/guards'
@@ -27,20 +27,20 @@ unless ENV['MSPEC_RUNNER']
       elsif ENV['USERPROFILE']
         ENV['HOME'] = ENV['USERPROFILE']
       else
-        puts "No suitable HOME environment found. This means that all of"
-        puts "HOME, HOMEDIR, HOMEDRIVE, and USERPROFILE are not set"
+        puts 'No suitable HOME environment found. This means that all of'
+        puts 'HOME, HOMEDIR, HOMEDRIVE, and USERPROFILE are not set'
         exit 1
       end
     end
 
     TOLERANCE = 0.00003 unless Object.const_defined?(:TOLERANCE)
   rescue LoadError
-    puts "Please install the MSpec gem to run the specs."
+    puts 'Please install the MSpec gem to run the specs.'
     exit 1
   end
 end
 
-minimum_version = "1.5.9"
+minimum_version = '1.5.9'
 unless MSpec::VERSION >= minimum_version
   puts "Please install MSpec version >= #{minimum_version} to run the specs"
   exit 1

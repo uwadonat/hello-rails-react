@@ -30,15 +30,13 @@ class Sass::Logger::Delayed < Sass::Logger::Base
 
   # Flushes all queued logs to the wrapped logger.
   def flush
-    @messages.each {|(l, m)| @inner.log(l, m)}
+    @messages.each { |(l, m)| @inner.log(l, m) }
   end
 
   # Uninstalls this logger from \{Sass.logger\}. This should only be called if
   # the logger was installed using \{#install!}
   def uninstall!
-    if Sass.logger != self
-      throw Exception.new("Can't uninstall a logger that's not currently installed.")
-    end
+    throw Exception.new("Can't uninstall a logger that's not currently installed.") if Sass.logger != self
 
     @inner.log_level = log_level
     Sass.logger = @inner

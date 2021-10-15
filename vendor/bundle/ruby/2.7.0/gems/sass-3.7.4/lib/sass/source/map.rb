@@ -85,19 +85,21 @@ module Sass::Source
     # @raise [ArgumentError] If neither `:css_uri` nor `:css_path` and
     #   `:sourcemap_path` are specified.
     def to_json(options)
-      css_uri, css_path, sourcemap_path =
-        options[:css_uri], options[:css_path], options[:sourcemap_path]
+      css_uri = options[:css_uri]
+      css_path = options[:css_path]
+      sourcemap_path = options[:sourcemap_path]
       unless css_uri || (css_path && sourcemap_path)
-        raise ArgumentError.new("Sass::Source::Map#to_json requires either " \
-          "the :css_uri option or both the :css_path and :soucemap_path options.")
+        raise ArgumentError, 'Sass::Source::Map#to_json requires either ' \
+          'the :css_uri option or both the :css_path and :soucemap_path options.'
       end
       css_path &&= Sass::Util.pathname(File.absolute_path(css_path))
       sourcemap_path &&= Sass::Util.pathname(File.absolute_path(sourcemap_path))
       css_uri ||= Sass::Util.file_uri_from_path(
-        Sass::Util.relative_path_from(css_path, sourcemap_path.dirname))
+        Sass::Util.relative_path_from(css_path, sourcemap_path.dirname)
+      )
 
       result = "{\n"
-      write_json_field(result, "version", 3, true)
+      write_json_field(result, 'version', 3, true)
 
       source_uri_to_id = {}
       id_to_source_uri = {}
@@ -114,7 +116,8 @@ module Sass::Source
       previous_source_id = 0
 
       @data.each do |m|
-        file, importer = m.input.file, m.input.importer
+        file = m.input.file
+        importer = m.input.importer
 
         next unless importer
 
@@ -146,15 +149,15 @@ module Sass::Source
           [m.input.end_pos, m.output.end_pos]
         ].each do |source_pos, target_pos|
           if previous_target_line != target_pos.line
-            line_data.push(segment_data_for_line.join(",")) unless segment_data_for_line.empty?
-            (target_pos.line - 1 - (previous_target_line || 0)).times {line_data.push("")}
+            line_data.push(segment_data_for_line.join(',')) unless segment_data_for_line.empty?
+            (target_pos.line - 1 - (previous_target_line || 0)).times { line_data.push('') }
             previous_target_line = target_pos.line
             previous_target_offset = 1
             segment_data_for_line = []
           end
 
           # `segment` is a data chunk for a single position mapping.
-          segment = ""
+          segment = ''
 
           # Field 1: zero-based starting offset.
           segment << Sass::Util.encode_vlq(target_pos.offset - previous_target_offset)
@@ -177,20 +180,20 @@ module Sass::Source
           previous_target_line = target_pos.line
         end
       end
-      line_data.push(segment_data_for_line.join(","))
-      write_json_field(result, "mappings", line_data.join(";"))
+      line_data.push(segment_data_for_line.join(','))
+      write_json_field(result, 'mappings', line_data.join(';'))
 
       source_names = []
-      (0...next_source_id).each {|id| source_names.push(id_to_source_uri[id].to_s)}
-      write_json_field(result, "sources", source_names)
+      (0...next_source_id).each { |id| source_names.push(id_to_source_uri[id].to_s) }
+      write_json_field(result, 'sources', source_names)
 
       if options[:type] == :inline
-        write_json_field(result, "sourcesContent",
-          (0...next_source_id).map {|id| id_to_contents[id]})
+        write_json_field(result, 'sourcesContent',
+                         (0...next_source_id).map { |id| id_to_contents[id] })
       end
 
-      write_json_field(result, "names", [])
-      write_json_field(result, "file", css_uri)
+      write_json_field(result, 'names', [])
+      write_json_field(result, 'file', css_uri)
 
       result << "\n}"
       result
@@ -199,10 +202,10 @@ module Sass::Source
     private
 
     def write_json_field(out, name, value, is_first = false)
-      out << (is_first ? "" : ",\n") <<
-        "\"" <<
+      out << (is_first ? '' : ",\n") <<
+        '"' <<
         Sass::Util.json_escape_string(name) <<
-        "\": " <<
+        '": ' <<
         Sass::Util.json_value_of(value)
     end
   end

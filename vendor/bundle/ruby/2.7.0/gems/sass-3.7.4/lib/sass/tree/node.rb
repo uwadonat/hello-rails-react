@@ -122,7 +122,7 @@ module Sass
       def <<(child)
         return if child.nil?
         if child.is_a?(Array)
-          child.each {|c| self << c}
+          child.each { |c| self << c }
         else
           self.has_children = true
           @children << child
@@ -149,7 +149,9 @@ module Sass
       # Should only be called in a static tree.
       #
       # @return [Boolean]
-      def invisible?; false; end
+      def invisible?
+        false
+      end
 
       # The output style. See {file:SASS_REFERENCE.md#Options the Sass options documentation}.
       #
@@ -174,7 +176,7 @@ module Sass
       def css_with_sourcemap
         visitor = Sass::Tree::Visitors::ToCss.new(:build_source_mapping)
         result = visitor.visit(self)
-        return result, visitor.source_mapping
+        [result, visitor.source_mapping]
       end
 
       # Returns a representation of the node for debugging purposes.
@@ -182,7 +184,7 @@ module Sass
       # @return [String]
       def inspect
         return self.class.to_s unless has_children
-        "(#{self.class} #{children.map {|c| c.inspect}.join(' ')})"
+        "(#{self.class} #{children.map(&:inspect).join(' ')})"
       end
 
       # Iterates through each node in the tree rooted at this node
@@ -192,7 +194,7 @@ module Sass
       # @yieldparam node [Node] a node in the tree
       def each
         yield self
-        children.each {|c| c.each {|n| yield n}}
+        children.each { |c| c.each { |n| yield n } }
       end
 
       # Converts a node to Sass code that will generate it.
@@ -233,7 +235,7 @@ module Sass
       def balance(*args)
         res = Sass::Shared.balance(*args)
         return res if res
-        raise Sass::SyntaxError.new("Unbalanced brackets.", :line => line)
+        raise Sass::SyntaxError.new('Unbalanced brackets.', line: line)
       end
     end
   end

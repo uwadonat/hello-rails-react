@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 Capybara.add_selector(:element, locator_type: [String, Symbol]) do
   xpath do |locator, **|
     XPath.descendant.where(locator ? XPath.local_name == locator.to_s : nil)

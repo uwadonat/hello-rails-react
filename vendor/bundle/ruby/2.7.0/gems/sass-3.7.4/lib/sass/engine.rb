@@ -128,35 +128,35 @@ module Sass
     end
 
     # The character that begins a CSS property.
-    PROPERTY_CHAR  = ?:
+    PROPERTY_CHAR = ':'.freeze
 
     # The character that designates the beginning of a comment,
     # either Sass or CSS.
-    COMMENT_CHAR = ?/
+    COMMENT_CHAR = '/'.freeze
 
     # The character that follows the general COMMENT_CHAR and designates a Sass comment,
     # which is not output as a CSS comment.
-    SASS_COMMENT_CHAR = ?/
+    SASS_COMMENT_CHAR = '/'.freeze
 
     # The character that indicates that a comment allows interpolation
     # and should be preserved even in `:compressed` mode.
-    SASS_LOUD_COMMENT_CHAR = ?!
+    SASS_LOUD_COMMENT_CHAR = '!'.freeze
 
     # The character that follows the general COMMENT_CHAR and designates a CSS comment,
     # which is embedded in the CSS document.
-    CSS_COMMENT_CHAR = ?*
+    CSS_COMMENT_CHAR = '*'.freeze
 
     # The character used to denote a compiler directive.
-    DIRECTIVE_CHAR = ?@
+    DIRECTIVE_CHAR = '@'.freeze
 
     # Designates a non-parsed rule.
-    ESCAPE_CHAR    = ?\\
+    ESCAPE_CHAR = '\\'.freeze
 
     # Designates block as mixin definition rather than CSS rules to output
-    MIXIN_DEFINITION_CHAR = ?=
+    MIXIN_DEFINITION_CHAR = '='.freeze
 
     # Includes named mixin declared using MIXIN_DEFINITION_CHAR
-    MIXIN_INCLUDE_CHAR    = ?+
+    MIXIN_INCLUDE_CHAR = '+'.freeze
 
     # The regex that matches and extracts data from
     # properties of the form `:name prop`.
@@ -165,12 +165,12 @@ module Sass
     # The default options for Sass::Engine.
     # @api public
     DEFAULT_OPTIONS = {
-      :style => :nested,
-      :load_paths => [],
-      :cache => true,
-      :cache_location => './.sass-cache',
-      :syntax => :sass,
-      :filesystem_importer => Sass::Importers::Filesystem
+      style: :nested,
+      load_paths: [],
+      cache: true,
+      cache_location: './.sass-cache',
+      syntax: :sass,
+      filesystem_importer: Sass::Importers::Filesystem
     }.freeze
 
     # Converts a Sass options hash into a standard form, filling in
@@ -181,17 +181,18 @@ module Sass
     # @return [{Symbol => Object}] The normalized options hash.
     # @private
     def self.normalize_options(options)
-      options = DEFAULT_OPTIONS.merge(options.reject {|_k, v| v.nil?})
+      options = DEFAULT_OPTIONS.merge(options.reject { |_k, v| v.nil? })
 
       # If the `:filename` option is passed in without an importer,
       # assume it's using the default filesystem importer.
-      options[:importer] ||= options[:filesystem_importer].new(".") if options[:filename]
+      options[:importer] ||= options[:filesystem_importer].new('.') if options[:filename]
 
       # Tracks the original filename of the top-level Sass file
       options[:original_filename] ||= options[:filename]
 
       options[:cache_store] ||= Sass::CacheStores::Chain.new(
-        Sass::CacheStores::Memory.new, Sass::CacheStores::Filesystem.new(options[:cache_location]))
+        Sass::CacheStores::Memory.new, Sass::CacheStores::Filesystem.new(options[:cache_location])
+      )
       # Support both, because the docs said one and the other actually worked
       # for quite a long time.
       options[:line_comments] ||= options[:line_numbers]
@@ -214,8 +215,8 @@ module Sass
       # Backwards compatibility
       options[:property_syntax] ||= options[:attribute_syntax]
       case options[:property_syntax]
-      when :alternate; options[:property_syntax] = :new
-      when :normal; options[:property_syntax] = :old
+      when :alternate then options[:property_syntax] = :new
+      when :normal then options[:property_syntax] = :old
       end
       options[:sourcemap] = :auto if options[:sourcemap] == true
       options[:sourcemap] = :none if options[:sourcemap] == false
@@ -240,12 +241,12 @@ module Sass
       if had_syntax
         # Use what was explicitly specified
       elsif filename =~ /\.scss$/
-        options.merge!(:syntax => :scss)
+        options[:syntax] = :scss
       elsif filename =~ /\.sass$/
-        options.merge!(:syntax => :sass)
+        options[:syntax] = :sass
       end
 
-      Sass::Engine.new(File.read(filename), options.merge(:filename => filename))
+      Sass::Engine.new(File.read(filename), options.merge(filename: filename))
     end
 
     # The options for the Sass engine.
@@ -288,7 +289,7 @@ module Sass
     # @raise [ArgumentError] if the document uses an unknown encoding with `@charset`
     def render
       return _to_tree.render unless @options[:quiet]
-      Sass::Util.silence_sass_warnings {_to_tree.render}
+      Sass::Util.silence_sass_warnings { _to_tree.render }
     end
 
     # Render the template to CSS and return the source map.
@@ -305,10 +306,10 @@ module Sass
     # @raise [ArgumentError] if the document uses an unknown encoding with `@charset`
     def render_with_sourcemap(sourcemap_uri)
       return _render_with_sourcemap(sourcemap_uri) unless @options[:quiet]
-      Sass::Util.silence_sass_warnings {_render_with_sourcemap(sourcemap_uri)}
+      Sass::Util.silence_sass_warnings { _render_with_sourcemap(sourcemap_uri) }
     end
 
-    alias_method :to_css, :render
+    alias to_css render
 
     # Parses the document into its parse tree. Memoized.
     #
@@ -316,7 +317,7 @@ module Sass
     # @raise [Sass::SyntaxError] if there's an error in the document
     def to_tree
       @tree ||= if @options[:quiet]
-                  Sass::Util.silence_sass_warnings {_to_tree}
+                  Sass::Util.silence_sass_warnings { _to_tree }
                 else
                   _to_tree
                 end
@@ -363,14 +364,14 @@ module Sass
       filename = @options[:filename]
       importer = @options[:importer]
       sourcemap_dir = @options[:sourcemap_filename] &&
-        File.dirname(File.expand_path(@options[:sourcemap_filename]))
+                      File.dirname(File.expand_path(@options[:sourcemap_filename]))
       if filename.nil?
-        raise Sass::SyntaxError.new(<<ERR)
+        raise Sass::SyntaxError, <<ERR
 Error generating source map: couldn't determine public URL for the source stylesheet.
   No filename is available so there's nothing for the source map to link to.
 ERR
       elsif importer.nil?
-        raise Sass::SyntaxError.new(<<ERR)
+        raise Sass::SyntaxError, <<ERR
 Error generating source map: couldn't determine public URL for "#{filename}".
   Without a public URL, there's nothing for the source map to link to.
   An importer was not set for this file.
@@ -379,7 +380,7 @@ ERR
               sourcemap_dir = nil if @options[:sourcemap] == :file
               importer.public_url(filename, sourcemap_dir).nil?
             end
-        raise Sass::SyntaxError.new(<<ERR)
+        raise Sass::SyntaxError, <<ERR
 Error generating source map: couldn't determine public URL for "#{filename}".
   Without a public URL, there's nothing for the source map to link to.
   Custom importers should define the #public_url method.
@@ -388,19 +389,19 @@ ERR
 
       rendered, sourcemap = _to_tree.render_with_sourcemap
       compressed = @options[:style] == :compressed
-      rendered << "\n" if rendered[-1] != ?\n
+      rendered << "\n" if rendered[-1] != "\n"
       rendered << "\n" unless compressed
-      rendered << "/*# sourceMappingURL="
+      rendered << '/*# sourceMappingURL='
       rendered << URI::DEFAULT_PARSER.escape(sourcemap_uri)
       rendered << " */\n"
-      return rendered, sourcemap
+      [rendered, sourcemap]
     end
 
     def _to_tree
       check_encoding!
 
       if (@options[:cache] || @options[:read_cache]) &&
-          @options[:filename] && @options[:importer]
+         @options[:filename] && @options[:importer]
         key = sassc_key
         sha = Digest::SHA1.hexdigest(@template)
 
@@ -429,7 +430,7 @@ ERR
       end
       root
     rescue SyntaxError => e
-      e.modify_backtrace(:filename => @options[:filename], :line => @line)
+      e.modify_backtrace(filename: @options[:filename], line: @line)
       e.sass_template = @template
       raise e
     end
@@ -460,17 +461,21 @@ ERR
         unless line_tab_str.empty?
           if tab_str.nil?
             comment_tab_str ||= line_tab_str
-            next if try_comment(line, lines.last, "", comment_tab_str, index)
+            next if try_comment(line, lines.last, '', comment_tab_str, index)
             comment_tab_str = nil
           end
 
           tab_str ||= line_tab_str
 
-          raise SyntaxError.new("Indenting at the beginning of the document is illegal.",
-            :line => index) if first
+          if first
+            raise SyntaxError.new('Indenting at the beginning of the document is illegal.',
+                                  line: index)
+          end
 
-          raise SyntaxError.new("Indentation can't use both tabs and spaces.",
-            :line => index) if tab_str.include?(?\s) && tab_str.include?(?\t)
+          if tab_str.include?("\s") && tab_str.include?("\t")
+            raise SyntaxError.new("Indentation can't use both tabs and spaces.",
+                                  line: index)
+          end
         end
         first &&= !tab_str.nil?
         if tab_str.nil?
@@ -491,7 +496,7 @@ ERR
 Inconsistent indentation: #{Sass::Shared.human_indentation line_tab_str, true} used for indentation,
 but the rest of the document was indented using #{Sass::Shared.human_indentation tab_str}.
 END
-          raise SyntaxError.new(message, :line => index)
+          raise SyntaxError.new(message, line: index)
         end
 
         lines << Line.new(line.strip, line_tabs, index, line_tab_str.size, @options[:filename], [])
@@ -505,7 +510,7 @@ END
       # than the normal indentation
       return unless line =~ /^#{tab_str}\s/
       unless line =~ /^(?:#{comment_tab_str})(.*)$/
-        raise SyntaxError.new(<<MSG.strip.tr("\n", " "), :line => index)
+        raise SyntaxError.new(<<MSG.strip.tr("\n", ' '), line: index)
 Inconsistent indentation:
 previous line was indented by #{Sass::Shared.human_indentation comment_tab_str},
 but this line was indented by #{Sass::Shared.human_indentation line[/^\s*/]}.
@@ -530,7 +535,7 @@ MSG
           i += 1
         end
       end
-      return nodes, i
+      [nodes, i]
     end
 
     def build_tree(parent, line, root = false)
@@ -568,7 +573,8 @@ MSG
           elsif continued_rule
             continued_rule.add_rules child
             continued_rule.children = child.children
-            continued_rule, child = nil, continued_rule
+            child = continued_rule
+            continued_rule = nil
           end
         elsif continued_rule
           continued_rule = nil
@@ -576,8 +582,8 @@ MSG
 
         if child.is_a?(Tree::CommentNode) && child.type == :silent
           if continued_comment &&
-              child.line == continued_comment.line +
-              continued_comment.lines + 1
+             child.line == continued_comment.line +
+                           continued_comment.lines + 1
             continued_comment.value.last.sub!(%r{ \*/\Z}, '')
             child.value.first.gsub!(%r{\A/\*}, ' *')
             continued_comment.value += ["\n"] + child.value
@@ -597,7 +603,7 @@ MSG
     def validate_and_append_child(parent, child, line, root)
       case child
       when Array
-        child.each {|c| validate_and_append_child(parent, c, line, root)}
+        child.each { |c| validate_and_append_child(parent, c, line, root) }
       when Tree::Node
         parent << child
       end
@@ -615,8 +621,8 @@ WARNING
       case line.text[0]
       when PROPERTY_CHAR
         if line.text[1] == PROPERTY_CHAR ||
-            (@options[:property_syntax] == :new &&
-             line.text =~ PROPERTY_OLD && $2.empty?)
+           (@options[:property_syntax] == :new &&
+            line.text =~ PROPERTY_OLD && Regexp.last_match(2).empty?)
           # Support CSS3-style pseudo-elements,
           # which begin with ::,
           # as well as pseudo-classes
@@ -625,8 +631,10 @@ WARNING
         else
           name_start_offset = line.offset + 1 # +1 for the leading ':'
           name, value = line.text.scan(PROPERTY_OLD)[0]
-          raise SyntaxError.new("Invalid property: \"#{line.text}\".",
-            :line => @line) if name.nil? || value.nil?
+          if name.nil? || value.nil?
+            raise SyntaxError.new("Invalid property: \"#{line.text}\".",
+                                  line: @line)
+          end
 
           @@old_property_deprecation.warn(@options[:filename], @line, <<WARNING)
 Old-style properties like "#{line.text}" are deprecated and will be an error in future versions of Sass.
@@ -643,10 +651,11 @@ WARNING
           property.name_source_range = Sass::Source::Range.new(
             Sass::Source::Position.new(@line, to_parser_offset(name_start_offset)),
             Sass::Source::Position.new(@line, to_parser_offset(name_end_offset)),
-            @options[:filename], @options[:importer])
+            @options[:filename], @options[:importer]
+          )
           property
         end
-      when ?$
+      when '$'
         parse_variable(line)
       when COMMENT_CHAR
         parse_comment(line)
@@ -657,7 +666,7 @@ WARNING
       when MIXIN_DEFINITION_CHAR
         parse_mixin_definition(line)
       when MIXIN_INCLUDE_CHAR
-        if line.text[1].nil? || line.text[1] == ?\s
+        if line.text[1].nil? || line.text[1] == "\s"
           Tree::RuleNode.new(parse_interp(line.text), full_line_range(line))
         else
           parse_mixin_include(line, root)
@@ -673,8 +682,8 @@ WARNING
       offset = line.offset
       offset += hack_char.length if hack_char
       parser = Sass::SCSS::Parser.new(scanner,
-        @options[:filename], @options[:importer],
-        @line, to_parser_offset(offset))
+                                      @options[:filename], @options[:importer],
+                                      @line, to_parser_offset(offset))
 
       unless (res = parser.parse_interp_ident)
         parsed = parse_interp(line.text, line.offset)
@@ -684,7 +693,8 @@ WARNING
       ident_range = Sass::Source::Range.new(
         Sass::Source::Position.new(@line, to_parser_offset(line.offset)),
         Sass::Source::Position.new(@line, parser.offset),
-        @options[:filename], @options[:importer])
+        @options[:filename], @options[:importer]
+      )
       offset = parser.offset - 1
       res.unshift(hack_char) if hack_char
 
@@ -718,31 +728,31 @@ WARNING
         selector_range = Sass::Source::Range.new(
           ident_range.start_pos,
           Sass::Source::Position.new(@line, to_parser_offset(line.offset) + line.text.length),
-          @options[:filename], @options[:importer])
+          @options[:filename], @options[:importer]
+        )
         rule = Tree::RuleNode.new(res + interp_parsed, selector_range)
         rule << Tree::CommentNode.new([trailing], :silent) if trailing
         rule
       end
     end
 
-    def parse_property(name, parsed_name, value, prop, line, start_offset)
-
+    def parse_property(name, _parsed_name, value, prop, line, start_offset)
       if name.start_with?('--')
         unless line.children.empty?
-          raise SyntaxError.new("Illegal nesting: Nothing may be nested beneath custom properties.",
-            :line => @line + 1)
+          raise SyntaxError.new('Illegal nesting: Nothing may be nested beneath custom properties.',
+                                line: @line + 1)
         end
 
         parser = Sass::SCSS::Parser.new(value,
-          @options[:filename], @options[:importer],
-          @line, to_parser_offset(@offset))
+                                        @options[:filename], @options[:importer],
+                                        @line, to_parser_offset(@offset))
         parsed_value = parser.parse_declaration_value
         end_offset = start_offset + value.length
       elsif value.strip.empty?
-        parsed_value = [Sass::Script::Tree::Literal.new(Sass::Script::Value::String.new(""))]
+        parsed_value = [Sass::Script::Tree::Literal.new(Sass::Script::Value::String.new(''))]
         end_offset = start_offset
       else
-        expr = parse_script(value, :offset => to_parser_offset(start_offset))
+        expr = parse_script(value, offset: to_parser_offset(start_offset))
         end_offset = expr.source_range.end_pos.offset - 1
         parsed_value = [expr]
       end
@@ -750,11 +760,11 @@ WARNING
       node.value_source_range = Sass::Source::Range.new(
         Sass::Source::Position.new(line.index, to_parser_offset(start_offset)),
         Sass::Source::Position.new(line.index, to_parser_offset(end_offset)),
-        @options[:filename], @options[:importer])
+        @options[:filename], @options[:importer]
+      )
       if !node.custom_property? && value.strip.empty? && line.children.empty?
-        raise SyntaxError.new(
-          "Invalid property: \"#{node.declaration}\" (no value)." +
-          node.pseudo_class_selector_message)
+        raise SyntaxError, "Invalid property: \"#{node.declaration}\" (no value)." +
+                           node.pseudo_class_selector_message
       end
 
       node
@@ -762,13 +772,17 @@ WARNING
 
     def parse_variable(line)
       name, value, flags = line.text.scan(Script::MATCH)[0]
-      raise SyntaxError.new("Illegal nesting: Nothing may be nested beneath variable declarations.",
-        :line => @line + 1) unless line.children.empty?
-      raise SyntaxError.new("Invalid variable: \"#{line.text}\".",
-        :line => @line) unless name && value
+      unless line.children.empty?
+        raise SyntaxError.new('Illegal nesting: Nothing may be nested beneath variable declarations.',
+                              line: @line + 1)
+      end
+      unless name && value
+        raise SyntaxError.new("Invalid variable: \"#{line.text}\".",
+                              line: @line)
+      end
       flags = flags ? flags.split(/\s+/) : []
-      if (invalid_flag = flags.find {|f| f != '!default' && f != '!global'})
-        raise SyntaxError.new("Invalid flag \"#{invalid_flag}\".", :line => @line)
+      if (invalid_flag = flags.find { |f| f != '!default' && f != '!global' })
+        raise SyntaxError.new("Invalid flag \"#{invalid_flag}\".", line: @line)
       end
 
       # This workaround is needed for the case when the variable value is part of the identifier,
@@ -776,7 +790,7 @@ WARNING
       # $red_color: red;
       var_lhs_length = 1 + name.length # 1 stands for '$'
       index = line.text.index(value, line.offset + var_lhs_length) || 0
-      expr = parse_script(value, :offset => to_parser_offset(line.offset + index))
+      expr = parse_script(value, offset: to_parser_offset(line.offset + index))
 
       Tree::VariableNode.new(name, expr, flags.include?('!default'), flags.include?('!global'))
     end
@@ -785,12 +799,13 @@ WARNING
       if line.text[1] == CSS_COMMENT_CHAR || line.text[1] == SASS_COMMENT_CHAR
         silent = line.text[1] == SASS_COMMENT_CHAR
         loud = !silent && line.text[2] == SASS_LOUD_COMMENT_CHAR
-        if silent
-          value = [line.text]
-        else
-          value = self.class.parse_interp(
-            line.text, line.index, to_parser_offset(line.offset), :filename => @filename)
-        end
+        value = if silent
+                  [line.text]
+                else
+                  self.class.parse_interp(
+                    line.text, line.index, to_parser_offset(line.offset), filename: @filename
+                  )
+                end
         value = Sass::Util.with_extracted_values(value) do |str|
           str = str.gsub(/^#{line.comment_tab_str}/m, '')[2..-1] # get rid of // or /*
           format_comment_text(str, silent)
@@ -805,15 +820,16 @@ WARNING
         comment = Tree::CommentNode.new(value, type)
         comment.line = line.index
         text = line.text.rstrip
-        if text.include?("\n")
-          end_offset = text.length - text.rindex("\n")
-        else
-          end_offset = to_parser_offset(line.offset + text.length)
-        end
+        end_offset = if text.include?("\n")
+                       text.length - text.rindex("\n")
+                     else
+                       to_parser_offset(line.offset + text.length)
+                     end
         comment.source_range = Sass::Source::Range.new(
           Sass::Source::Position.new(@line, to_parser_offset(line.offset)),
           Sass::Source::Position.new(@line + text.count("\n"), end_offset),
-          @options[:filename])
+          @options[:filename]
+        )
         comment
       else
         Tree::RuleNode.new(parse_interp(line.text), full_line_range(line))
@@ -821,12 +837,12 @@ WARNING
     end
 
     DIRECTIVES = Set[:mixin, :include, :function, :return, :debug, :warn, :for,
-      :each, :while, :if, :else, :extend, :import, :media, :charset, :content,
-      :at_root, :error]
+                     :each, :while, :if, :else, :extend, :import, :media, :charset, :content,
+                     :at_root, :error]
 
     def parse_directive(parent, line, root)
       directive, whitespace, value = line.text[1..-1].split(/(\s+)/, 2)
-      raise SyntaxError.new("Invalid directive: '@'.") unless directive
+      raise SyntaxError, "Invalid directive: '@'." unless directive
       offset = directive.size + whitespace.size + 1 if whitespace
 
       directive_name = directive.tr('-', '_').to_sym
@@ -841,39 +857,46 @@ WARNING
       end
 
       Tree::DirectiveNode.new(
-        value.nil? ? ["@#{directive}"] : ["@#{directive} "] + parse_interp(value, offset))
+        value.nil? ? ["@#{directive}"] : ["@#{directive} "] + parse_interp(value, offset)
+      )
     end
 
-    def parse_while_directive(parent, line, root, value, offset)
-      raise SyntaxError.new("Invalid while directive '@while': expected expression.") unless value
-      Tree::WhileNode.new(parse_script(value, :offset => offset))
+    def parse_while_directive(_parent, _line, _root, value, offset)
+      raise SyntaxError, "Invalid while directive '@while': expected expression." unless value
+      Tree::WhileNode.new(parse_script(value, offset: offset))
     end
 
-    def parse_if_directive(parent, line, root, value, offset)
-      raise SyntaxError.new("Invalid if directive '@if': expected expression.") unless value
-      Tree::IfNode.new(parse_script(value, :offset => offset))
+    def parse_if_directive(_parent, _line, _root, value, offset)
+      raise SyntaxError, "Invalid if directive '@if': expected expression." unless value
+      Tree::IfNode.new(parse_script(value, offset: offset))
     end
 
-    def parse_debug_directive(parent, line, root, value, offset)
-      raise SyntaxError.new("Invalid debug directive '@debug': expected expression.") unless value
-      raise SyntaxError.new("Illegal nesting: Nothing may be nested beneath debug directives.",
-        :line => @line + 1) unless line.children.empty?
+    def parse_debug_directive(_parent, line, _root, value, offset)
+      raise SyntaxError, "Invalid debug directive '@debug': expected expression." unless value
+      unless line.children.empty?
+        raise SyntaxError.new('Illegal nesting: Nothing may be nested beneath debug directives.',
+                              line: @line + 1)
+      end
       offset = line.offset + line.text.index(value).to_i
-      Tree::DebugNode.new(parse_script(value, :offset => offset))
+      Tree::DebugNode.new(parse_script(value, offset: offset))
     end
 
-    def parse_error_directive(parent, line, root, value, offset)
-      raise SyntaxError.new("Invalid error directive '@error': expected expression.") unless value
-      raise SyntaxError.new("Illegal nesting: Nothing may be nested beneath error directives.",
-        :line => @line + 1) unless line.children.empty?
+    def parse_error_directive(_parent, line, _root, value, offset)
+      raise SyntaxError, "Invalid error directive '@error': expected expression." unless value
+      unless line.children.empty?
+        raise SyntaxError.new('Illegal nesting: Nothing may be nested beneath error directives.',
+                              line: @line + 1)
+      end
       offset = line.offset + line.text.index(value).to_i
-      Tree::ErrorNode.new(parse_script(value, :offset => offset))
+      Tree::ErrorNode.new(parse_script(value, offset: offset))
     end
 
-    def parse_extend_directive(parent, line, root, value, offset)
-      raise SyntaxError.new("Invalid extend directive '@extend': expected expression.") unless value
-      raise SyntaxError.new("Illegal nesting: Nothing may be nested beneath extend directives.",
-        :line => @line + 1) unless line.children.empty?
+    def parse_extend_directive(_parent, line, _root, value, offset)
+      raise SyntaxError, "Invalid extend directive '@extend': expected expression." unless value
+      unless line.children.empty?
+        raise SyntaxError.new('Illegal nesting: Nothing may be nested beneath extend directives.',
+                              line: @line + 1)
+      end
       optional = !!value.gsub!(/\s+#{Sass::SCSS::RX::OPTIONAL}$/, '')
       offset = line.offset + line.text.index(value).to_i
       interp_parsed = parse_interp(value, offset)
@@ -885,51 +908,58 @@ WARNING
       Tree::ExtendNode.new(interp_parsed, optional, selector_range)
     end
 
-    def parse_warn_directive(parent, line, root, value, offset)
-      raise SyntaxError.new("Invalid warn directive '@warn': expected expression.") unless value
-      raise SyntaxError.new("Illegal nesting: Nothing may be nested beneath warn directives.",
-        :line => @line + 1) unless line.children.empty?
+    def parse_warn_directive(_parent, line, _root, value, offset)
+      raise SyntaxError, "Invalid warn directive '@warn': expected expression." unless value
+      unless line.children.empty?
+        raise SyntaxError.new('Illegal nesting: Nothing may be nested beneath warn directives.',
+                              line: @line + 1)
+      end
       offset = line.offset + line.text.index(value).to_i
-      Tree::WarnNode.new(parse_script(value, :offset => offset))
+      Tree::WarnNode.new(parse_script(value, offset: offset))
     end
 
-    def parse_return_directive(parent, line, root, value, offset)
-      raise SyntaxError.new("Invalid @return: expected expression.") unless value
-      raise SyntaxError.new("Illegal nesting: Nothing may be nested beneath return directives.",
-        :line => @line + 1) unless line.children.empty?
+    def parse_return_directive(_parent, line, _root, value, offset)
+      raise SyntaxError, 'Invalid @return: expected expression.' unless value
+      unless line.children.empty?
+        raise SyntaxError.new('Illegal nesting: Nothing may be nested beneath return directives.',
+                              line: @line + 1)
+      end
       offset = line.offset + line.text.index(value).to_i
-      Tree::ReturnNode.new(parse_script(value, :offset => offset))
+      Tree::ReturnNode.new(parse_script(value, offset: offset))
     end
 
-    def parse_charset_directive(parent, line, root, value, offset)
+    def parse_charset_directive(_parent, line, _root, value, _offset)
       name = value && value[/\A(["'])(.*)\1\Z/, 2] # "
-      raise SyntaxError.new("Invalid charset directive '@charset': expected string.") unless name
-      raise SyntaxError.new("Illegal nesting: Nothing may be nested beneath charset directives.",
-        :line => @line + 1) unless line.children.empty?
+      raise SyntaxError, "Invalid charset directive '@charset': expected string." unless name
+      unless line.children.empty?
+        raise SyntaxError.new('Illegal nesting: Nothing may be nested beneath charset directives.',
+                              line: @line + 1)
+      end
       Tree::CharsetNode.new(name)
     end
 
-    def parse_media_directive(parent, line, root, value, offset)
+    def parse_media_directive(_parent, line, _root, value, offset)
       parser = Sass::SCSS::Parser.new(value,
-        @options[:filename], @options[:importer],
-        @line, to_parser_offset(@offset))
+                                      @options[:filename], @options[:importer],
+                                      @line, to_parser_offset(@offset))
       offset = line.offset + line.text.index('media').to_i - 1
       parsed_media_query_list = parser.parse_media_query_list.to_a
       node = Tree::MediaNode.new(parsed_media_query_list)
       node.source_range = Sass::Source::Range.new(
         Sass::Source::Position.new(@line, to_parser_offset(offset)),
         Sass::Source::Position.new(@line, to_parser_offset(line.offset) + line.text.length),
-        @options[:filename], @options[:importer])
+        @options[:filename], @options[:importer]
+      )
       node
     end
 
-    def parse_at_root_directive(parent, line, root, value, offset)
+    def parse_at_root_directive(parent, line, _root, value, offset)
       return Sass::Tree::AtRootNode.new unless value
 
       if value.start_with?('(')
         parser = Sass::SCSS::Parser.new(value,
-          @options[:filename], @options[:importer],
-          @line, to_parser_offset(@offset))
+                                        @options[:filename], @options[:importer],
+                                        @line, to_parser_offset(@offset))
         offset = line.offset + line.text.index('at-root').to_i - 1
         return Tree::AtRootNode.new(parser.parse_at_root_query)
       end
@@ -948,59 +978,57 @@ WARNING
       nil
     end
 
-    def parse_for_directive(parent, line, root, value, offset)
+    def parse_for_directive(_parent, line, _root, value, _offset)
       var, from_expr, to_name, to_expr =
         value.scan(/^([^\s]+)\s+from\s+(.+)\s+(to|through)\s+(.+)$/).first
 
       if var.nil? # scan failed, try to figure out why for error message
-        if value !~ /^[^\s]+/
-          expected = "variable name"
-        elsif value !~ /^[^\s]+\s+from\s+.+/
-          expected = "'from <expr>'"
-        else
-          expected = "'to <expr>' or 'through <expr>'"
-        end
-        raise SyntaxError.new("Invalid for directive '@for #{value}': expected #{expected}.")
+        expected = if value !~ /^[^\s]+/
+                     'variable name'
+                   elsif value !~ /^[^\s]+\s+from\s+.+/
+                     "'from <expr>'"
+                   else
+                     "'to <expr>' or 'through <expr>'"
+                   end
+        raise SyntaxError, "Invalid for directive '@for #{value}': expected #{expected}."
       end
-      raise SyntaxError.new("Invalid variable \"#{var}\".") unless var =~ Script::VALIDATE
+      raise SyntaxError, "Invalid variable \"#{var}\"." unless var =~ Script::VALIDATE
 
       var = var[1..-1]
-      parsed_from = parse_script(from_expr, :offset => line.offset + line.text.index(from_expr))
-      parsed_to = parse_script(to_expr, :offset => line.offset + line.text.index(to_expr))
+      parsed_from = parse_script(from_expr, offset: line.offset + line.text.index(from_expr))
+      parsed_to = parse_script(to_expr, offset: line.offset + line.text.index(to_expr))
       Tree::ForNode.new(var, parsed_from, parsed_to, to_name == 'to')
     end
 
-    def parse_each_directive(parent, line, root, value, offset)
+    def parse_each_directive(_parent, line, _root, value, _offset)
       vars, list_expr = value.scan(/^([^\s]+(?:\s*,\s*[^\s]+)*)\s+in\s+(.+)$/).first
 
       if vars.nil? # scan failed, try to figure out why for error message
         if value !~ /^[^\s]+/
-          expected = "variable name"
+          expected = 'variable name'
         elsif value !~ /^[^\s]+(?:\s*,\s*[^\s]+)*[^\s]+\s+from\s+.+/
           expected = "'in <expr>'"
         end
-        raise SyntaxError.new("Invalid each directive '@each #{value}': expected #{expected}.")
+        raise SyntaxError, "Invalid each directive '@each #{value}': expected #{expected}."
       end
 
       vars = vars.split(',').map do |var|
         var.strip!
-        raise SyntaxError.new("Invalid variable \"#{var}\".") unless var =~ Script::VALIDATE
+        raise SyntaxError, "Invalid variable \"#{var}\"." unless var =~ Script::VALIDATE
         var[1..-1]
       end
 
-      parsed_list = parse_script(list_expr, :offset => line.offset + line.text.index(list_expr))
+      parsed_list = parse_script(list_expr, offset: line.offset + line.text.index(list_expr))
       Tree::EachNode.new(vars, parsed_list)
     end
 
-    def parse_else_directive(parent, line, root, value, offset)
+    def parse_else_directive(parent, line, _root, value, _offset)
       previous = parent.children.last
-      raise SyntaxError.new("@else must come after @if.") unless previous.is_a?(Tree::IfNode)
+      raise SyntaxError, '@else must come after @if.' unless previous.is_a?(Tree::IfNode)
 
       if value
-        if value !~ /^if\s+(.+)/
-          raise SyntaxError.new("Invalid else directive '@else #{value}': expected 'if <expr>'.")
-        end
-        expr = parse_script($1, :offset => line.offset + line.text.index($1))
+        raise SyntaxError, "Invalid else directive '@else #{value}': expected 'if <expr>'." if value !~ /^if\s+(.+)/
+        expr = parse_script(Regexp.last_match(1), offset: line.offset + line.text.index(Regexp.last_match(1)))
       end
 
       node = Tree::IfNode.new(expr)
@@ -1009,9 +1037,11 @@ WARNING
       nil
     end
 
-    def parse_import_directive(parent, line, root, value, offset)
-      raise SyntaxError.new("Illegal nesting: Nothing may be nested beneath import directives.",
-        :line => @line + 1) unless line.children.empty?
+    def parse_import_directive(_parent, line, _root, value, offset)
+      unless line.children.empty?
+        raise SyntaxError.new('Illegal nesting: Nothing may be nested beneath import directives.',
+                              line: @line + 1)
+      end
 
       scanner = Sass::Util::MultibyteStringScanner.new(value)
       values = []
@@ -1020,15 +1050,16 @@ WARNING
         unless (node = parse_import_arg(scanner, offset + scanner.pos))
           raise SyntaxError.new(
             "Invalid @import: expected file to import, was #{scanner.rest.inspect}",
-            :line => @line)
+            line: @line
+          )
         end
         values << node
         break unless scanner.scan(/,\s*/)
       end
 
       if scanner.scan(/;/)
-        raise SyntaxError.new("Invalid @import: expected end of line, was \";\".",
-          :line => @line)
+        raise SyntaxError.new('Invalid @import: expected end of line, was ";".',
+                              line: @line)
       end
 
       values
@@ -1046,16 +1077,16 @@ WARNING
           node = Tree::CssImportNode.new(str)
         else
           supports_parser = Sass::SCSS::Parser.new(scanner,
-            @options[:filename], @options[:importer],
-            @line, str.source_range.end_pos.offset)
+                                                   @options[:filename], @options[:importer],
+                                                   @line, str.source_range.end_pos.offset)
           supports_condition = supports_parser.parse_supports_clause
 
           if scanner.eos?
             node = Tree::CssImportNode.new(str, [], supports_condition)
           else
             media_parser = Sass::SCSS::Parser.new(scanner,
-              @options[:filename], @options[:importer],
-              @line, str.source_range.end_pos.offset)
+                                                  @options[:filename], @options[:importer],
+                                                  @line, str.source_range.end_pos.offset)
             media = media_parser.parse_media_query_list
             end_pos = Sass::Source::Position.new(@line, media_parser.offset + 1)
             node = Tree::CssImportNode.new(str, media.to_a, supports_condition)
@@ -1064,7 +1095,8 @@ WARNING
 
         node.source_range = Sass::Source::Range.new(
           str.source_range.start_pos, end_pos,
-          @options[:filename], @options[:importer])
+          @options[:filename], @options[:importer]
+        )
         return node
       end
 
@@ -1075,7 +1107,8 @@ WARNING
         node.source_range = Sass::Source::Range.new(
           Sass::Source::Position.new(@line, start_parser_offset),
           Sass::Source::Position.new(@line, start_parser_offset + scanned.length),
-          @options[:filename], @options[:importer])
+          @options[:filename], @options[:importer]
+        )
         return node
       end
 
@@ -1086,80 +1119,82 @@ WARNING
       if !scanner.match?(/[,;]|$/)
         offset += scanned.length if scanned
         media_parser = Sass::SCSS::Parser.new(scanner,
-          @options[:filename], @options[:importer], @line, offset)
+                                              @options[:filename], @options[:importer], @line, offset)
         media = media_parser.parse_media_query_list
         node = Tree::CssImportNode.new(quoted_val, media.to_a)
         node.source_range = Sass::Source::Range.new(
           Sass::Source::Position.new(@line, to_parser_offset(start_offset)),
           Sass::Source::Position.new(@line, media_parser.offset),
-          @options[:filename], @options[:importer])
+          @options[:filename], @options[:importer]
+        )
       elsif val =~ %r{^(https?:)?//}
         node = Tree::CssImportNode.new(quoted_val)
         node.source_range = Sass::Source::Range.new(
           Sass::Source::Position.new(@line, to_parser_offset(start_offset)),
           Sass::Source::Position.new(@line, to_parser_offset(offset)),
-          @options[:filename], @options[:importer])
+          @options[:filename], @options[:importer]
+        )
       else
         node = Tree::ImportNode.new(val)
         node.source_range = Sass::Source::Range.new(
           Sass::Source::Position.new(@line, to_parser_offset(start_offset)),
           Sass::Source::Position.new(@line, to_parser_offset(offset)),
-          @options[:filename], @options[:importer])
+          @options[:filename], @options[:importer]
+        )
       end
       node
     end
 
-    def parse_mixin_directive(parent, line, root, value, offset)
+    def parse_mixin_directive(_parent, line, _root, _value, _offset)
       parse_mixin_definition(line)
     end
 
     MIXIN_DEF_RE = /^(?:=|@mixin)\s*(#{Sass::SCSS::RX::IDENT})(.*)$/
     def parse_mixin_definition(line)
       name, arg_string = line.text.scan(MIXIN_DEF_RE).first
-      raise SyntaxError.new("Invalid mixin \"#{line.text[1..-1]}\".") if name.nil?
+      raise SyntaxError, "Invalid mixin \"#{line.text[1..-1]}\"." if name.nil?
 
       offset = line.offset + line.text.size - arg_string.size
-      args, splat = Script::Parser.new(arg_string.strip, @line, to_parser_offset(offset), @options).
-        parse_mixin_definition_arglist
+      args, splat = Script::Parser.new(arg_string.strip, @line, to_parser_offset(offset), @options)
+        .parse_mixin_definition_arglist
       Tree::MixinDefNode.new(name, args, splat)
     end
 
     CONTENT_RE = /^@content\s*(.+)?$/
-    def parse_content_directive(parent, line, root, value, offset)
+    def parse_content_directive(_parent, line, _root, _value, _offset)
       trailing = line.text.scan(CONTENT_RE).first.first
-      unless trailing.nil?
-        raise SyntaxError.new(
-          "Invalid content directive. Trailing characters found: \"#{trailing}\".")
+      raise SyntaxError, "Invalid content directive. Trailing characters found: \"#{trailing}\"." unless trailing.nil?
+      unless line.children.empty?
+        raise SyntaxError.new('Illegal nesting: Nothing may be nested beneath @content directives.',
+                              line: line.index + 1)
       end
-      raise SyntaxError.new("Illegal nesting: Nothing may be nested beneath @content directives.",
-        :line => line.index + 1) unless line.children.empty?
       Tree::ContentNode.new
     end
 
-    def parse_include_directive(parent, line, root, value, offset)
+    def parse_include_directive(_parent, line, root, _value, _offset)
       parse_mixin_include(line, root)
     end
 
     MIXIN_INCLUDE_RE = /^(?:\+|@include)\s*(#{Sass::SCSS::RX::IDENT})(.*)$/
-    def parse_mixin_include(line, root)
+    def parse_mixin_include(line, _root)
       name, arg_string = line.text.scan(MIXIN_INCLUDE_RE).first
-      raise SyntaxError.new("Invalid mixin include \"#{line.text}\".") if name.nil?
+      raise SyntaxError, "Invalid mixin include \"#{line.text}\"." if name.nil?
 
       offset = line.offset + line.text.size - arg_string.size
       args, keywords, splat, kwarg_splat =
-        Script::Parser.new(arg_string.strip, @line, to_parser_offset(offset), @options).
-          parse_mixin_include_arglist
+        Script::Parser.new(arg_string.strip, @line, to_parser_offset(offset), @options)
+          .parse_mixin_include_arglist
       Tree::MixinNode.new(name, args, keywords, splat, kwarg_splat)
     end
 
     FUNCTION_RE = /^@function\s*(#{Sass::SCSS::RX::IDENT})(.*)$/
-    def parse_function_directive(parent, line, root, value, offset)
+    def parse_function_directive(_parent, line, _root, _value, offset)
       name, arg_string = line.text.scan(FUNCTION_RE).first
-      raise SyntaxError.new("Invalid function definition \"#{line.text}\".") if name.nil?
+      raise SyntaxError, "Invalid function definition \"#{line.text}\"." if name.nil?
 
       offset = line.offset + line.text.size - arg_string.size
-      args, splat = Script::Parser.new(arg_string.strip, @line, to_parser_offset(offset), @options).
-        parse_function_definition_arglist
+      args, splat = Script::Parser.new(arg_string.strip, @line, to_parser_offset(offset), @options)
+        .parse_function_definition_arglist
       Tree::FunctionNode.new(name, args, splat)
     end
 
@@ -1177,21 +1212,21 @@ WARNING
         content.shift
       end
 
-      return "/* */" if content.empty?
+      return '/* */' if content.empty?
       content.last.gsub!(%r{ ?\*/ *$}, '')
       first = content.shift unless removed_first
-      content.map! {|l| l.gsub!(/^\*( ?)/, '\1') || (l.empty? ? "" : " ") + l}
+      content.map! { |l| l.gsub!(/^\*( ?)/, '\1') || (l.empty? ? '' : ' ') + l }
       content.unshift first unless removed_first
       if silent
-        "/*" + content.join("\n *") + " */"
+        '/*' + content.join("\n *") + ' */'
       else
         # The #gsub fixes the case of a trailing */
-        "/*" + content.join("\n *").gsub(/ \*\Z/, '') + " */"
+        '/*' + content.join("\n *").gsub(/ \*\Z/, '') + ' */'
       end
     end
 
     def parse_interp(text, offset = 0)
-      self.class.parse_interp(text, @line, offset, :filename => @filename)
+      self.class.parse_interp(text, @line, offset, filename: @filename)
     end
 
     # Parser tracks 1-based line and offset, so our offset should be converted.
@@ -1203,7 +1238,8 @@ WARNING
       Sass::Source::Range.new(
         Sass::Source::Position.new(@line, to_parser_offset(line.offset)),
         Sass::Source::Position.new(@line, to_parser_offset(line.offset) + line.text.length),
-        @options[:filename], @options[:importer])
+        @options[:filename], @options[:importer]
+      )
     end
 
     # It's important that this have strings (at least)
@@ -1216,9 +1252,9 @@ WARNING
         escapes = scan[2].size
         res << scan.matched[0...-2 - escapes]
         if escapes.odd?
-          res << "\\" * (escapes - 1) << '#{'
+          res << '\\' * (escapes - 1) << '#{'
         else
-          res << "\\" * [0, escapes - 1].max
+          res << '\\' * [0, escapes - 1].max
           if scan[1].include?("\n")
             line += scan[1].count("\n")
             offset = scan.matched_size - scan[1].rindex("\n")

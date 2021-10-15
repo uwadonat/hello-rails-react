@@ -6,7 +6,7 @@ module Sass::Tree
   # @see Sass::Tree
   class RuleNode < Node
     # The character used to include the parent selector
-    PARENT = '&'
+    PARENT = '&'.freeze
 
     # The CSS selector for this rule,
     # interspersed with {Sass::Script::Tree::Node}s
@@ -103,14 +103,15 @@ module Sass::Tree
     # @param node [RuleNode] The other node
     def add_rules(node)
       @rule = Sass::Util.strip_string_array(
-        Sass::Util.merge_adjacent_strings(@rule + ["\n"] + node.rule))
+        Sass::Util.merge_adjacent_strings(@rule + ["\n"] + node.rule)
+      )
       try_to_parse_non_interpolated_rules
     end
 
     # @return [Boolean] Whether or not this rule is continued on the next line
     def continued?
       last = @rule.last
-      last.is_a?(String) && last[-1] == ?,
+      last.is_a?(String) && last[-1] == ','
     end
 
     # A hash that will be associated with this rule in the CSS document
@@ -120,29 +121,34 @@ module Sass::Tree
     #
     # @return [{#to_s => #to_s}]
     def debug_info
-      {:filename => filename &&
-         ("file://" + URI::DEFAULT_PARSER.escape(File.expand_path(filename))),
-       :line => line}
+      { filename: filename &&
+        ('file://' + URI::DEFAULT_PARSER.escape(File.expand_path(filename))),
+        line: line }
     end
 
     # A rule node is invisible if it has only placeholder selectors.
     def invisible?
-      resolved_rules.members.all? {|seq| seq.invisible?}
+      resolved_rules.members.all?(&:invisible?)
     end
 
     private
 
     def try_to_parse_non_interpolated_rules
       @parsed_rules = nil
-      return unless @rule.all? {|t| t.is_a?(String)}
+      return unless @rule.all? { |t| t.is_a?(String) }
 
       # We don't use real filename/line info because we don't have it yet.
       # When we get it, we'll set it on the parsed rules if possible.
       parser = nil
       warnings = Sass.logger.capture do
         parser = Sass::SCSS::StaticParser.new(
-          Sass::Util.strip_except_escapes(@rule.join), nil, nil, 1)
-        @parsed_rules = parser.parse_selector rescue nil
+          Sass::Util.strip_except_escapes(@rule.join), nil, nil, 1
+        )
+        @parsed_rules = begin
+                          parser.parse_selector
+                        rescue StandardError
+                          nil
+                        end
       end
 
       # If parsing produces a warning, throw away the result so we can parse

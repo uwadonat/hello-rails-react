@@ -2,11 +2,11 @@ module Spring
   ORIGINAL_ENV = ENV.to_hash
 end
 
-require "spring/boot"
-require "spring/application_manager"
+require 'spring/boot'
+require 'spring/application_manager'
 
 # Must be last, as it requires bundler/setup, which alters the load path
-require "spring/commands"
+require 'spring/commands'
 
 module Spring
   class Server
@@ -17,11 +17,11 @@ module Spring
     attr_reader :env
 
     def initialize(options = {})
-      @foreground   = options.fetch(:foreground, false)
-      @env          = options[:env] || default_env
+      @foreground = options.fetch(:foreground, false)
+      @env = options[:env] || default_env
       @applications = Hash.new { |h, k| h[k] = ApplicationManager.new(k, env) }
-      @pidfile      = env.pidfile_path.open('a')
-      @mutex        = Mutex.new
+      @pidfile = env.pidfile_path.open('a')
+      @mutex = Mutex.new
     end
 
     def foreground?
@@ -51,11 +51,11 @@ module Spring
     end
 
     def serve(client)
-      log "accepted client"
+      log 'accepted client'
       client.puts env.version
 
       app_client = client.recv_io
-      command    = JSON.load(client.read(client.gets.to_i))
+      command = JSON.load(client.read(client.gets.to_i))
 
       args, default_rails_env = command.values_at('args', 'default_rails_env')
 
@@ -87,7 +87,7 @@ module Spring
     # Ignore SIGINT and SIGQUIT otherwise the user typing ^C or ^\ on the command line
     # will kill the server/application.
     def ignore_signals
-      IGNORE_SIGNALS.each { |sig| trap(sig, "IGNORE") }
+      IGNORE_SIGNALS.each { |sig| trap(sig, 'IGNORE') }
     end
 
     def set_exit_hook
@@ -98,11 +98,14 @@ module Spring
     end
 
     def shutdown
-      log "shutting down"
+      log 'shutting down'
 
       [env.socket_path, env.pidfile_path].each do |path|
-        if path.exist?
-          path.unlink rescue nil
+        next unless path.exist?
+        begin
+          path.unlink
+        rescue StandardError
+          nil
         end
       end
 
@@ -128,9 +131,9 @@ module Spring
     end
 
     def set_process_title
-      ProcessTitleUpdater.run { |distance|
+      ProcessTitleUpdater.run do |distance|
         "spring server | #{env.app_name} | started #{distance} ago"
-      }
+      end
     end
 
     private
@@ -140,11 +143,7 @@ module Spring
     end
 
     def default_log_file
-      if foreground? && !ENV["SPRING_LOG"]
-        $stdout
-      else
-        nil
-      end
+      $stdout if foreground? && !ENV['SPRING_LOG']
     end
   end
 end

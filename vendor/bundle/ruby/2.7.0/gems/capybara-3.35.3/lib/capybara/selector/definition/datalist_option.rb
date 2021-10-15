@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 Capybara.add_selector(:datalist_option, locator_type: [String, Symbol]) do
   label 'datalist option'
   visible(:all)

@@ -1,7 +1,5 @@
-# frozen_string_literal: true
-
-require "active_support/rescuable"
-require "active_job/arguments"
+require 'active_support/rescuable'
+require 'active_job/arguments'
 
 module ActiveJob
   module Execution
@@ -38,12 +36,12 @@ module ActiveJob
       run_callbacks :perform do
         perform(*arguments)
       end
-    rescue => exception
+    rescue StandardError => exception
       rescue_with_handler(exception) || raise
     end
 
     def perform(*)
-      fail NotImplementedError
+      raise NotImplementedError
     end
   end
 end

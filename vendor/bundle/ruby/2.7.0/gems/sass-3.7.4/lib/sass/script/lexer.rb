@@ -67,42 +67,43 @@ module Sass
         '}' => :end_interpolation,
         ';' => :semicolon,
         '{' => :lcurly,
-        '...' => :splat,
-      }
+        '...' => :splat
+      }.freeze
 
-      OPERATORS_REVERSE = Sass::Util.map_hash(OPERATORS) {|k, v| [v, k]}
+      OPERATORS_REVERSE = Sass::Util.map_hash(OPERATORS) { |k, v| [v, k] }
 
-      TOKEN_NAMES = Sass::Util.map_hash(OPERATORS_REVERSE) {|k, v| [k, v.inspect]}.merge(
-        :const => "variable (e.g. $foo)",
-        :ident => "identifier (e.g. middle)")
+      TOKEN_NAMES = Sass::Util.map_hash(OPERATORS_REVERSE) { |k, v| [k, v.inspect] }.merge(
+        const: 'variable (e.g. $foo)',
+        ident: 'identifier (e.g. middle)'
+      )
 
       # A list of operator strings ordered with longer names first
       # so that `>` and `<` don't clobber `>=` and `<=`.
-      OP_NAMES = OPERATORS.keys.sort_by {|o| -o.size}
+      OP_NAMES = OPERATORS.keys.sort_by { |o| -o.size }
 
       # A sub-list of {OP_NAMES} that only includes operators
       # with identifier names.
-      IDENT_OP_NAMES = OP_NAMES.select {|k, _v| k =~ /^\w+/}
+      IDENT_OP_NAMES = OP_NAMES.select { |k, _v| k =~ /^\w+/ }
 
       PARSEABLE_NUMBER = /(?:(\d*\.\d+)|(\d+))(?:[eE]([+-]?\d+))?(#{UNIT})?/
 
       # A hash of regular expressions that are used for tokenizing.
       REGULAR_EXPRESSIONS = {
-        :whitespace => /\s+/,
-        :comment => COMMENT,
-        :single_line_comment => SINGLE_LINE_COMMENT,
-        :variable => /(\$)(#{IDENT})/,
-        :ident => /(#{IDENT})(\()?/,
-        :number => PARSEABLE_NUMBER,
-        :unary_minus_number => /-#{PARSEABLE_NUMBER}/,
-        :color => HEXCOLOR,
-        :id => /##{IDENT}/,
-        :selector => /&/,
-        :ident_op => /(#{Regexp.union(*IDENT_OP_NAMES.map do |s|
+        whitespace: /\s+/,
+        comment: COMMENT,
+        single_line_comment: SINGLE_LINE_COMMENT,
+        variable: /(\$)(#{IDENT})/,
+        ident: /(#{IDENT})(\()?/,
+        number: PARSEABLE_NUMBER,
+        unary_minus_number: /-#{PARSEABLE_NUMBER}/,
+        color: HEXCOLOR,
+        id: /##{IDENT}/,
+        selector: /&/,
+        ident_op: /(#{Regexp.union(*IDENT_OP_NAMES.map do |s|
           Regexp.new(Regexp.escape(s) + "(?!#{NMCHAR}|\Z)")
         end)})/,
-        :op => /(#{Regexp.union(*OP_NAMES)})/,
-      }
+        op: /(#{Regexp.union(*OP_NAMES)})/
+      }.freeze
 
       class << self
         private
@@ -119,29 +120,29 @@ module Sass
       # while the boolean represents whether or not the string
       # is following an interpolated segment.
       STRING_REGULAR_EXPRESSIONS = {
-        :double => {
+        double: {
           false => string_re('"', '"'),
           true => string_re('', '"')
         },
-        :single => {
+        single: {
           false => string_re("'", "'"),
           true => string_re('', "'")
         },
-        :uri => {
+        uri: {
           false => /url\(#{W}(#{URLCHAR}*?)(#{W}\)|#\{)/,
           true => /(#{URLCHAR}*?)(#{W}\)|#\{)/
         },
         # Defined in https://developer.mozilla.org/en/CSS/@-moz-document as a
         # non-standard version of http://www.w3.org/TR/css3-conditional/
-        :url_prefix => {
+        url_prefix: {
           false => /url-prefix\(#{W}(#{URLCHAR}*?)(#{W}\)|#\{)/,
           true => /(#{URLCHAR}*?)(#{W}\)|#\{)/
         },
-        :domain => {
+        domain: {
           false => /domain\(#{W}(#{URLCHAR}*?)(#{W}\)|#\{)/,
           true => /(#{URLCHAR}*?)(#{W}\)|#\{)/
         }
-      }
+      }.freeze
 
       # @param str [String, StringScanner] The source text to lex
       # @param line [Integer] The 1-based line on which the SassScript appears.
@@ -166,7 +167,8 @@ module Sass
       # @return [Token] The token that was moved past
       def next
         @tok ||= read_token
-        @tok, tok = nil, @tok
+        tok = @tok
+        @tok = nil
         @prev = tok
         tok
       end
@@ -294,8 +296,8 @@ module Sass
 
       def whitespace
         nil while scan(REGULAR_EXPRESSIONS[:whitespace]) ||
-          scan(REGULAR_EXPRESSIONS[:comment]) ||
-          scan(REGULAR_EXPRESSIONS[:single_line_comment])
+                  scan(REGULAR_EXPRESSIONS[:comment]) ||
+                  scan(REGULAR_EXPRESSIONS[:single_line_comment])
       end
 
       def token
@@ -333,7 +335,8 @@ module Sass
       end
 
       def string(re, open)
-        line, offset = @line, @offset
+        line = @line
+        offset = @offset
         return unless scan(STRING_REGULAR_EXPRESSIONS[re][open])
         if @scanner[0] =~ /([^\\]|^)\n/
           filename = @options[:filename]
@@ -370,8 +373,8 @@ MESSAGE
           return if @scanner.pos == 0
           unary_minus_allowed =
             case @scanner.string[@scanner.pos - 1, 1]
-            when /\s/; true
-            when '/'; @scanner.pos != 1 && @scanner.string[@scanner.pos - 2, 1] == '*'
+            when /\s/ then true
+            when '/' then @scanner.pos != 1 && @scanner.string[@scanner.pos - 2, 1] == '*'
             else; false
             end
 
@@ -386,7 +389,7 @@ MESSAGE
         value = (@scanner[1] ? @scanner[1].to_f : @scanner[2].to_i) * (minus ? -1 : 1)
         value *= 10**@scanner[3].to_i if @scanner[3]
         units = @scanner[4]
-        units = Sass::Util::normalize_ident_escapes(units) if units
+        units = Sass::Util.normalize_ident_escapes(units) if units
         script_number = Script::Value::Number.new(value, Array(units))
         [:number, script_number]
       end
@@ -407,8 +410,8 @@ MESSAGE
         # (http://www.w3.org/TR/css3-ui/).
         return unless scan(REGULAR_EXPRESSIONS[:id])
         if @scanner[0] =~ /^\#[0-9a-fA-F]+$/ &&
-          (@scanner[0].length == 4 || @scanner[0].length == 5 ||
-           @scanner[0].length == 7 || @scanner[0].length == 9)
+           (@scanner[0].length == 4 || @scanner[0].length == 5 ||
+            @scanner[0].length == 7 || @scanner[0].length == 9)
           return [:color, Script::Value::Color.from_hex(@scanner[0])]
         end
         [:ident, Sass::Util.normalize_ident_escapes(@scanner[0])]
@@ -451,14 +454,14 @@ MESSAGE
         str = prefix || ''
         while (scanned = scan(/.*?([()]|\#\{)/m))
           str << scanned
-          if scanned[-1] == ?(
+          if scanned[-1] == '('
             parens += 1
             next
-          elsif scanned[-1] == ?)
+          elsif scanned[-1] == ')'
             parens -= 1
             next unless parens == 0
           else
-            raise "[BUG] Unreachable" unless @scanner[1] == '#{' # '
+            raise '[BUG] Unreachable' unless @scanner[1] == '#{' # '
             str.slice!(-2..-1)
             @interpolation_stack << [:special_fun, parens]
             start_pos = Sass::Source::Position.new(@line, @offset - 2)
@@ -474,7 +477,7 @@ MESSAGE
 
       def special_val
         return unless scan(/!#{W}important/i)
-        [:string, Script::Value::String.new("!important")]
+        [:string, Script::Value::String.new('!important')]
       end
 
       def ident_op

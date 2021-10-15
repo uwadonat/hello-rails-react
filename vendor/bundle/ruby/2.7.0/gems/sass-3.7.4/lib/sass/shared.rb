@@ -55,20 +55,20 @@ module Sass
     #   (depending on how many characters were in `indentation`)
     # @return [String] The name of the indentation (e.g. `"12 spaces"`, `"1 tab"`)
     def human_indentation(indentation, was = false)
-      if !indentation.include?(?\t)
+      if !indentation.include?("\t")
         noun = 'space'
-      elsif !indentation.include?(?\s)
+      elsif !indentation.include?("\s")
         noun = 'tab'
       else
         return indentation.inspect + (was ? ' was' : '')
       end
 
       singular = indentation.length == 1
-      if was
-        was = singular ? ' was' : ' were'
-      else
-        was = ''
-      end
+      was = if was
+              singular ? ' was' : ' were'
+            else
+              ''
+            end
 
       "#{indentation.length} #{noun}#{'s' unless singular}#{was}"
     end

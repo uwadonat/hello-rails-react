@@ -1,5 +1,3 @@
-# encoding: UTF-8
-
 require 'minitest/autorun'
 
 require File.expand_path('../../fixtures/classes', __FILE__)
@@ -7,8 +5,8 @@ require File.expand_path('../../fixtures/classes', __FILE__)
 require 'archive/zip/codec/null_encryption'
 require 'archive/support/binary_stringio'
 
-describe "Archive::Zip::Codec::NullEncryption::Encrypt#write" do
-  it "calls the write method of the delegate" do
+describe 'Archive::Zip::Codec::NullEncryption::Encrypt#write' do
+  it 'calls the write method of the delegate' do
     delegate = MiniTest::Mock.new
     delegate.expect(
       :write,
@@ -21,7 +19,7 @@ describe "Archive::Zip::Codec::NullEncryption::Encrypt#write" do
     end
   end
 
-  it "passes data through unmodified" do
+  it 'passes data through unmodified' do
     encrypted_data = BinaryStringIO.new
     Archive::Zip::Codec::NullEncryption::Encrypt.open(encrypted_data) do |e|
       e.write(NullEncryptionSpecs.test_data)

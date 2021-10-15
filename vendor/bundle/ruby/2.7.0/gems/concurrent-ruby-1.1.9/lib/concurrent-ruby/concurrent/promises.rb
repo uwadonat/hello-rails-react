@@ -6,10 +6,8 @@ require 'concurrent/errors'
 require 'concurrent/re_include'
 
 module Concurrent
-
   # {include:file:docs-source/promises-main.md}
   module Promises
-
     # @!macro promises.param.default_executor
     #   @param [Executor, :io, :fast] default_executor Instance of an executor or a name of the
     #     global executor. Default executor propagates to chained futures unless overridden with
@@ -253,7 +251,7 @@ module Concurrent
         ZipFuturesPromise.new_blocked_by(futures_and_or_events, default_executor).future
       end
 
-      alias_method :zip, :zip_futures
+      alias zip zip_futures
 
       # @!macro promises.shortcut.on
       # @return [Event]
@@ -277,7 +275,7 @@ module Concurrent
         any_resolved_future_on default_executor, *futures_and_or_events
       end
 
-      alias_method :any, :any_resolved_future
+      alias any any_resolved_future
 
       # Creates new future which is resolved after first futures_and_or_events is resolved.
       # Its result equals result of the first resolved future.
@@ -328,7 +326,7 @@ module Concurrent
         AnyResolvedEventPromise.new_blocked_by(futures_and_or_events, default_executor).event
       end
 
-      # TODO consider adding first(count, *futures)
+      # TODO: consider adding first(count, *futures)
       # TODO consider adding zip_by(slice, *futures) processing futures in slices
       # TODO or rather a generic aggregator taking a function
     end
@@ -393,7 +391,6 @@ module Concurrent
 
       # @!visibility private
       class Fulfilled < ResolvedWithResult
-
         def initialize(value)
           @Value = value
         end
@@ -457,7 +454,7 @@ module Concurrent
       class PartiallyRejected < ResolvedWithResult
         def initialize(value, reason)
           super()
-          @Value  = value
+          @Value = value
           @Reason = reason
         end
 
@@ -519,12 +516,12 @@ module Concurrent
 
       def initialize(promise, default_executor)
         super()
-        @Lock               = Mutex.new
-        @Condition          = ConditionVariable.new
-        @Promise            = promise
-        @DefaultExecutor    = default_executor
-        @Callbacks          = LockFreeStack.new
-        @Waiters            = AtomicFixnum.new 0
+        @Lock = Mutex.new
+        @Condition = ConditionVariable.new
+        @Promise = promise
+        @DefaultExecutor = default_executor
+        @Callbacks = LockFreeStack.new
+        @Waiters = AtomicFixnum.new 0
         self.internal_state = PENDING
       end
 
@@ -618,7 +615,7 @@ module Concurrent
         format '%s %s>', super[0..-2], state
       end
 
-      alias_method :inspect, :to_s
+      alias inspect to_s
 
       # Resolves the resolvable when receiver is resolved.
       #
@@ -628,7 +625,7 @@ module Concurrent
         on_resolution! { resolvable.resolve_with internal_state }
       end
 
-      alias_method :tangle, :chain_resolvable
+      alias tangle chain_resolvable
 
       # @!macro promises.shortcut.using
       # @return [self]
@@ -678,7 +675,7 @@ module Concurrent
       # @!macro promises.shortcut.event-future
       # @abstract
       # @return [AbstractEventFuture]
-      def with_default_executor(executor)
+      def with_default_executor(_executor)
         raise NotImplementedError
       end
 
@@ -739,7 +736,7 @@ module Concurrent
 
       # @!visibility private
       def with_hidden_resolvable
-        # TODO (pitr-ch 10-Dec-2018): documentation, better name if in edge
+        # TODO: (pitr-ch 10-Dec-2018): documentation, better name if in edge
         self
       end
 
@@ -758,7 +755,7 @@ module Concurrent
         self
       end
 
-      def callback_clear_delayed_node(state, node)
+      def callback_clear_delayed_node(_state, node)
         node.value = nil
       end
 
@@ -771,9 +768,7 @@ module Concurrent
         @Lock.synchronize do
           @Waiters.increment
           begin
-            unless resolved?
-              @Condition.wait @Lock, timeout
-            end
+            @Condition.wait @Lock, timeout unless resolved?
           ensure
             # JRuby may raise ConcurrencyError
             @Waiters.decrement
@@ -783,7 +778,7 @@ module Concurrent
       end
 
       def call_callback(method, state, args)
-        self.send method, state, *args
+        send method, state, *args
       end
 
       def call_callbacks(state)
@@ -804,7 +799,7 @@ module Concurrent
         end
       end
 
-      def callback_notify_blocked(state, promise, index)
+      def callback_notify_blocked(_state, promise, index)
         promise.on_blocker_resolution self, index
       end
     end
@@ -813,9 +808,7 @@ module Concurrent
     # pending or resolved. It should be always resolved. Use {Future} to communicate rejections and
     # cancellation.
     class Event < AbstractEventFuture
-
-      alias_method :then, :chain
-
+      alias then chain
 
       # @!macro promises.method.zip
       #   Creates a new event or a future which will be resolved when receiver and other are.
@@ -833,7 +826,7 @@ module Concurrent
         end
       end
 
-      alias_method :&, :zip
+      alias & zip
 
       # Creates a new event which will be resolved when the first of receiver, `event_or_future`
       # resolves.
@@ -843,7 +836,7 @@ module Concurrent
         AnyResolvedEventPromise.new_blocked_by2(self, event_or_future, @DefaultExecutor).event
       end
 
-      alias_method :|, :any
+      alias | any
 
       # Creates new event dependent on receiver which will not evaluate until touched, see {#touch}.
       # In other words, it inserts delay into the chain of Futures making rest of it lazy evaluated.
@@ -891,12 +884,12 @@ module Concurrent
 
       private
 
-      def rejected_resolution(raise_on_reassign, state)
+      def rejected_resolution(raise_on_reassign, _state)
         Concurrent::MultipleAssignmentError.new('Event can be resolved only once') if raise_on_reassign
-        return false
+        false
       end
 
-      def callback_on_resolution(state, args, callback)
+      def callback_on_resolution(_state, args, callback)
         callback.call(*args)
       end
     end
@@ -904,7 +897,6 @@ module Concurrent
     # Represents a value which will become available in future. May reject with a reason instead,
     # e.g. when the tasks raises an exception.
     class Future < AbstractEventFuture
-
       # Is it in fulfilled state?
       # @return [Boolean]
       def fulfilled?
@@ -1064,7 +1056,7 @@ module Concurrent
         end
       end
 
-      alias_method :&, :zip
+      alias & zip
 
       # Creates a new event which will be resolved when the first of receiver, `event_or_future`
       # resolves. Returning future will have value nil if event_or_future is event and resolves
@@ -1075,7 +1067,7 @@ module Concurrent
         AnyResolvedFuturePromise.new_blocked_by2(self, event_or_future, @DefaultExecutor).future
       end
 
-      alias_method :|, :any
+      alias | any
 
       # Creates new future dependent on receiver which will not evaluate until touched, see {#touch}.
       # In other words, it inserts delay into the chain of Futures making rest of it lazy evaluated.
@@ -1110,7 +1102,7 @@ module Concurrent
         FlatFuturePromise.new_blocked_by1(self, level, @DefaultExecutor).future
       end
 
-      alias_method :flat, :flat_future
+      alias flat flat_future
 
       # Creates new event which will be resolved when the returned event by receiver is.
       # Be careful if the receiver rejects it will just resolve since Event does not hold reason.
@@ -1229,7 +1221,7 @@ module Concurrent
         end
       end
 
-      alias_method :inspect, :to_s
+      alias inspect to_s
 
       private
 
@@ -1240,16 +1232,16 @@ module Concurrent
       def rejected_resolution(raise_on_reassign, state)
         if raise_on_reassign
           if internal_state == RESERVED
-            raise Concurrent::MultipleAssignmentError.new(
-                "Future can be resolved only once. It is already reserved.")
+            raise Concurrent::MultipleAssignmentError, 'Future can be resolved only once. It is already reserved.'
           else
             raise Concurrent::MultipleAssignmentError.new(
-                "Future can be resolved only once. It's #{result}, trying to set #{state.result}.",
-                current_result: result,
-                new_result:     state.result)
+              "Future can be resolved only once. It's #{result}, trying to set #{state.result}.",
+              current_result: result,
+              new_result:     state.result
+            )
           end
         end
-        return false
+        false
       end
 
       def wait_until_resolved!(timeout = nil)
@@ -1281,7 +1273,6 @@ module Concurrent
       def callback_on_resolution(state, args, callback)
         callback.call(*state.result, *args)
       end
-
     end
 
     # Marker module of Future, Event resolved manually.
@@ -1548,7 +1539,7 @@ module Concurrent
         @Future
       end
 
-      alias_method :event, :future
+      alias event future
 
       def default_executor
         future.default_executor
@@ -1558,14 +1549,13 @@ module Concurrent
         future.state
       end
 
-      def touch
-      end
+      def touch; end
 
       def to_s
         format '%s %s>', super[0..-2], @Future
       end
 
-      alias_method :inspect, :to_s
+      alias inspect to_s
 
       def delayed_because
         nil
@@ -1606,12 +1596,11 @@ module Concurrent
 
     # @abstract
     class BlockedPromise < InnerPromise
-
       private_class_method :new
 
       def self.new_blocked_by1(blocker, *args, &block)
         blocker_delayed = blocker.promise.delayed_because
-        promise         = new(blocker_delayed, 1, *args, &block)
+        promise = new(blocker_delayed, 1, *args, &block)
         blocker.add_callback_notify_blocked promise, 0
         promise
       end
@@ -1619,13 +1608,13 @@ module Concurrent
       def self.new_blocked_by2(blocker1, blocker2, *args, &block)
         blocker_delayed1 = blocker1.promise.delayed_because
         blocker_delayed2 = blocker2.promise.delayed_because
-        delayed          = if blocker_delayed1 && blocker_delayed2
-                             # TODO (pitr-ch 23-Dec-2016): use arrays when we know it will not grow (only flat adds delay)
-                             LockFreeStack.of2(blocker_delayed1, blocker_delayed2)
-                           else
-                             blocker_delayed1 || blocker_delayed2
+        delayed = if blocker_delayed1 && blocker_delayed2
+                    # TODO: (pitr-ch 23-Dec-2016): use arrays when we know it will not grow (only flat adds delay)
+                    LockFreeStack.of2(blocker_delayed1, blocker_delayed2)
+                  else
+                    blocker_delayed1 || blocker_delayed2
                            end
-        promise          = new(delayed, 2, *args, &block)
+        promise = new(delayed, 2, *args, &block)
         blocker1.add_callback_notify_blocked promise, 0
         blocker2.add_callback_notify_blocked promise, 1
         promise
@@ -1649,12 +1638,12 @@ module Concurrent
 
       def initialize(delayed, blockers_count, future)
         super(future)
-        @Delayed   = delayed
+        @Delayed = delayed
         @Countdown = AtomicFixnum.new blockers_count
       end
 
       def on_blocker_resolution(future, index)
-        countdown  = process_on_blocker_resolution(future, index)
+        countdown = process_on_blocker_resolution(future, index)
         resolvable = resolvable?(countdown, future, index)
 
         on_resolvable(future, index) if resolvable
@@ -1688,27 +1677,27 @@ module Concurrent
       end
 
       # @return [true,false] if resolvable
-      def resolvable?(countdown, future, index)
+      def resolvable?(countdown, _future, _index)
         countdown.zero?
       end
 
-      def process_on_blocker_resolution(future, index)
+      def process_on_blocker_resolution(_future, _index)
         @Countdown.decrement
       end
 
-      def on_resolvable(resolved_future, index)
+      def on_resolvable(_resolved_future, _index)
         raise NotImplementedError
       end
     end
 
     # @abstract
     class BlockedTaskPromise < BlockedPromise
-      def initialize(delayed, blockers_count, default_executor, executor, args, &task)
+      def initialize(delayed, _blockers_count, default_executor, executor, args, &task)
         raise ArgumentError, 'no block given' unless block_given?
         super delayed, 1, Future.new(self, default_executor)
         @Executor = executor
-        @Task     = task
-        @Args     = args
+        @Task = task
+        @Args = args
       end
 
       def executor
@@ -1723,10 +1712,10 @@ module Concurrent
         super delayed, blockers_count, default_executor, executor, args, &task
       end
 
-      def on_resolvable(resolved_future, index)
+      def on_resolvable(resolved_future, _index)
         if resolved_future.fulfilled?
           Concurrent.executor(@Executor).post(resolved_future, @Args, @Task) do |future, args, task|
-            evaluate_to lambda { future.apply args, task }
+            evaluate_to -> { future.apply args, task }
           end
         else
           resolve_with resolved_future.internal_state
@@ -1741,10 +1730,10 @@ module Concurrent
         super delayed, blockers_count, default_executor, executor, args, &task
       end
 
-      def on_resolvable(resolved_future, index)
+      def on_resolvable(resolved_future, _index)
         if resolved_future.rejected?
           Concurrent.executor(@Executor).post(resolved_future, @Args, @Task) do |future, args, task|
-            evaluate_to lambda { future.apply args, task }
+            evaluate_to -> { future.apply args, task }
           end
         else
           resolve_with resolved_future.internal_state
@@ -1755,7 +1744,7 @@ module Concurrent
     class ChainPromise < BlockedTaskPromise
       private
 
-      def on_resolvable(resolved_future, index)
+      def on_resolvable(resolved_future, _index)
         if Future === resolved_future
           Concurrent.executor(@Executor).post(resolved_future, @Args, @Task) do |future, args, task|
             evaluate_to(*future.result, *args, task)
@@ -1777,27 +1766,24 @@ module Concurrent
 
     class ImmediateFuturePromise < InnerPromise
       def initialize(default_executor, fulfilled, value, reason)
-        super Future.new(self, default_executor).
-            resolve_with(fulfilled ? Fulfilled.new(value) : Rejected.new(reason))
+        super Future.new(self, default_executor)
+          .resolve_with(fulfilled ? Fulfilled.new(value) : Rejected.new(reason))
       end
     end
 
     class AbstractFlatPromise < BlockedPromise
-
       def initialize(delayed_because, blockers_count, event_or_future)
         delayed = LockFreeStack.of1(self)
         super(delayed, blockers_count, event_or_future)
         # noinspection RubyArgCount
-        @Touched        = AtomicBoolean.new false
+        @Touched = AtomicBoolean.new false
         @DelayedBecause = delayed_because || LockFreeStack.new
 
         event_or_future.add_callback_clear_delayed_node delayed.peek
       end
 
       def touch
-        if @Touched.make_true
-          clear_and_propagate_touch @DelayedBecause
-        end
+        clear_and_propagate_touch @DelayedBecause if @Touched.make_true
       end
 
       private
@@ -1806,7 +1792,7 @@ module Concurrent
         @Touched.value
       end
 
-      def on_resolvable(resolved_future, index)
+      def on_resolvable(resolved_future, _index)
         resolve_with resolved_future.internal_state
       end
 
@@ -1823,14 +1809,12 @@ module Concurrent
           clear_and_propagate_touch @DelayedBecause if touched?
         end
       end
-
     end
 
     class FlatEventPromise < AbstractFlatPromise
-
       private
 
-      def initialize(delayed, blockers_count, default_executor)
+      def initialize(delayed, _blockers_count, default_executor)
         super delayed, 2, Event.new(self, default_executor)
       end
 
@@ -1856,14 +1840,12 @@ module Concurrent
         end
         countdown
       end
-
     end
 
     class FlatFuturePromise < AbstractFlatPromise
-
       private
 
-      def initialize(delayed, blockers_count, levels, default_executor)
+      def initialize(delayed, _blockers_count, levels, default_executor)
         raise ArgumentError, 'levels has to be higher than 0' if levels < 1
         # flat promise may result to a future having delayed futures, therefore we have to have empty stack
         # to be able to add new delayed futures
@@ -1887,24 +1869,22 @@ module Concurrent
             value.add_callback_notify_blocked self, nil
             countdown
           else
-            evaluate_to(lambda { raise TypeError, "returned value #{value.inspect} is not a Future" })
+            evaluate_to(-> { raise TypeError, "returned value #{value.inspect} is not a Future" })
           end
         end
         countdown
       end
-
     end
 
     class RunFuturePromise < AbstractFlatPromise
-
       private
 
-      def initialize(delayed, blockers_count, default_executor, run_test)
+      def initialize(delayed, _blockers_count, default_executor, run_test)
         super delayed, 1, Future.new(self, default_executor)
         @RunTest = run_test
       end
 
-      def process_on_blocker_resolution(future, index)
+      def process_on_blocker_resolution(future, _index)
         internal_state = future.internal_state
 
         unless internal_state.fulfilled?
@@ -1912,7 +1892,7 @@ module Concurrent
           return 0
         end
 
-        value               = internal_state.value
+        value = internal_state.value
         continuation_future = @RunTest.call value
 
         if continuation_future
@@ -1927,19 +1907,19 @@ module Concurrent
     end
 
     class ZipEventEventPromise < BlockedPromise
-      def initialize(delayed, blockers_count, default_executor)
+      def initialize(delayed, _blockers_count, default_executor)
         super delayed, 2, Event.new(self, default_executor)
       end
 
       private
 
-      def on_resolvable(resolved_future, index)
+      def on_resolvable(_resolved_future, _index)
         resolve_with RESOLVED
       end
     end
 
     class ZipFutureEventPromise < BlockedPromise
-      def initialize(delayed, blockers_count, default_executor)
+      def initialize(delayed, _blockers_count, default_executor)
         super delayed, 2, Future.new(self, default_executor)
         @result = nil
       end
@@ -1953,37 +1933,36 @@ module Concurrent
         super future, index
       end
 
-      def on_resolvable(resolved_future, index)
+      def on_resolvable(_resolved_future, _index)
         resolve_with @result
       end
     end
 
     class EventWrapperPromise < BlockedPromise
-      def initialize(delayed, blockers_count, default_executor)
+      def initialize(delayed, _blockers_count, default_executor)
         super delayed, 1, Event.new(self, default_executor)
       end
 
       private
 
-      def on_resolvable(resolved_future, index)
+      def on_resolvable(_resolved_future, _index)
         resolve_with RESOLVED
       end
     end
 
     class FutureWrapperPromise < BlockedPromise
-      def initialize(delayed, blockers_count, default_executor)
+      def initialize(delayed, _blockers_count, default_executor)
         super delayed, 1, Future.new(self, default_executor)
       end
 
       private
 
-      def on_resolvable(resolved_future, index)
+      def on_resolvable(resolved_future, _index)
         resolve_with resolved_future.internal_state
       end
     end
 
     class ZipFuturesPromise < BlockedPromise
-
       private
 
       def initialize(delayed, blockers_count, default_executor)
@@ -1994,19 +1973,19 @@ module Concurrent
       end
 
       def process_on_blocker_resolution(future, index)
-        # TODO (pitr-ch 18-Dec-2016): Can we assume that array will never break under parallel access when never re-sized?
+        # TODO: (pitr-ch 18-Dec-2016): Can we assume that array will never break under parallel access when never re-sized?
         @Resolutions[index] = future.internal_state # has to be set before countdown in super
         super future, index
       end
 
-      def on_resolvable(resolved_future, index)
+      def on_resolvable(_resolved_future, _index)
         all_fulfilled = true
-        values        = ::Array.new(@Resolutions.size)
-        reasons       = ::Array.new(@Resolutions.size)
+        values = ::Array.new(@Resolutions.size)
+        reasons = ::Array.new(@Resolutions.size)
 
         @Resolutions.each_with_index do |internal_state, i|
           fulfilled, values[i], reasons[i] = internal_state.result
-          all_fulfilled                    &&= fulfilled
+          all_fulfilled &&= fulfilled
         end
 
         if all_fulfilled
@@ -2018,7 +1997,6 @@ module Concurrent
     end
 
     class ZipEventsPromise < BlockedPromise
-
       private
 
       def initialize(delayed, blockers_count, default_executor)
@@ -2027,7 +2005,7 @@ module Concurrent
         on_resolvable nil, nil if blockers_count == 0
       end
 
-      def on_resolvable(resolved_future, index)
+      def on_resolvable(_resolved_future, _index)
         resolve_with RESOLVED
       end
     end
@@ -2037,54 +2015,50 @@ module Concurrent
     end
 
     class AnyResolvedEventPromise < AbstractAnyPromise
-
       private
 
       def initialize(delayed, blockers_count, default_executor)
         super delayed, blockers_count, Event.new(self, default_executor)
       end
 
-      def resolvable?(countdown, future, index)
+      def resolvable?(_countdown, _future, _index)
         true
       end
 
-      def on_resolvable(resolved_future, index)
+      def on_resolvable(_resolved_future, _index)
         resolve_with RESOLVED, false
       end
     end
 
     class AnyResolvedFuturePromise < AbstractAnyPromise
-
       private
 
       def initialize(delayed, blockers_count, default_executor)
         super delayed, blockers_count, Future.new(self, default_executor)
       end
 
-      def resolvable?(countdown, future, index)
+      def resolvable?(_countdown, _future, _index)
         true
       end
 
-      def on_resolvable(resolved_future, index)
+      def on_resolvable(resolved_future, _index)
         resolve_with resolved_future.internal_state, false
       end
     end
 
     class AnyFulfilledFuturePromise < AnyResolvedFuturePromise
-
       private
 
-      def resolvable?(countdown, future, index)
+      def resolvable?(countdown, future, _index)
         future.fulfilled? ||
-            # inlined super from BlockedPromise
-            countdown.zero?
+          # inlined super from BlockedPromise
+          countdown.zero?
       end
     end
 
     class DelayPromise < InnerPromise
-
       def initialize(default_executor)
-        event    = Event.new(self, default_executor)
+        event = Event.new(self, default_executor)
         @Delayed = LockFreeStack.of1(self)
         super event
         event.add_callback_clear_delayed_node @Delayed.peek
@@ -2097,7 +2071,6 @@ module Concurrent
       def delayed_because
         @Delayed
       end
-
     end
 
     class ScheduledPromise < InnerPromise
@@ -2117,7 +2090,7 @@ module Concurrent
         @IntendedTime = intended_time
 
         in_seconds = begin
-          now           = Time.now
+          now = Time.now
           schedule_time = if @IntendedTime.is_a? Time
                             @IntendedTime
                           else
@@ -2161,7 +2134,5 @@ module Concurrent
                      :AnyResolvedEventPromise,
                      :DelayPromise,
                      :ScheduledPromise
-
-
   end
 end

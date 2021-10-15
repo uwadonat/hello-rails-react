@@ -9,7 +9,7 @@ module Sprockets
   #   https://github.com/josh/ruby-coffee-script
   #
   module CoffeeScriptProcessor
-    VERSION = '1'
+    VERSION = '1'.freeze
 
     def self.cache_key
       @cache_key ||= "#{name}:#{Autoload::CoffeeScript::Source.version}:#{VERSION}".freeze
@@ -17,7 +17,7 @@ module Sprockets
 
     def self.call(input)
       data = input[:data]
-      input[:cache].fetch([self.cache_key, data]) do
+      input[:cache].fetch([cache_key, data]) do
         Autoload::CoffeeScript.compile(data)
       end
     end

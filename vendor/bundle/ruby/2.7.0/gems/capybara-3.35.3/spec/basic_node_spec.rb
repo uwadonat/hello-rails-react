@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 require 'spec_helper'
 
 RSpec.describe Capybara do
@@ -66,7 +64,7 @@ RSpec.describe Capybara do
       described_class.add_selector :section do
         css { |css_class| "section .#{css_class}" }
       end
-      expect(string).to     have_selector(:section, 'subsection')
+      expect(string).to have_selector(:section, 'subsection')
       expect(string).not_to have_selector(:section, 'section_8')
     end
 

@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 Capybara::SpecHelper.spec '#scroll_to', requires: [:scroll] do
   before do
     @session.visit('/scroll')

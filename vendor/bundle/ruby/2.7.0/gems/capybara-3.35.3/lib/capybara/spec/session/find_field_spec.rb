@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 Capybara::SpecHelper.spec '#find_field' do
   before do
     @session.visit('/form')

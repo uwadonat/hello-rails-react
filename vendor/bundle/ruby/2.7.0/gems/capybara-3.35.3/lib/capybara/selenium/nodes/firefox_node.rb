@@ -23,7 +23,7 @@ class Capybara::Selenium::FirefoxNode < Capybara::Selenium::Node
     driver.evaluate_script("arguments[0].matches(':disabled, select:disabled *')", self)
   end
 
-  def set_file(value) # rubocop:disable Naming/AccessorMethodName
+  def set_file(value)
     # By default files are appended so we have to clear here if its multiple and already set
     driver.execute_script(<<~JS, self)
       if (arguments[0].multiple && arguments[0].files.length){

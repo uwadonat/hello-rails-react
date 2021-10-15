@@ -29,15 +29,15 @@ module Sass
 
       # @see Base#mtime
       def mtime(name, options)
-        file, _ = Sass::Util.destructure(find_real_file(@root, name, options))
+        file, = Sass::Util.destructure(find_real_file(@root, name, options))
         File.mtime(file) if file
       rescue Errno::ENOENT
         nil
       end
 
       # @see Base#key
-      def key(name, options)
-        [self.class.name + ":" + File.dirname(File.expand_path(name)),
+      def key(name, _options)
+        [self.class.name + ':' + File.dirname(File.expand_path(name)),
          File.basename(name)]
       end
 
@@ -73,7 +73,8 @@ module Sass
         sourcemap_pathname = Sass::Util.cleanpath(sourcemap_directory)
         begin
           Sass::Util.file_uri_from_path(
-            Sass::Util.relative_path_from(file_pathname, sourcemap_pathname))
+            Sass::Util.relative_path_from(file_pathname, sourcemap_pathname)
+          )
         rescue ArgumentError # when a relative path cannot be constructed
           Sass::Util.file_uri_from_path(file_pathname)
         end
@@ -84,7 +85,7 @@ module Sass
       # If a full uri is passed, this removes the root from it
       # otherwise returns the name unchanged
       def remove_root(name)
-        if name.index(@root + "/") == 0
+        if name.index(@root + '/') == 0
           name[(@root.length + 1)..-1]
         else
           name
@@ -99,7 +100,7 @@ module Sass
       #
       # @return [{String => Symbol}]
       def extensions
-        {'sass' => :sass, 'scss' => :scss}
+        { 'sass' => :sass, 'scss' => :scss }
       end
 
       # Given an `@import`ed path, returns an array of possible
@@ -115,14 +116,14 @@ module Sass
         sorted_exts = extensions.sort
         syntax = extensions[extname]
 
-        if syntax
-          ret = [["#{dirname}/{_,}#{basename}.#{extensions.invert[syntax]}", syntax]]
-        else
-          ret = sorted_exts.map {|ext, syn| ["#{dirname}/{_,}#{basename}.#{ext}", syn]}
-        end
+        ret = if syntax
+                [["#{dirname}/{_,}#{basename}.#{extensions.invert[syntax]}", syntax]]
+              else
+                sorted_exts.map { |ext, syn| ["#{dirname}/{_,}#{basename}.#{ext}", syn] }
+              end
 
         # JRuby chokes when trying to import files from JARs when the path starts with './'.
-        ret.map {|f, s| [f.sub(%r{^\./}, ''), s]}
+        ret.map { |f, s| [f.sub(%r{^\./}, ''), s] }
       end
 
       def escape_glob_characters(name)
@@ -143,8 +144,8 @@ module Sass
         dir = dir.gsub(File::ALT_SEPARATOR, File::SEPARATOR) unless File::ALT_SEPARATOR.nil?
         name = name.gsub(File::ALT_SEPARATOR, File::SEPARATOR) unless File::ALT_SEPARATOR.nil?
 
-        found = possible_files(remove_root(name)).map do |f, s|
-          path = if dir == "." || Sass::Util.pathname(f).absolute?
+        found = possible_files(remove_root(name)).flat_map do |f, s|
+          path = if dir == '.' || Sass::Util.pathname(f).absolute?
                    f
                  else
                    "#{escape_glob_characters(dir)}/#{f}"
@@ -153,22 +154,22 @@ module Sass
             full_path.gsub!(REDUNDANT_DIRECTORY, File::SEPARATOR)
             [Sass::Util.cleanpath(full_path).to_s, s]
           end
-        end.flatten(1)
+        end
         if found.empty? && split(name)[2].nil? && File.directory?("#{dir}/#{name}")
-          return find_real_file("#{dir}/#{name}", "index", options)
+          return find_real_file("#{dir}/#{name}", 'index', options)
         end
 
         if found.size > 1 && !@same_name_warnings.include?(found.first.first)
-          found.each {|(f, _)| @same_name_warnings << f}
+          found.each { |(f, _)| @same_name_warnings << f }
           relative_to = Sass::Util.pathname(dir)
           if options[:_from_import_node]
             # If _line exists, we're here due to an actual import in an
             # import_node and we want to print a warning for a user writing an
             # ambiguous import.
             candidates = found.map do |(f, _)|
-              "  " + Sass::Util.pathname(f).relative_path_from(relative_to).to_s
+              '  ' + Sass::Util.pathname(f).relative_path_from(relative_to).to_s
             end.join("\n")
-            raise Sass::SyntaxError.new(<<MESSAGE)
+            raise Sass::SyntaxError, <<MESSAGE
 It's not clear which file to import for '@import "#{name}"'.
 Candidates:
 #{candidates}
@@ -177,7 +178,7 @@ MESSAGE
           else
             # Otherwise, we're here via StalenessChecker, and we want to print a
             # warning for a user running `sass --watch` with two ambiguous files.
-            candidates = found.map {|(f, _)| "    " + File.basename(f)}.join("\n")
+            candidates = found.map { |(f, _)| '    ' + File.basename(f) }.join("\n")
             Sass::Util.sass_warn <<WARNING
 WARNING: In #{File.dirname(name)}:
   There are multiple files that match the name "#{File.basename(name)}":
@@ -192,10 +193,11 @@ WARNING
       # Only the known extensions returned from the extensions method will be recognized as such.
       def split(name)
         extension = nil
-        dirname, basename = File.dirname(name), File.basename(name)
-        if basename =~ /^(.*)\.(#{extensions.keys.map {|e| Regexp.escape(e)}.join('|')})$/
-          basename = $1
-          extension = $2
+        dirname = File.dirname(name)
+        basename = File.basename(name)
+        if basename =~ /^(.*)\.(#{extensions.keys.map { |e| Regexp.escape(e) }.join('|')})$/
+          basename = Regexp.last_match(1)
+          extension = Regexp.last_match(2)
         end
         [dirname, basename, extension]
       end
@@ -209,7 +211,7 @@ WARNING
         # TODO: this preserves historical behavior, but it's possible
         # :filename should be either normalized to the native format
         # or consistently URI-format.
-        full_filename = full_filename.tr("\\", "/") if Sass::Util.windows?
+        full_filename = full_filename.tr('\\', '/') if Sass::Util.windows?
 
         options[:syntax] = syntax
         options[:filename] = full_filename

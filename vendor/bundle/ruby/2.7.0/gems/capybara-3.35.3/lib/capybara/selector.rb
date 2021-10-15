@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 require 'capybara/selector/xpath_extensions'
 require 'capybara/selector/selector'
 require 'capybara/selector/definition'
@@ -171,7 +169,7 @@ require 'capybara/selector/definition'
 #   * Filters:
 #       * :\<any> (String, Regexp) - Match on any specified element attribute
 #
-class Capybara::Selector; end # rubocop:disable Lint/EmptyClass
+class Capybara::Selector; end
 
 Capybara::Selector::FilterSet.add(:_field) do
   node_filter(:checked, :boolean) { |node, value| !(value ^ node.checked?) }
@@ -207,7 +205,8 @@ Capybara::Selector::FilterSet.add(:_field) do
   end
 
   describe(:node_filters) do |checked: nil, unchecked: nil, disabled: nil, valid: nil, validation_message: nil, **|
-    desc, states = +'', []
+    desc = +''
+    states = []
     states << 'checked' if checked || (unchecked == false)
     states << 'not checked' if unchecked || (checked == false)
     states << 'disabled' if disabled == true

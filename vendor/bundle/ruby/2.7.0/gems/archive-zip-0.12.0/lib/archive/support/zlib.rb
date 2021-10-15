@@ -1,5 +1,3 @@
-# encoding: UTF-8
-
 require 'zlib'
 
 require 'archive/support/io-like'
@@ -173,12 +171,10 @@ module Zlib # :nodoc:
     #
     # Raises IOError if called more than once.
     def close
-      flush()
+      flush
       @deflate_buffer << @deflater.finish unless @deflater.finished?
       begin
-        until @deflate_buffer.empty? do
-          @deflate_buffer.slice!(0, delegate.write(@deflate_buffer))
-        end
+        @deflate_buffer.slice!(0, delegate.write(@deflate_buffer)) until @deflate_buffer.empty?
       rescue Errno::EAGAIN, Errno::EINTR
         retry if write_ready?
       end
@@ -221,7 +217,7 @@ module Zlib # :nodoc:
     def unbuffered_seek(offset, whence = IO::SEEK_SET)
       unless offset == 0 &&
              ((whence == IO::SEEK_SET && delegate.respond_to?(:rewind)) ||
-              whence == IO::SEEK_CUR) then
+              whence == IO::SEEK_CUR)
         raise Errno::EINVAL
       end
 
@@ -244,9 +240,7 @@ module Zlib # :nodoc:
       # First try to write out the contents of the deflate buffer because if
       # that raises a failure we can let that pass up the call stack without
       # having polluted the deflater instance.
-      until @deflate_buffer.empty? do
-        @deflate_buffer.slice!(0, delegate.write(@deflate_buffer))
-      end
+      @deflate_buffer.slice!(0, delegate.write(@deflate_buffer)) until @deflate_buffer.empty?
       # At this point we can deflate the given string into a new buffer and
       # behave as if it was written.
       @deflate_buffer = @deflater.deflate(string)
@@ -411,12 +405,10 @@ module Zlib # :nodoc:
     private
 
     def unbuffered_read(length)
-      if @inflate_buffer.empty? && @inflater.finished? then
-        raise EOFError, 'end of file reached'
-      end
+      raise EOFError, 'end of file reached' if @inflate_buffer.empty? && @inflater.finished?
 
       begin
-        while @inflate_buffer.length < length && ! @inflater.finished? do
+        while @inflate_buffer.length < length && !@inflater.finished?
           @inflate_buffer <<
             @inflater.inflate(delegate.read(@delegate_read_size))
         end
@@ -436,7 +428,7 @@ module Zlib # :nodoc:
     def unbuffered_seek(offset, whence = IO::SEEK_SET)
       unless offset == 0 &&
              ((whence == IO::SEEK_SET && delegate.respond_to?(:rewind)) ||
-              whence == IO::SEEK_CUR) then
+              whence == IO::SEEK_CUR)
         raise Errno::EINVAL
       end
 

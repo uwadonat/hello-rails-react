@@ -18,10 +18,8 @@ module Sass
       def _retrieve(key, version, sha)
         return unless File.readable?(path_to(key))
         begin
-          File.open(path_to(key), "rb") do |f|
-            if f.readline("\n").strip == version && f.readline("\n").strip == sha
-              return f.read
-            end
+          File.open(path_to(key), 'rb') do |f|
+            return f.read if f.readline("\n").strip == version && f.readline("\n").strip == sha
           end
           File.unlink path_to(key)
         rescue Errno::ENOENT
@@ -52,7 +50,7 @@ module Sass
       # @param key [String]
       # @return [String] The path to the cache file.
       def path_to(key)
-        key = key.gsub(/[<>:\\|?*%]/) {|c| "%%%03d" % c.ord}
+        key = key.gsub(/[<>:\\|?*%]/) { |c| format('%%%03d', c.ord) }
         File.join(cache_location, key)
       end
     end

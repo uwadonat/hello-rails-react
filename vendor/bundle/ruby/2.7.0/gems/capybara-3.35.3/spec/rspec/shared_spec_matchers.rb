@@ -1,11 +1,7 @@
-# frozen_string_literal: true
-
 require 'spec_helper'
 require 'capybara/dsl'
 require 'capybara/rspec/matchers'
 require 'benchmark'
-
-# rubocop:disable RSpec/ExpectActual
 
 RSpec.shared_examples Capybara::RSpecMatchers do |session, _mode|
   include Capybara::DSL

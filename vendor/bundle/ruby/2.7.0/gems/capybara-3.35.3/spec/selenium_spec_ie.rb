@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 require 'spec_helper'
 require 'selenium-webdriver'
 require 'shared_selenium_session'
@@ -114,7 +112,7 @@ Capybara::SpecHelper.run_specs TestSessions::SeleniumIE, 'selenium', capybara_sk
   end
 end
 
-RSpec.describe 'Capybara::Session with Internet Explorer', capybara_skip: skipped_tests do # rubocop:disable RSpec/MultipleDescribes
+RSpec.describe 'Capybara::Session with Internet Explorer', capybara_skip: skipped_tests do
   include Capybara::SpecHelper
   ['Capybara::Session', 'Capybara::Node', Capybara::RSpecMatchers].each do |examples|
     include_examples examples, TestSessions::SeleniumIE, :selenium_ie

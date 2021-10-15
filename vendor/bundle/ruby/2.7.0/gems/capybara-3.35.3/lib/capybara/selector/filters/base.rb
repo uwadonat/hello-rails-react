@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 module Capybara
   class Selector
     module Filters
@@ -44,7 +42,7 @@ module Capybara
           end
         end
 
-      private
+        private
 
         def apply(subject, name, value, skip_value, ctx)
           return skip_value if skip?(value)

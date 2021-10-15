@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 module Capybara
   module Driver
     class Node
@@ -19,7 +17,7 @@ module Capybara
         raise NotImplementedError
       end
 
-      def [](name)
+      def [](_name)
         raise NotImplementedError
       end
 
@@ -27,13 +25,13 @@ module Capybara
         raise NotImplementedError
       end
 
-      def style(styles)
+      def style(_styles)
         raise NotImplementedError
       end
 
       # @param value [String, Array] Array is only allowed if node has 'multiple' attribute
       # @param options [Hash] Driver specific options for how to set a value on a node
-      def set(value, **options)
+      def set(_value, **_options)
         raise NotImplementedError
       end
 
@@ -45,19 +43,19 @@ module Capybara
         raise NotImplementedError
       end
 
-      def click(keys = [], **options)
+      def click(_keys = [], **_options)
         raise NotImplementedError
       end
 
-      def right_click(keys = [], **options)
+      def right_click(_keys = [], **_options)
         raise NotImplementedError
       end
 
-      def double_click(keys = [], **options)
+      def double_click(_keys = [], **_options)
         raise NotImplementedError
       end
 
-      def send_keys(*args)
+      def send_keys(*_args)
         raise NotImplementedError
       end
 
@@ -65,19 +63,19 @@ module Capybara
         raise NotImplementedError
       end
 
-      def drag_to(element, **options)
+      def drag_to(_element, **_options)
         raise NotImplementedError
       end
 
-      def drop(*args)
+      def drop(*_args)
         raise NotImplementedError
       end
 
-      def scroll_by(x, y)
+      def scroll_by(_x, _y)
         raise NotImplementedError
       end
 
-      def scroll_to(element, alignment, position = nil)
+      def scroll_to(_element, _alignment, _position = nil)
         raise NotImplementedError
       end
 
@@ -121,7 +119,7 @@ module Capybara
         raise NotSupportedByDriverError, 'Capybara::Driver::Node#path'
       end
 
-      def trigger(event)
+      def trigger(_event)
         raise NotSupportedByDriverError, 'Capybara::Driver::Node#trigger'
       end
 
@@ -131,7 +129,7 @@ module Capybara
         %(#<#{self.class} tag="#{tag_name}">)
       end
 
-      def ==(other)
+      def ==(_other)
         raise NotSupportedByDriverError, 'Capybara::Driver::Node#=='
       end
     end

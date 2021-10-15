@@ -1,8 +1,4 @@
-# frozen_string_literal: true
-
 require 'spec_helper'
-
-# rubocop:disable RSpec/InstanceVariable
 RSpec.describe Capybara::Selector::XPathBuilder do
   let :builder do
     ::Capybara::Selector::XPathBuilder.new(@xpath)

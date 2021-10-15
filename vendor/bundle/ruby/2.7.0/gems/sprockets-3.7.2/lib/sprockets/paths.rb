@@ -3,7 +3,8 @@ require 'sprockets/utils'
 
 module Sprockets
   module Paths
-    include PathUtils, Utils
+    include Utils
+    include PathUtils
 
     # Returns `Environment` root.
     #
@@ -56,9 +57,7 @@ module Sprockets
     # completely wipe the paths list and reappend them in the order
     # you want.
     def clear_paths
-      self.config = hash_reassoc(config, :paths) do |paths|
-        paths.clear
-      end
+      self.config = hash_reassoc(config, :paths, &:clear)
     end
 
     # Public: Iterate over every file under all load paths.
@@ -69,9 +68,7 @@ module Sprockets
 
       paths.each do |root|
         stat_tree(root).each do |filename, stat|
-          if stat.file?
-            yield filename
-          end
+          yield filename if stat.file?
         end
       end
 

@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 if defined?(::RSpec::Expectations::Version)
   module Capybara
     module RSpecMatchers
@@ -65,7 +63,7 @@ if defined?(::RSpec::Expectations::Version)
           class And < ::RSpec::Matchers::BuiltIn::Compound::And
             include Synchronizer
 
-          private
+            private
 
             def synchronized_match?
               [matcher_1_matches?, matcher_2_matches?].all?
@@ -75,7 +73,7 @@ if defined?(::RSpec::Expectations::Version)
           class Or < ::RSpec::Matchers::BuiltIn::Compound::Or
             include Synchronizer
 
-          private
+            private
 
             def synchronized_match?
               [matcher_1_matches?, matcher_2_matches?].any?

@@ -79,7 +79,7 @@ module Capybara
         raise TypeError, 'The second parameter to Session::new should be a rack app if passed.'
       end
 
-      @@instance_created = true # rubocop:disable Style/ClassVars
+      @@instance_created = true
       @mode = mode
       @app = app
       if block_given?
@@ -840,7 +840,7 @@ module Capybara
 
   private
 
-    @@instance_created = false # rubocop:disable Style/ClassVars
+    @@instance_created = false
 
     def driver_args(args)
       args.map { |arg| arg.is_a?(Capybara::Node::Element) ? arg.base : arg }

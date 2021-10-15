@@ -48,7 +48,9 @@ module Sass
         # Entries in the following instance-level caches are never explicitly expired.
         # Instead they are supposed to automatically go out of scope when a series of staleness
         # checks (this instance of StalenessChecker was created for) is finished.
-        @mtimes, @dependencies_stale, @parse_trees = {}, {}, {}
+        @mtimes = {}
+        @dependencies_stale = {}
+        @parse_trees = {}
         @options = Sass::Engine.normalize_options(options)
       end
 
@@ -77,7 +79,7 @@ module Sass
       #   Defaults to the filesystem importer.
       # @return [Boolean] Whether the stylesheet has been modified.
       def stylesheet_modified_since?(template_file, mtime, importer = nil)
-        importer ||= @options[:filesystem_importer].new(".")
+        importer ||= @options[:filesystem_importer].new('.')
         dependency_updated?(mtime).call(template_file, importer)
       end
 
@@ -133,7 +135,7 @@ module Sass
           begin
             mtime = importer.mtime(uri, @options)
             if mtime.nil?
-              with_dependency_cache {|cache| cache.delete([uri, importer])}
+              with_dependency_cache { |cache| cache.delete([uri, importer]) }
               nil
             else
               mtime
@@ -143,7 +145,7 @@ module Sass
 
       def dependencies(uri, importer)
         stored_mtime, dependencies =
-          with_dependency_cache {|cache| Sass::Util.destructure(cache[[uri, importer]])}
+          with_dependency_cache { |cache| Sass::Util.destructure(cache[[uri, importer]]) }
 
         if !stored_mtime || stored_mtime < mtime(uri, importer)
           dependencies = compute_dependencies(uri, importer)

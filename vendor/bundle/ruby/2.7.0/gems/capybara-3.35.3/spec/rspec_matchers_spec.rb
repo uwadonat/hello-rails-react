@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 require 'spec_helper'
 
 RSpec.describe 'Capybara RSpec Matchers', type: :feature do

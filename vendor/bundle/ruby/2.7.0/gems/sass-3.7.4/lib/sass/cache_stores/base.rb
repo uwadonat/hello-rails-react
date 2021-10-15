@@ -21,7 +21,7 @@ module Sass
       # @param sha [String] The sha of the sass source.
       #                Cached contents must not be retrieved if the sha has changed.
       # @param contents [String] The contents to store.
-      def _store(key, version, sha, contents)
+      def _store(_key, _version, _sha, _contents)
         raise "#{self.class} must implement #_store."
       end
 
@@ -38,7 +38,7 @@ module Sass
       #                Cached contents must not be retrieved if the sha has changed.
       # @return [String] The contents that were previously stored.
       # @return [NilClass] when the cache key is not found or the version or sha have changed.
-      def _retrieve(key, version, sha)
+      def _retrieve(_key, _version, _sha)
         raise "#{self.class} must implement #_retrieve."
       end
 

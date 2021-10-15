@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 Capybara.register_server :default do |app, port, _host|
   Capybara.run_default_server(app, port)
 end
@@ -40,6 +38,7 @@ Capybara.register_server :puma do |app, port, host, **options|
 
   Puma::Server.new(conf.app, events, conf.options).tap do |s|
     s.binder.parse conf.options[:binds], s.events
-    s.min_threads, s.max_threads = conf.options[:min_threads], conf.options[:max_threads]
+    s.min_threads = conf.options[:min_threads]
+    s.max_threads = conf.options[:max_threads]
   end.run.join
 end

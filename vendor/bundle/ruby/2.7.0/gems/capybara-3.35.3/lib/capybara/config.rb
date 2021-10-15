@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 require 'forwardable'
 require 'capybara/session/config'
 
@@ -57,11 +55,11 @@ module Capybara
     def server=(name)
       name, options = *name if name.is_a? Array
       @server = if name.respond_to? :call
-        name
-      elsif options
-        proc { |app, port, host| Capybara.servers[name.to_sym].call(app, port, host, **options) }
-      else
-        Capybara.servers[name.to_sym]
+                  name
+                elsif options
+                  proc { |app, port, host| Capybara.servers[name.to_sym].call(app, port, host, **options) }
+                else
+                  Capybara.servers[name.to_sym]
       end
     end
 

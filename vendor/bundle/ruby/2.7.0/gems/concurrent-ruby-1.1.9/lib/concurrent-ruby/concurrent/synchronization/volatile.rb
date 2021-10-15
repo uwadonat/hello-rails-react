@@ -1,6 +1,5 @@
 module Concurrent
   module Synchronization
-
     # Volatile adds the attr_volatile class method when included.
     #
     # @example
@@ -20,14 +19,13 @@ module Concurrent
     #  foo.bar = 2
     #  => 2
 
-    Volatile = case
-               when Concurrent.on_cruby?
+    Volatile = if Concurrent.on_cruby?
                  MriAttrVolatile
-               when Concurrent.on_jruby?
+               elsif Concurrent.on_jruby?
                  JRubyAttrVolatile
-               when Concurrent.on_rbx?
+               elsif Concurrent.on_rbx?
                  RbxAttrVolatile
-               when Concurrent.on_truffleruby?
+               elsif Concurrent.on_truffleruby?
                  TruffleRubyAttrVolatile
                else
                  MriAttrVolatile
