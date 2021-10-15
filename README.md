@@ -31,6 +31,14 @@ Setup database with:
    rails db:create
    rails db:migrate
 ```
+Insert five records as follows:
+
+```
+   rails console
+   message1 = Message.new
+   message1.body = "Hello"
+   message1.save
+```
 
 ### Usage
 
